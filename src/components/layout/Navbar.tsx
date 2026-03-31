@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Activity } from 'lucide-react'
+import { Menu, X, Activity, CalendarDays } from 'lucide-react'
 import { motion, AnimatePresence, useMotionValueEvent, useScroll } from 'framer-motion'
 import { defaultPageContent } from '@/lib/pageContent'
 
@@ -134,49 +134,48 @@ export default function Navbar() {
         </nav>
       </motion.header>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu — slide down panel */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 md:hidden bg-brand-darkest"
-          >
-            <nav className="flex flex-col items-center justify-center h-full gap-2">
-              {navLinks.map((link, index) => {
-                const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
-                return (
-                  <motion.div key={link.href}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ duration: 0.4, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    <Link href={link.href}
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 z-40 md:hidden bg-black/50"
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="fixed top-14 left-0 right-0 z-40 md:hidden bg-brand-darkest border-b border-brand-mid/10 shadow-[0_8px_30px_rgba(0,0,0,0.4)]"
+            >
+              <nav className="px-5 py-4 space-y-1">
+                {navLinks.map((link) => {
+                  const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+                  return (
+                    <Link key={link.href} href={link.href}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`block py-3 text-[28px] font-display font-bold tracking-tight transition-colors
-                        ${isActive ? 'text-brand-cream' : 'text-brand-cream/30 hover:text-brand-cream/70'}`}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-medium transition-colors
+                        ${isActive ? 'text-brand-cream bg-brand-mid/10' : 'text-brand-cream/60 hover:text-brand-cream hover:bg-brand-mid/5'}`}
                     >
                       {link.label}
+                      {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-brand-gold" />}
                     </Link>
-                  </motion.div>
-                )
-              })}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: navLinks.length * 0.06 }}
-                className="mt-8"
-              >
-                <Link href={content.buttonLink} onClick={() => setIsMobileMenuOpen(false)}
-                  className="inline-flex items-center justify-center h-12 px-8 text-[15px] font-semibold bg-brand-gold text-brand-darkest rounded-full">
-                  {content.buttonText}
-                </Link>
-              </motion.div>
-            </nav>
-          </motion.div>
+                  )
+                })}
+                <div className="pt-3 mt-2 border-t border-brand-mid/10">
+                  <Link href={content.buttonLink} onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full h-11 text-[14px] font-semibold bg-brand-gold text-brand-darkest rounded-xl">
+                    <CalendarDays className="w-4 h-4" />
+                    {content.buttonText}
+                  </Link>
+                </div>
+              </nav>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>

@@ -97,12 +97,12 @@ export default function Footer() {
       <div className="container-main"><div className="line-divider-gold" /></div>
 
       {/* Main Footer */}
-      <div className="container-main py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
+      <div className="container-main py-10 sm:py-16">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-8">
 
-          {/* Brand - spans 4 cols */}
-          <div className="lg:col-span-4">
-            <Link href="/" className="flex items-center gap-2.5 mb-5">
+          {/* Brand - spans full on mobile, 4 cols on lg */}
+          <div className="col-span-2 lg:col-span-4">
+            <Link href="/" className="flex items-center gap-2.5 mb-4">
               <div className="w-9 h-9 rounded-lg bg-brand-gold/15 border border-brand-gold/25 flex items-center justify-center">
                 <Activity className="w-4.5 h-4.5 text-brand-gold" />
               </div>
@@ -110,7 +110,7 @@ export default function Footer() {
                 <span className="text-brand-gold">{headerContent.logoFirst}</span>{headerContent.logoSecond}
               </span>
             </Link>
-            <p className="text-[14px] leading-[1.7] text-brand-cream/60 max-w-[300px] mb-6">
+            <p className="text-[13px] sm:text-[14px] leading-[1.7] text-brand-cream/60 max-w-[300px] mb-5">
               {content.brandDescription}
             </p>
 
@@ -134,13 +134,13 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Navigation - spans 2 cols */}
-          <div className="lg:col-span-2">
-            <h4 className="text-[13px] font-semibold text-brand-cream mb-5">{content.navigationHeading || 'Navigation'}</h4>
-            <ul className="space-y-3">
+          {/* Navigation */}
+          <div className="col-span-1 lg:col-span-2">
+            <h4 className="text-[12px] sm:text-[13px] font-semibold text-brand-cream mb-4">{content.navigationHeading || 'Navigation'}</h4>
+            <ul className="space-y-2.5">
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-[14px] text-brand-cream/60 hover:text-brand-cream transition-colors duration-200">
+                  <Link href={link.href} className="text-[13px] sm:text-[14px] text-brand-cream/60 hover:text-brand-cream transition-colors duration-200">
                     {link.label}
                   </Link>
                 </li>
@@ -148,10 +148,10 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Services - spans 3 cols */}
-          <div className="lg:col-span-3">
-            <h4 className="text-[13px] font-semibold text-brand-cream mb-5">{content.servicesHeading || 'Services'}</h4>
-            <ul className="space-y-3">
+          {/* Services */}
+          <div className="col-span-1 lg:col-span-3">
+            <h4 className="text-[12px] sm:text-[13px] font-semibold text-brand-cream mb-4">{content.servicesHeading || 'Services'}</h4>
+            <ul className="space-y-2.5">
               {(() => {
                 let items: { label: string; href: string }[] = []
                 try { items = typeof content.serviceLinks === 'string' ? JSON.parse(content.serviceLinks) : (content.serviceLinks || []) } catch { items = serviceLinks.map(s => ({ label: s.name, href: `/services/${s.slug}` })) }
@@ -164,9 +164,9 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact - spans 3 cols */}
-          <div className="lg:col-span-3">
-            <h4 className="text-[13px] font-semibold text-brand-cream mb-5">{content.contactHeading || 'Get in Touch'}</h4>
+          {/* Contact */}
+          <div className="col-span-2 lg:col-span-3">
+            <h4 className="text-[12px] sm:text-[13px] font-semibold text-brand-cream mb-4">{content.contactHeading || 'Get in Touch'}</h4>
             <ul className="space-y-4">
               <li>
                 <a href={`mailto:${content.email}`} className="flex items-center gap-3 group">
