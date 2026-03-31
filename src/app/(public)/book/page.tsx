@@ -465,14 +465,25 @@ export default function BookingPage() {
                               >
                                 <div className={`text-[14px] font-medium ${selectedPackage === tier.name ? 'text-[#E7DDC6]' : 'text-[#C9BFA6]/55'}`}>{tier.name}</div>
                                 <div className="text-[16px] font-bold text-brand-gold mt-1">{tier.price}</div>
-                                <div className="text-[10px] text-brand-cream/30 mt-1">{tier.features?.filter(f => f.included).length || 0} features included</div>
+                                <div className="text-[10px] text-brand-cream/30 mt-1">{tier.features?.filter(f => f.included).length || 0} features</div>
                               </button>
                               <button
-                                onClick={(e) => { e.stopPropagation(); setDetailTier(tier) }}
-                                className="w-full py-2 text-[11px] text-brand-gold/70 hover:text-brand-gold border-t border-[#4B8A6C]/10 hover:bg-brand-gold/5 transition-colors"
+                                onClick={(e) => { e.stopPropagation(); setDetailTier(detailTier?.name === tier.name ? null : tier) }}
+                                className="w-full py-2 text-[11px] text-brand-gold/70 hover:text-brand-gold border-t border-[#4B8A6C]/10 hover:bg-brand-gold/5 transition-colors flex items-center justify-center gap-1"
                               >
-                                View Details
+                                {detailTier?.name === tier.name ? 'Hide Details' : 'View Details'}
+                                <ChevronRight className={`w-3 h-3 transition-transform ${detailTier?.name === tier.name ? 'rotate-90' : ''}`} />
                               </button>
+                              {detailTier?.name === tier.name && (
+                                <div className="px-4 pb-4 pt-2 border-t border-[#4B8A6C]/10 space-y-2">
+                                  {tier.features?.map((f, i) => (
+                                    <div key={i} className={`flex items-center gap-2 text-[12px] ${f.included ? 'text-brand-cream/70' : 'text-brand-cream/25'}`}>
+                                      {f.included ? <Check className="w-3.5 h-3.5 text-brand-mid flex-shrink-0" /> : <span className="w-3.5 h-3.5 flex items-center justify-center flex-shrink-0 text-[10px]">×</span>}
+                                      {f.text}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
@@ -881,47 +892,6 @@ export default function BookingPage() {
 
         </div>
       </section>
-      {/* Package Detail Modal */}
-      {detailTier && (
-        <>
-          <div onClick={() => setDetailTier(null)} className="fixed inset-0 z-50 bg-black/60" />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-md bg-[#0B2A1F] border border-[#4B8A6C]/20 rounded-2xl overflow-hidden"
-          >
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h3 className="text-[20px] font-display font-bold text-brand-cream">{detailTier.name}</h3>
-                  <div className="text-[28px] font-display font-bold text-brand-gold mt-1">{detailTier.price}</div>
-                </div>
-                <button onClick={() => setDetailTier(null)} className="w-8 h-8 rounded-full border border-[#4B8A6C]/20 flex items-center justify-center text-brand-cream/40 hover:text-brand-cream">
-                  <span className="text-[18px]">×</span>
-                </button>
-              </div>
-              <div className="space-y-2.5 mb-6">
-                {detailTier.features?.map((f, i) => (
-                  <div key={i} className={`flex items-center gap-2.5 text-[14px] ${f.included ? 'text-brand-cream/80' : 'text-brand-cream/25'}`}>
-                    {f.included ? (
-                      <Check className="w-4 h-4 text-brand-mid flex-shrink-0" />
-                    ) : (
-                      <span className="w-4 h-4 flex items-center justify-center flex-shrink-0 text-brand-cream/15">×</span>
-                    )}
-                    {f.text}
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={() => { setSelectedPackage(detailTier.name); setDetailTier(null) }}
-                className="w-full h-11 bg-brand-gold text-brand-darkest font-medium text-[14px] rounded-xl hover:bg-brand-gold-light transition-colors"
-              >
-                Select {detailTier.name}
-              </button>
-            </div>
-          </motion.div>
-        </>
-      )}
     </main>
   );
 }
