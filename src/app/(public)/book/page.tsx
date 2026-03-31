@@ -40,8 +40,7 @@ function to12Hour(time24: string): string {
 
 const STEPS = [
   'Select Service',
-  'Choose Date',
-  'Choose Time',
+  'Choose Date & Time',
   'Your Details',
   'Confirm',
 ] as const;
@@ -215,10 +214,8 @@ export default function BookingPage() {
       case 0:
         return !!selectedService && !!selectedPackage;
       case 1:
-        return !!selectedDate;
+        return !!selectedDate && !!selectedTime;
       case 2:
-        return !!selectedTime;
-      case 3:
         return !!details.name && !!details.email;
       default:
         return true;
@@ -275,7 +272,7 @@ export default function BookingPage() {
     services.find((s) => s.id === selectedService)?.label ?? '';
 
   const goNext = () => {
-    if (step < 4 && canGoNext()) {
+    if (step < 3 && canGoNext()) {
       setDirection(1);
       setStep((s) => s + 1);
     }
@@ -583,47 +580,45 @@ export default function BookingPage() {
                       </span>
                     </p>
                   )}
-                </div>
-              )}
 
-              {/* Step 2: Time */}
-              {step === 2 && (
-                <div>
-                  <h2 className="heading-sm text-[#E7DDC6] mb-7">
-                    Choose a Time Slot
-                  </h2>
-                  {loadingSlots ? (
-                    <div className="flex items-center justify-center py-12">
-                      <div className="w-6 h-6 border-2 border-[#B89B4A]/30 border-t-[#B89B4A] rounded-full animate-spin" />
-                      <span className="ml-3 text-[13px] text-[#C9BFA6]/50">Checking calendar availability...</span>
+                  {/* Time Slots — shown below date after selecting */}
+                  {selectedDate && (
+                    <div className="mt-8 pt-6 border-t border-[#4B8A6C]/10">
+                      <h3 className="text-[16px] font-semibold text-[#E7DDC6] mb-4">Choose a Time Slot</h3>
+                      {loadingSlots ? (
+                        <div className="flex items-center justify-center py-8">
+                          <div className="w-5 h-5 border-2 border-[#B89B4A]/30 border-t-[#B89B4A] rounded-full animate-spin" />
+                          <span className="ml-3 text-[13px] text-[#C9BFA6]/50">Checking availability...</span>
+                        </div>
+                      ) : availableSlots.length === 0 ? (
+                        <div className="text-center py-8">
+                          <p className="text-[#C9BFA6]/50 text-[14px]">No available time slots for this date.</p>
+                          <p className="text-[#C9BFA6]/30 text-[12px] mt-2">Try selecting a different date.</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
+                          {availableSlots.map((slot) => (
+                            <button
+                              key={slot}
+                              onClick={() => setSelectedTime(slot)}
+                              className={`rounded-full border py-2.5 text-[13px] font-medium transition-all duration-300 ${
+                                selectedTime === slot
+                                  ? 'border-[#B89B4A]/40 bg-[#B89B4A] text-[#0E3529] shadow-lg shadow-[#B89B4A]/20'
+                                  : 'border-[#4B8A6C]/15 text-[#C9BFA6]/50 hover:border-[#4B8A6C]/30 hover:bg-[#215F47]/30'
+                              }`}
+                            >
+                              {slot}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  ) : availableSlots.length === 0 ? (
-                    <div className="text-center py-12">
-                      <p className="text-[#C9BFA6]/50 text-[14px]">No available time slots for this date.</p>
-                      <p className="text-[#C9BFA6]/30 text-[12px] mt-2">Try selecting a different date.</p>
-                    </div>
-                  ) : (
-                  <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
-                    {availableSlots.map((slot) => (
-                      <button
-                        key={slot}
-                        onClick={() => setSelectedTime(slot)}
-                        className={`rounded-full border py-2.5 text-[13px] font-medium transition-all duration-300 ${
-                          selectedTime === slot
-                            ? 'border-[#B89B4A]/40 bg-[#B89B4A] text-[#0E3529] shadow-lg shadow-[#B89B4A]/20'
-                            : 'border-[#4B8A6C]/15 text-[#C9BFA6]/50 hover:border-[#4B8A6C]/30 hover:bg-[#215F47]/30'
-                        }`}
-                      >
-                        {slot}
-                      </button>
-                    ))}
-                  </div>
                   )}
                 </div>
               )}
 
-              {/* Step 3: Details */}
-              {step === 3 && (
+              {/* Step 2: Details */}
+              {step === 2 && (
                 <div>
                   <h2 className="heading-sm text-[#E7DDC6] mb-7">
                     Your Details
@@ -702,7 +697,7 @@ export default function BookingPage() {
               )}
 
               {/* Step 4: Confirm */}
-              {step === 4 && (
+              {step === 3 && (
                 <div>
                   <h2 className="heading-sm text-[#E7DDC6] mb-7">
                     Review &amp; Confirm
@@ -766,7 +761,7 @@ export default function BookingPage() {
               <ArrowLeft size={14} /> Back
             </button>
 
-            {step < 4 ? (
+            {step < 3 ? (
               <button
                 onClick={goNext}
                 disabled={!canGoNext()}
@@ -893,7 +888,7 @@ export default function BookingPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="fixed inset-x-4 top-[10%] sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-full sm:max-w-md z-50 bg-[#0B2A1F] border border-[#4B8A6C]/20 rounded-2xl overflow-hidden"
+            className="fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-md bg-[#0B2A1F] border border-[#4B8A6C]/20 rounded-2xl overflow-hidden"
           >
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
