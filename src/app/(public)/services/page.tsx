@@ -272,12 +272,12 @@ export default function ServicesPage() {
                     </div>
 
                     {/* Buttons */}
-                    <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
-                      <Link href={buildServiceUrl(service.slug, service.category)} className="btn-secondary h-10 px-5 text-[13px] flex-1 text-center justify-center">
-                        {content.viewDetailsText || 'View Details'} <ArrowRight className="w-3.5 h-3.5" />
+                    <div className="mt-6 flex items-center gap-2 sm:gap-3">
+                      <Link href={buildServiceUrl(service.slug, service.category)} className="btn-secondary h-9 sm:h-10 px-4 sm:px-5 text-[12px] sm:text-[13px] flex-1 text-center justify-center">
+                        {content.viewDetailsText || 'View Details'} <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                       </Link>
-                      <button onClick={() => setPricingService(service)} className="btn-primary h-10 px-5 text-[13px] flex-1 text-center justify-center">
-                        <DollarSign className="w-3.5 h-3.5" /> {content.pricingBtnText || 'Pricing'}
+                      <button onClick={() => setPricingService(service)} className="btn-primary h-9 sm:h-10 px-4 sm:px-5 text-[12px] sm:text-[13px] flex-1 text-center justify-center">
+                        <DollarSign className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> {content.pricingBtnText || 'Pricing'}
                       </button>
                     </div>
                   </div>

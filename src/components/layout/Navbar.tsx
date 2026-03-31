@@ -69,15 +69,15 @@ export default function Navbar() {
           opacity: hidden ? 0 : 1,
         }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 px-4"
+        className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-0 px-0 sm:pt-4 sm:px-4"
       >
         <nav className={`
           flex items-center justify-between w-full max-w-[1200px]
-          h-14 px-4 rounded-full
+          h-14 px-4 rounded-none sm:rounded-full
           transition-all duration-500 ease-out
           ${isTop
-            ? 'bg-brand-darkest/95 backdrop-blur-xl lg:bg-transparent lg:backdrop-blur-none'
-            : 'bg-brand-darkest/95 backdrop-blur-xl border border-brand-mid/10 shadow-[0_4px_30px_rgba(0,0,0,0.3)]'
+            ? 'bg-brand-darkest/95 backdrop-blur-xl border-b border-brand-mid/10 sm:border-b-0 lg:bg-transparent lg:backdrop-blur-none lg:border-b-0'
+            : 'bg-brand-darkest/95 backdrop-blur-xl border-b sm:border border-brand-mid/10 shadow-[0_4px_30px_rgba(0,0,0,0.3)]'
           }
         `}>
           {/* Logo */}
