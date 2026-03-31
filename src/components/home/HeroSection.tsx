@@ -69,7 +69,7 @@ export default function HeroSection() {
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen flex items-center overflow-hidden pt-20 pb-10 lg:pt-0 lg:pb-0" suppressHydrationWarning>
+    <section ref={sectionRef} className="relative min-h-[100svh] flex items-center overflow-hidden pt-24 pb-12 sm:pt-20 sm:pb-10 lg:pt-0 lg:pb-0" suppressHydrationWarning>
       {/* Background gradient mesh */}
       <div className="absolute inset-0 z-0" style={{
         background: 'radial-gradient(ellipse at 20% 50%, rgba(75,138,108,0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 30%, rgba(184,155,74,0.04) 0%, transparent 40%), radial-gradient(ellipse at 60% 90%, rgba(33,95,71,0.1) 0%, transparent 50%)',
@@ -95,41 +95,41 @@ export default function HeroSection() {
 
             {/* Heading */}
             <motion.h1 variants={fadeUp} style={{ y: headingY }}
-              className="mt-8 text-[42px] sm:text-[52px] md:text-[60px] lg:text-[68px] font-display font-bold leading-[1.05] tracking-[-0.02em]">
+              className="mt-6 sm:mt-8 text-[32px] sm:text-[42px] md:text-[52px] lg:text-[68px] font-display font-bold leading-[1.08] tracking-[-0.02em]">
               {hero.heading}
             </motion.h1>
 
             {/* Subtitle */}
-            <motion.p variants={fadeUp} className="mt-6 text-[16px] md:text-[17px] leading-[1.8] text-brand-cream/80 max-w-[500px] mx-auto lg:mx-0">
+            <motion.p variants={fadeUp} className="mt-4 sm:mt-6 text-[14px] sm:text-[16px] md:text-[17px] leading-[1.75] text-brand-cream/70 max-w-[440px] mx-auto lg:mx-0">
               {hero.subtitle}
             </motion.p>
 
             {/* Buttons */}
-            <motion.div variants={fadeUp} className="mt-9 flex items-center justify-center lg:justify-start gap-4">
-              <MagneticButton href={hero.primaryBtnLink} className="btn-primary gap-2.5">
+            <motion.div variants={fadeUp} className="mt-7 sm:mt-9 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4">
+              <MagneticButton href={hero.primaryBtnLink} className="btn-primary gap-2.5 w-full sm:w-auto justify-center">
                 <CalendarDays className="w-4 h-4" />
                 {hero.primaryBtnText}
               </MagneticButton>
-              <MagneticButton href={hero.secondaryBtnLink} className="btn-secondary gap-2.5">
+              <MagneticButton href={hero.secondaryBtnLink} className="btn-secondary gap-2.5 w-full sm:w-auto justify-center">
                 {hero.secondaryBtnText}
                 <ArrowRight className="w-4 h-4" />
               </MagneticButton>
             </motion.div>
 
             {/* Stats Row */}
-            <motion.div variants={fadeUp} className="mt-12 flex items-center justify-center lg:justify-start gap-3">
+            <motion.div variants={fadeUp} className="mt-8 sm:mt-12 grid grid-cols-3 gap-2 sm:flex sm:items-center sm:justify-center lg:justify-start sm:gap-3">
               {hero.stats.map((stat, i) => (
-                <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-mid/[0.06] border border-brand-mid/10">
-                  <span className="text-[22px] font-display font-bold text-brand-gold leading-none">{stat.value}</span>
-                  <span className="text-[12px] font-medium text-brand-cream/50">{stat.label}</span>
+                <div key={i} className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-brand-mid/[0.06] border border-brand-mid/10">
+                  <span className="text-[18px] sm:text-[22px] font-display font-bold text-brand-gold leading-none">{stat.value}</span>
+                  <span className="text-[10px] sm:text-[12px] font-medium text-brand-cream/50 text-center">{stat.label}</span>
                 </div>
               ))}
             </motion.div>
           </div>
 
           {/* ═══ RIGHT SIDE - Photo with floating badges ═══ */}
-          <motion.div variants={fadeRight} style={{ y: photoY }} className="w-full lg:w-[45%] flex justify-center lg:justify-end">
-            <div className="relative w-[300px] sm:w-[360px] md:w-[420px] lg:w-full max-w-[480px]">
+          <motion.div variants={fadeRight} style={{ y: photoY }} className="w-full lg:w-[45%] flex justify-center lg:justify-end mt-4 lg:mt-0">
+            <div className="relative w-[240px] sm:w-[320px] md:w-[400px] lg:w-full max-w-[480px]">
 
               {/* Photo container */}
               <div className="relative rounded-2xl overflow-hidden shadow-[0_8px_60px_rgba(0,0,0,0.4)]" style={{ aspectRatio: '3/4' }}>
@@ -151,7 +151,7 @@ export default function HeroSection() {
 
               {/* ── Floating Glass Badge: Analytics (top right) ── */}
               <motion.div custom={0} variants={floatBadge}
-                className="absolute -top-3 -right-3 sm:top-4 sm:-right-8 z-20 animate-float">
+                className="absolute hidden sm:block sm:top-4 sm:-right-8 z-20 animate-float">
                 <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-dark/70 backdrop-blur-xl border border-brand-mid/20 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
                   <div className="w-10 h-10 rounded-lg bg-brand-mid/20 flex items-center justify-center">
                     {(() => { const I = getIcon(hero.floatingBadges[0]?.icon); return <I className="w-5 h-5 text-brand-mid" /> })()}
@@ -165,7 +165,7 @@ export default function HeroSection() {
 
               {/* ── Floating Glass Badge: Automation (mid left) ── */}
               <motion.div custom={1} variants={floatBadge}
-                className="absolute top-[45%] -left-4 sm:-left-10 z-20 animate-float-slow">
+                className="absolute hidden sm:block top-[45%] sm:-left-10 z-20 animate-float-slow">
                 <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-dark/70 backdrop-blur-xl border border-brand-mid/20 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
                   <div className="w-10 h-10 rounded-lg bg-brand-gold/15 flex items-center justify-center">
                     {(() => { const I = getIcon(hero.floatingBadges[1]?.icon); return <I className="w-5 h-5 text-brand-gold" /> })()}
@@ -179,7 +179,7 @@ export default function HeroSection() {
 
               {/* ── Floating Glass Badge: Development (bottom right) ── */}
               <motion.div custom={2} variants={floatBadge}
-                className="absolute -bottom-3 right-4 sm:bottom-8 sm:-right-6 z-20 animate-bounce-subtle">
+                className="absolute hidden sm:block sm:bottom-8 sm:-right-6 z-20 animate-bounce-subtle">
                 <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-dark/70 backdrop-blur-xl border border-brand-mid/20 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
                   <div className="w-10 h-10 rounded-lg bg-brand-green-light/15 flex items-center justify-center">
                     {(() => { const I = getIcon(hero.floatingBadges[2]?.icon); return <I className="w-5 h-5 text-brand-green-light" /> })()}
