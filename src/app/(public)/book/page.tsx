@@ -17,10 +17,14 @@ import { defaultPageContent } from '@/lib/pageContent';
 /*  Data — fetched from admin services                                 */
 /* ------------------------------------------------------------------ */
 
+interface PricingFeature { text: string; included: boolean }
+interface PricingTier { name: string; price: string; features: PricingFeature[]; highlighted?: boolean }
+
 interface BookingService {
   id: string;
   label: string;
   packages: Record<string, string>;
+  tiers: PricingTier[];
 }
 
 // Fallback while loading
@@ -112,6 +116,7 @@ export default function BookingPage() {
   const [servicesLoaded, setServicesLoaded] = useState(false);
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
+  const [detailTier, setDetailTier] = useState<PricingTier | null>(null);
 
   // Fetch available time slots — auto-refreshes every 15 seconds
   const fetchSlots = (date: Date, isInitial: boolean) => {
@@ -161,10 +166,11 @@ export default function BookingPage() {
         if (Array.isArray(data) && data.length) {
           const mapped: BookingService[] = data
             .filter((s: { active: boolean }) => s.active)
-            .map((s: { id: string; title: string; pricing: { name: string; price: string }[] }) => ({
+            .map((s: { id: string; title: string; pricing: PricingTier[] }) => ({
               id: s.id,
               label: s.title,
               packages: Object.fromEntries((s.pricing || []).map((p) => [p.name, p.price])),
+              tiers: s.pricing || [],
             }));
           setServices(mapped);
         }
@@ -446,24 +452,31 @@ export default function BookingPage() {
                   {selectedService && (() => {
                     const svc = services.find((s) => s.id === selectedService);
                     if (!svc) return null;
-                    const pkgEntries = Object.entries(svc.packages);
                     return (
                       <div className="mt-8">
                         <h3 className="text-[16px] font-semibold text-brand-cream mb-4">Select Package</h3>
                         <div className="grid grid-cols-3 gap-3">
-                          {pkgEntries.map(([pkg, price]) => (
-                            <button
-                              key={pkg}
-                              onClick={() => setSelectedPackage(pkg)}
-                              className={`rounded-xl border py-4 px-4 text-center transition-all duration-300 ${
-                                selectedPackage === pkg
-                                  ? 'border-[#B89B4A]/40 bg-[#B89B4A]/10 text-[#E7DDC6]'
-                                  : 'border-[#4B8A6C]/15 text-[#C9BFA6]/55 hover:border-[#4B8A6C]/30'
-                              }`}
-                            >
-                              <div className="text-[14px] font-medium">{pkg}</div>
-                              <div className="text-[16px] font-bold text-brand-gold mt-1">{price}</div>
-                            </button>
+                          {svc.tiers.map((tier) => (
+                            <div key={tier.name} className={`rounded-xl border transition-all duration-300 overflow-hidden ${
+                              selectedPackage === tier.name
+                                ? 'border-[#B89B4A]/40 bg-[#B89B4A]/10'
+                                : 'border-[#4B8A6C]/15 hover:border-[#4B8A6C]/30'
+                            }`}>
+                              <button
+                                onClick={() => setSelectedPackage(tier.name)}
+                                className="w-full py-4 px-4 text-center"
+                              >
+                                <div className={`text-[14px] font-medium ${selectedPackage === tier.name ? 'text-[#E7DDC6]' : 'text-[#C9BFA6]/55'}`}>{tier.name}</div>
+                                <div className="text-[16px] font-bold text-brand-gold mt-1">{tier.price}</div>
+                                <div className="text-[10px] text-brand-cream/30 mt-1">{tier.features?.filter(f => f.included).length || 0} features included</div>
+                              </button>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); setDetailTier(tier) }}
+                                className="w-full py-2 text-[11px] text-brand-gold/70 hover:text-brand-gold border-t border-[#4B8A6C]/10 hover:bg-brand-gold/5 transition-colors"
+                              >
+                                View Details
+                              </button>
+                            </div>
                           ))}
                         </div>
                       </div>
@@ -873,6 +886,47 @@ export default function BookingPage() {
 
         </div>
       </section>
+      {/* Package Detail Modal */}
+      {detailTier && (
+        <>
+          <div onClick={() => setDetailTier(null)} className="fixed inset-0 z-50 bg-black/60" />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="fixed inset-x-4 top-[10%] sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-full sm:max-w-md z-50 bg-[#0B2A1F] border border-[#4B8A6C]/20 rounded-2xl overflow-hidden"
+          >
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-[20px] font-display font-bold text-brand-cream">{detailTier.name}</h3>
+                  <div className="text-[28px] font-display font-bold text-brand-gold mt-1">{detailTier.price}</div>
+                </div>
+                <button onClick={() => setDetailTier(null)} className="w-8 h-8 rounded-full border border-[#4B8A6C]/20 flex items-center justify-center text-brand-cream/40 hover:text-brand-cream">
+                  <span className="text-[18px]">×</span>
+                </button>
+              </div>
+              <div className="space-y-2.5 mb-6">
+                {detailTier.features?.map((f, i) => (
+                  <div key={i} className={`flex items-center gap-2.5 text-[14px] ${f.included ? 'text-brand-cream/80' : 'text-brand-cream/25'}`}>
+                    {f.included ? (
+                      <Check className="w-4 h-4 text-brand-mid flex-shrink-0" />
+                    ) : (
+                      <span className="w-4 h-4 flex items-center justify-center flex-shrink-0 text-brand-cream/15">×</span>
+                    )}
+                    {f.text}
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={() => { setSelectedPackage(detailTier.name); setDetailTier(null) }}
+                className="w-full h-11 bg-brand-gold text-brand-darkest font-medium text-[14px] rounded-xl hover:bg-brand-gold-light transition-colors"
+              >
+                Select {detailTier.name}
+              </button>
+            </div>
+          </motion.div>
+        </>
+      )}
     </main>
   );
 }
