@@ -76,8 +76,8 @@ export default function Navbar() {
           h-14 px-4 rounded-full
           transition-all duration-500 ease-out
           ${isTop
-            ? 'bg-transparent'
-            : 'bg-brand-darkest/90 backdrop-blur-xl border border-brand-mid/10 shadow-[0_4px_30px_rgba(0,0,0,0.3)]'
+            ? 'bg-brand-darkest/95 backdrop-blur-xl lg:bg-transparent lg:backdrop-blur-none'
+            : 'bg-brand-darkest/95 backdrop-blur-xl border border-brand-mid/10 shadow-[0_4px_30px_rgba(0,0,0,0.3)]'
           }
         `}>
           {/* Logo */}
