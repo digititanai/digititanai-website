@@ -452,7 +452,7 @@ export default function BookingPage() {
                     return (
                       <div className="mt-8">
                         <h3 className="text-[16px] font-semibold text-brand-cream mb-4">Select Package</h3>
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           {svc.tiers.map((tier) => (
                             <div key={tier.name} className={`rounded-xl border transition-all duration-300 overflow-hidden ${
                               selectedPackage === tier.name
@@ -461,11 +461,11 @@ export default function BookingPage() {
                             }`}>
                               <button
                                 onClick={() => setSelectedPackage(tier.name)}
-                                className="w-full py-4 px-4 text-center"
+                                className="w-full py-3 sm:py-4 px-4 flex sm:flex-col items-center sm:items-center gap-3 sm:gap-0 sm:text-center"
                               >
                                 <div className={`text-[14px] font-medium ${selectedPackage === tier.name ? 'text-[#E7DDC6]' : 'text-[#C9BFA6]/55'}`}>{tier.name}</div>
-                                <div className="text-[16px] font-bold text-brand-gold mt-1">{tier.price}</div>
-                                <div className="text-[10px] text-brand-cream/30 mt-1">{tier.features?.filter(f => f.included).length || 0} features</div>
+                                <div className="text-[16px] font-bold text-brand-gold sm:mt-1">{tier.price}</div>
+                                <div className="text-[10px] text-brand-cream/30 sm:mt-1 ml-auto sm:ml-0">{tier.features?.filter(f => f.included).length || 0} features</div>
                               </button>
                               <button
                                 onClick={(e) => { e.stopPropagation(); setDetailTier(detailTier?.name === tier.name ? null : tier) }}
@@ -474,19 +474,24 @@ export default function BookingPage() {
                                 {detailTier?.name === tier.name ? 'Hide Details' : 'View Details'}
                                 <ChevronRight className={`w-3 h-3 transition-transform ${detailTier?.name === tier.name ? 'rotate-90' : ''}`} />
                               </button>
-                              {detailTier?.name === tier.name && (
-                                <div className="px-4 pb-4 pt-2 border-t border-[#4B8A6C]/10 space-y-2">
-                                  {tier.features?.map((f, i) => (
-                                    <div key={i} className={`flex items-center gap-2 text-[12px] ${f.included ? 'text-brand-cream/70' : 'text-brand-cream/25'}`}>
-                                      {f.included ? <Check className="w-3.5 h-3.5 text-brand-mid flex-shrink-0" /> : <span className="w-3.5 h-3.5 flex items-center justify-center flex-shrink-0 text-[10px]">×</span>}
-                                      {f.text}
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
                             </div>
                           ))}
                         </div>
+                        {/* Feature details shown below the grid */}
+                        {detailTier && (
+                          <div className="mt-3 p-4 rounded-xl border border-[#4B8A6C]/15 bg-[#0B2A1F]/50 space-y-2">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-[13px] font-semibold text-brand-cream">{detailTier.name} - {detailTier.price}</span>
+                              <button onClick={() => setDetailTier(null)} className="text-[11px] text-brand-cream/40 hover:text-brand-cream">Close</button>
+                            </div>
+                            {detailTier.features?.map((f, i) => (
+                              <div key={i} className={`flex items-center gap-2.5 text-[13px] ${f.included ? 'text-brand-cream/75' : 'text-brand-cream/25'}`}>
+                                {f.included ? <Check className="w-4 h-4 text-brand-mid flex-shrink-0" /> : <span className="w-4 h-4 flex items-center justify-center flex-shrink-0 text-brand-cream/15">×</span>}
+                                {f.text}
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     );
                   })()}

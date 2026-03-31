@@ -72,7 +72,7 @@ export default function Footer() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="relative overflow-hidden rounded-2xl p-10 md:p-14 text-center"
+          className="relative overflow-hidden rounded-2xl p-6 sm:p-10 md:p-14 text-center"
           style={{ background: 'linear-gradient(135deg, #0E3529, #215F47, #0E3529)' }}
         >
           <div className="absolute inset-0 opacity-[0.04]" style={{
@@ -80,15 +80,15 @@ export default function Footer() {
             backgroundSize: '40px 40px',
           }} />
           <div className="relative z-10">
-            <h3 className="text-[28px] md:text-[36px] font-display font-bold text-brand-cream">
+            <h3 className="text-[22px] sm:text-[28px] md:text-[36px] font-display font-bold text-brand-cream">
               {content.ctaHeading}
             </h3>
             <p className="mt-3 text-[15px] text-brand-cream/70 max-w-md mx-auto">
               {content.ctaDescription}
             </p>
-            <div className="mt-8 flex items-center justify-center gap-4">
-              <Link href={content.ctaBtn1Link} className="btn-primary">{content.ctaBtn1Text}</Link>
-              <Link href={content.ctaBtn2Link} className="btn-secondary">{content.ctaBtn2Text}</Link>
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+              <Link href={content.ctaBtn1Link} className="btn-primary w-full sm:w-auto text-center">{content.ctaBtn1Text}</Link>
+              <Link href={content.ctaBtn2Link} className="btn-secondary w-full sm:w-auto text-center">{content.ctaBtn2Text}</Link>
             </div>
           </div>
         </motion.div>
