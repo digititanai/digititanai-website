@@ -16,7 +16,7 @@ export default function FAQSection() {
     <section className="section-gap" suppressHydrationWarning>
       <div className="container-main">
         {/* Header */}
-        <div className="text-center mb-14">
+        <div className="text-center mb-8 md:mb-14">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -39,7 +39,7 @@ export default function FAQSection() {
 
         {/* FAQ Grid - 2 columns */}
         <motion.div
-          className="grid md:grid-cols-2 gap-4 items-stretch"
+          className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-40px' }}

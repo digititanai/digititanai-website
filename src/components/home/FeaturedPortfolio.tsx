@@ -38,7 +38,7 @@ export default function FeaturedPortfolio() {
     <section className="section-gap" suppressHydrationWarning>
       <div className="container-main">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8 md:mb-12">
           <div>
             <motion.span
               initial={{ opacity: 0, y: 15 }}
@@ -73,7 +73,7 @@ export default function FeaturedPortfolio() {
         {/* Project Grid - 2 columns */}
         <motion.div
           key={pData.projects.length}
-          className="grid md:grid-cols-2 gap-5 items-stretch"
+          className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch"
           initial="hidden"
           animate={pData.projects.length > 0 ? 'visible' : 'hidden'}
           variants={stagger}
@@ -82,7 +82,7 @@ export default function FeaturedPortfolio() {
             const Icon = getIcon(project.icon)
             return (
               <motion.div key={project.title} variants={fadeUp} className="h-full">
-                <Link href={`/portfolio/${project.slug}`} className="card-hover block h-full p-7 group flex flex-col">
+                <Link href={`/portfolio/${project.slug}`} className="card-hover block h-full p-5 md:p-7 group flex flex-col">
                   {/* Top row: icon + category + arrow */}
                   <div className="flex items-start justify-between mb-6">
                     <div className="flex items-center gap-3">
@@ -109,7 +109,7 @@ export default function FeaturedPortfolio() {
                   </p>
 
                   {/* Metrics row */}
-                  <div className="mt-6 pt-5 border-t border-brand-mid/10 flex items-center gap-6">
+                  <div className="mt-6 pt-5 border-t border-brand-mid/10 flex flex-wrap items-center gap-4 md:gap-6">
                     {project.metrics.map((m) => (
                       <div key={m.label}>
                         <div className="text-[20px] font-display font-bold text-brand-gold leading-none">

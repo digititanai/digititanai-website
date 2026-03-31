@@ -85,7 +85,7 @@ export default function BlogPreview() {
   const heading = bData?.heading || defaultHomePageData.blog.heading;
   const linkText = bData?.linkText || defaultHomePageData.blog.linkText;
   const posts = bData?.posts || [];
-  const gridCols = posts.length === 4 ? 'md:grid-cols-2 lg:grid-cols-4' : posts.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3';
+  const gridCols = posts.length === 4 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4' : posts.length === 2 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
 
   return (
     <section className="section-gap" suppressHydrationWarning>
@@ -101,7 +101,7 @@ export default function BlogPreview() {
         {posts.length > 0 && (
           <motion.div
             key={posts.length}
-            className={`mt-14 grid gap-6 items-stretch ${gridCols}`}
+            className={`mt-8 md:mt-14 grid gap-6 items-stretch ${gridCols}`}
             initial="hidden"
             animate="visible"
             variants={stagger}
@@ -114,7 +114,7 @@ export default function BlogPreview() {
                       {post.image && <img src={post.image} alt={post.title} className="absolute inset-0 w-full h-full object-cover" />}
                     </div>
                   </div>
-                  <div className="p-6 flex flex-col flex-1">
+                  <div className="p-4 md:p-6 flex flex-col flex-1">
                     <span className="badge-green">{post.category}</span>
                     <h3 className="heading-sm mt-3 text-brand-cream text-[20px] line-clamp-2">{post.title}</h3>
                     <p className="body-sm mt-2 line-clamp-2 flex-1">{post.excerpt}</p>

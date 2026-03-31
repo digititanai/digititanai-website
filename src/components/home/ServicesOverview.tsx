@@ -76,7 +76,7 @@ export default function ServicesOverview() {
     <section className="section-gap" suppressHydrationWarning>
       <div className="container-main">
         {/* Header row */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8 md:mb-12">
           <div>
             <motion.h2
               initial={{ opacity: 0, y: 20 }}

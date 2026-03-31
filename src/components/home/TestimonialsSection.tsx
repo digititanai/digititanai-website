@@ -47,7 +47,7 @@ export default function TestimonialsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-14"
+          className="text-center mb-8 md:mb-14"
         >
           <span className="badge">{header.badge}</span>
           <h2 className="mt-5 heading-lg">{header.heading}</h2>
@@ -59,14 +59,14 @@ export default function TestimonialsSection() {
         {/* 3-column grid */}
         <motion.div
           key={testimonials.length}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch"
           initial="hidden"
           animate={testimonials.length > 0 ? 'visible' : 'hidden'}
           variants={stagger}
         >
           {testimonials.map((t) => (
             <motion.div key={t.id} variants={fadeUp} className="h-full">
-              <div className="card h-full p-7 flex flex-col">
+              <div className="card h-full p-5 md:p-7 flex flex-col">
                 {/* Stars */}
                 <div className="flex gap-1 mb-5">
                   {[1, 2, 3, 4, 5].map((s) => (
