@@ -120,7 +120,7 @@ export default function ServiceDetailPage() {
           description: sData.description,
           heroDescription: sData.overview[0],
           ctaPrimaryText: 'Book a Consultation',
-          ctaPrimaryLink: '/contact',
+          ctaPrimaryLink: '/book',
           ctaSecondaryText: 'Contact Me',
           ctaSecondaryLink: '/contact',
           quickOverviewItems: [
@@ -194,7 +194,7 @@ export default function ServiceDetailPage() {
 
   const heroDescription = d?.heroDescription || s.overview[0];
   const ctaPrimaryText = d?.ctaPrimaryText || 'Book a Consultation';
-  const ctaPrimaryLink = d?.ctaPrimaryLink || '/contact';
+  const ctaPrimaryLink = d?.ctaPrimaryLink || '/book';
   const ctaSecondaryText = d?.ctaSecondaryText || 'Contact Me';
   const ctaSecondaryLink = d?.ctaSecondaryLink || '/contact';
   const processSectionTitle = d?.processSectionTitle || 'The Process';

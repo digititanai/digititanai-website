@@ -35,7 +35,7 @@ function seedFromDefaults(s: string): ServiceDetail {
     description: src?.description || '',
     heroDescription: src?.overview?.[0] || '',
     ctaPrimaryText: 'Book a Consultation',
-    ctaPrimaryLink: '/contact',
+    ctaPrimaryLink: '/book',
     ctaSecondaryText: 'Contact Me',
     ctaSecondaryLink: '/contact',
     quickOverviewItems: [
