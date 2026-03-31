@@ -1,0 +1,88 @@
+import {
+  BarChart3, Zap, Globe, Target, Search, Settings2, Megaphone, PenTool,
+  TrendingUp, Users, ArrowUpRight, Activity, Briefcase, Code, Coffee,
+  Database, FileText, Heart, Image, Layers, Layout, LineChart,
+  Mail, Monitor, Palette, Phone, Rocket, Server, Shield, Smartphone,
+  Star, Tag, Terminal, ThumbsUp, Tv, Video, Wifi,
+  // Social media icons
+  Linkedin, Twitter, Facebook, Instagram, Youtube, Github,
+  // Extra useful icons
+  Share2, MousePointerClick, Cpu, GraduationCap, Award, MapPin,
+  Calendar, Clock, Download, ExternalLink, Eye, Home, Link,
+  MessageSquare, Music, Pencil, Plus, Send, ShoppingCart, Trash2,
+  type LucideIcon,
+} from 'lucide-react'
+
+export const iconMap: Record<string, LucideIcon> = {
+  // Social media
+  Linkedin,
+  Twitter,
+  Facebook,
+  Instagram,
+  Youtube,
+  Github,
+  // Business
+  BarChart3,
+  Zap,
+  Globe,
+  Target,
+  Search,
+  Settings2,
+  Megaphone,
+  PenTool,
+  TrendingUp,
+  Users,
+  ArrowUpRight,
+  Activity,
+  Briefcase,
+  Code,
+  Coffee,
+  Database,
+  FileText,
+  Heart,
+  Image,
+  Layers,
+  Layout,
+  LineChart,
+  Mail,
+  Monitor,
+  Palette,
+  Phone,
+  Rocket,
+  Server,
+  Shield,
+  Smartphone,
+  Star,
+  Tag,
+  Terminal,
+  ThumbsUp,
+  Tv,
+  Video,
+  Wifi,
+  // Extra
+  Share2,
+  MousePointerClick,
+  Cpu,
+  GraduationCap,
+  Award,
+  MapPin,
+  Calendar,
+  Clock,
+  Download,
+  ExternalLink,
+  Eye,
+  Home,
+  Link,
+  MessageSquare,
+  Music,
+  Pencil,
+  Plus,
+  Send,
+  ShoppingCart,
+}
+
+export const iconNames = Object.keys(iconMap)
+
+export function getIcon(name: string): LucideIcon {
+  return iconMap[name] || Globe
+}
