@@ -246,7 +246,7 @@ export default function ServicesPage() {
               const Icon = getIcon(service.icon)
               return (
                 <motion.div key={service.slug} variants={fadeUp} className="h-full">
-                  <div className="card-hover h-full p-7 flex flex-col">
+                  <div className="card-hover h-full p-5 sm:p-7 flex flex-col">
                     {/* Header */}
                     <div className="flex items-start justify-between mb-5">
                       <div className="w-12 h-12 rounded-xl bg-brand-mid/10 border border-brand-mid/20 flex items-center justify-center">
@@ -262,21 +262,21 @@ export default function ServicesPage() {
                     <p className="mt-4 text-[14px] leading-[1.7] text-brand-cream/70">{service.description}</p>
 
                     {/* Features */}
-                    <div className="mt-5 pt-5 border-t border-brand-mid/10 grid grid-cols-2 gap-x-4 gap-y-2.5 flex-1">
+                    <div className="mt-5 pt-5 border-t border-brand-mid/10 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 flex-1">
                       {service.features.map((f) => (
                         <div key={f} className="flex items-center gap-2">
                           <CheckCircle2 className="w-3.5 h-3.5 text-brand-mid shrink-0" />
-                          <span className="text-[13px] text-brand-cream/60">{f}</span>
+                          <span className="text-[12px] sm:text-[13px] text-brand-cream/60">{f}</span>
                         </div>
                       ))}
                     </div>
 
                     {/* Buttons */}
-                    <div className="mt-6 flex items-center gap-3">
-                      <Link href={buildServiceUrl(service.slug, service.category)} className="btn-secondary h-10 px-5 text-[13px] flex-1 text-center">
+                    <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+                      <Link href={buildServiceUrl(service.slug, service.category)} className="btn-secondary h-10 px-5 text-[13px] flex-1 text-center justify-center">
                         {content.viewDetailsText || 'View Details'} <ArrowRight className="w-3.5 h-3.5" />
                       </Link>
-                      <button onClick={() => setPricingService(service)} className="btn-primary h-10 px-5 text-[13px] flex-1 text-center">
+                      <button onClick={() => setPricingService(service)} className="btn-primary h-10 px-5 text-[13px] flex-1 text-center justify-center">
                         <DollarSign className="w-3.5 h-3.5" /> {content.pricingBtnText || 'Pricing'}
                       </button>
                     </div>
