@@ -89,7 +89,7 @@ export async function PUT(request: Request) {
         const serviceName = existing.message?.match(/^\[([^\]]+)\]/)?.[1] || 'Consultation'
         sendEmail({
           to: existing.client_email,
-          subject: `Booking Cancelled — ${serviceName}`,
+          subject: `Booking Cancelled - ${serviceName}`,
           html: `
             <div style="font-family:sans-serif;max-width:500px;">
               <h2 style="color:#c0392b;">Booking Cancelled</h2>
@@ -114,7 +114,7 @@ export async function PUT(request: Request) {
         const serviceName = existing.message?.match(/^\[([^\]]+)\]/)?.[1] || 'Consultation'
         sendEmail({
           to: existing.client_email,
-          subject: `Booking Confirmed — ${serviceName}`,
+          subject: `Booking Confirmed - ${serviceName}`,
           html: `
             <div style="font-family:sans-serif;max-width:500px;">
               <h2 style="color:#27ae60;">Booking Confirmed!</h2>

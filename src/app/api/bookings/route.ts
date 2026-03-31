@@ -78,11 +78,11 @@ export async function POST(request: Request) {
     const serviceLine = `${data.service_name}${data.package_name ? ` (${data.package_name})` : ''}`
     const adminEmail = process.env.ADMIN_EMAIL || 'sabbirahsan73@gmail.com'
 
-    // 1. Create Google Calendar event — both admin and client get calendar invites automatically from Google
+    // 1. Create Google Calendar event -both admin and client get calendar invites automatically from Google
     let calendarEventId: string | null = null
     try {
       const calEvent = await createCalendarEvent({
-        summary: `${serviceLine} — ${data.client_name}`,
+        summary: `${serviceLine} -${data.client_name}`,
         description: `Service: ${serviceLine}\nClient: ${data.client_name}\nEmail: ${data.client_email}${data.client_phone ? '\nPhone: ' + data.client_phone : ''}${data.message ? '\nMessage: ' + data.message : ''}`,
         startDate: data.booking_date,
         startTime: data.booking_time,
@@ -103,7 +103,7 @@ export async function POST(request: Request) {
     // 2. Send confirmation email to client
     sendEmail({
       to: data.client_email,
-      subject: `Booking Confirmed — ${serviceLine}`,
+      subject: `Booking Confirmed -${serviceLine}`,
       html: bookingConfirmationEmail({
         client_name: data.client_name,
         service_name: serviceLine,
@@ -116,7 +116,7 @@ export async function POST(request: Request) {
     // 3. Send notification email to admin
     sendEmail({
       to: adminEmail,
-      subject: `New Booking: ${data.client_name} — ${serviceLine}`,
+      subject: `New Booking: ${data.client_name} -${serviceLine}`,
       html: `
         <h2 style="color:#215F47;">New Booking Received</h2>
         <table style="border-collapse:collapse;font-family:sans-serif;">
@@ -127,7 +127,7 @@ export async function POST(request: Request) {
           <tr><td style="padding:8px 16px;font-weight:bold;color:#333;">Date</td><td style="padding:8px 16px;">${data.booking_date}</td></tr>
           <tr><td style="padding:8px 16px;font-weight:bold;color:#333;">Time</td><td style="padding:8px 16px;">${data.booking_time} (${data.duration_minutes} min)</td></tr>
           ${data.message ? `<tr><td style="padding:8px 16px;font-weight:bold;color:#333;">Message</td><td style="padding:8px 16px;">${data.message}</td></tr>` : ''}
-          <tr><td style="padding:8px 16px;font-weight:bold;color:#333;">Calendar</td><td style="padding:8px 16px;">${calendarEventId ? 'Added to your Google Calendar' : 'Calendar invite failed — add manually'}</td></tr>
+          <tr><td style="padding:8px 16px;font-weight:bold;color:#333;">Calendar</td><td style="padding:8px 16px;">${calendarEventId ? 'Added to your Google Calendar' : 'Calendar invite failed -add manually'}</td></tr>
         </table>
       `,
     }).catch((err) => console.error('Admin email failed:', err))
