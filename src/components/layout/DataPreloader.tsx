@@ -21,6 +21,7 @@ export default async function DataPreloader() {
     <script
       id="preloaded-data"
       type="application/json"
+      suppressHydrationWarning
       dangerouslySetInnerHTML={{ __html: JSON.stringify(preloadedData) }}
     />
   )

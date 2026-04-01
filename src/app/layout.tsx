@@ -32,12 +32,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head suppressHydrationWarning>
+    <html lang="en">
+      <head>
         <HeadCodeInjection />
-        <DataPreloader />
       </head>
-      <body className="bg-brand-darkest text-brand-cream antialiased font-sans" suppressHydrationWarning>
+      <body className="bg-brand-darkest text-brand-cream antialiased font-sans">
+        <DataPreloader />
         <BodyCodeInjection />
         <ThemeProvider>
           <Providers>
