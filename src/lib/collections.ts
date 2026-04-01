@@ -302,12 +302,8 @@ export async function loadCollection(key: string): Promise<unknown | null> {
 
 // ── localStorage helpers (fallback during migration) ──
 
-function readLocalStorage<T>(key: string): T | null {
-  if (typeof window === 'undefined') return null
-  try {
-    const stored = localStorage.getItem(key)
-    if (stored) return JSON.parse(stored) as T
-  } catch {}
+// localStorage reads removed — Supabase is the only source of truth
+function readLocalStorage<T>(_key: string): T | null {
   return null
 }
 

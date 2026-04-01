@@ -205,11 +205,6 @@ let homeCache: HomePageData | null = null
 
 export function getHomePageData(): HomePageData {
   if (homeCache) return homeCache
-  if (typeof window === 'undefined') return defaultHomePageData
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored) return { ...defaultHomePageData, ...JSON.parse(stored) }
-  } catch {}
   return defaultHomePageData
 }
 
