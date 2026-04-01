@@ -14,6 +14,7 @@ import { serviceDetailDefaults } from '@/lib/serviceDetailDefaults'
 import { iconMap } from '@/lib/iconMap'
 import IconPicker from '@/components/admin/IconPicker'
 import CategoryPicker from '@/components/admin/CategoryPicker'
+import ImageUploader from '@/components/admin/ImageUploader'
 
 function SectionBlock({ title, defaultOpen, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) {
   const [open, setOpen] = useState(defaultOpen ?? false)
@@ -381,6 +382,15 @@ export default function ServiceDetailEditor() {
             </div>
           )
         })()}
+      </SectionBlock>
+
+      {/* SEO */}
+      <SectionBlock title="SEO">
+        <div className="space-y-3">
+          <div><label className="block text-[11px] text-brand-cream/50 uppercase tracking-wider mb-1.5 font-medium">Meta Title</label><input type="text" value={d.seoTitle || ''} onChange={(e) => setD((p) => ({ ...p, seoTitle: e.target.value }))} placeholder={serviceTitle} className="w-full h-10 px-3 text-[13px] bg-brand-darkest/40 border border-brand-mid/[0.06] rounded-xl text-brand-cream focus:outline-none focus:border-brand-mid/15" /><p className="text-[10px] text-brand-cream/25 mt-1">{(d.seoTitle || serviceTitle || '').length}/60</p></div>
+          <div><label className="block text-[11px] text-brand-cream/50 uppercase tracking-wider mb-1.5 font-medium">Meta Description</label><textarea value={d.seoDescription || ''} onChange={(e) => setD((p) => ({ ...p, seoDescription: e.target.value }))} placeholder={d.description} rows={2} className="w-full px-3 py-2.5 text-[13px] bg-brand-darkest/40 border border-brand-mid/[0.06] rounded-xl text-brand-cream focus:outline-none focus:border-brand-mid/15 resize-none" /><p className="text-[10px] text-brand-cream/25 mt-1">{(d.seoDescription || d.description || '').length}/160</p></div>
+          <ImageUploader label="OG Image" value={d.seoImage || ''} onChange={(v) => setD((p) => ({ ...p, seoImage: v }))} hint="1200x630 for social sharing" />
+        </div>
       </SectionBlock>
     </div>
   )

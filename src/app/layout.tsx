@@ -3,6 +3,7 @@ import '@/styles/globals.css'
 import Providers from '@/components/layout/Providers'
 import { HeadCodeInjection, BodyCodeInjection } from '@/components/layout/CodeInjection'
 import ThemeProvider from '@/components/layout/ThemeProvider'
+import DataPreloader from '@/components/layout/DataPreloader'
 
 export const metadata: Metadata = {
   title: 'Sabbir Ahsan | Premium Digital Marketing & MarTech Consulting',
@@ -31,11 +32,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <head>
+    <html lang="en" suppressHydrationWarning>
+      <head suppressHydrationWarning>
         <HeadCodeInjection />
       </head>
-      <body className="bg-brand-darkest text-brand-cream antialiased font-sans">
+      <body className="bg-brand-darkest text-brand-cream antialiased font-sans" suppressHydrationWarning>
+        <DataPreloader />
         <BodyCodeInjection />
         <ThemeProvider>
           <Providers>

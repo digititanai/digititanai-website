@@ -7,6 +7,7 @@ import { Search, ArrowRight, ArrowUpRight, Clock, Calendar } from 'lucide-react'
 import { getBlog, getBlogDetail, loadCollection, type BlogItem } from '@/lib/collections'
 import { useData } from '@/lib/useData'
 import { defaultPageContent } from '@/lib/pageContent'
+import PageSEO from '@/components/layout/PageSEO'
 
 // Categories derived dynamically from posts in the component
 
@@ -105,20 +106,24 @@ export default function BlogPage() {
 
   useEffect(() => {
     if (!loaded) return
-    const loadBlogs = async () => {
-      const blogItems = getBlog()
-      const allBlogs = blogItems.filter((b: { status: string }) => b.status === 'published')
-      await Promise.all(allBlogs.map((b) => loadCollection(`col_blog_detail_${b.slug}`)))
-      const withImages = allBlogs.map((b) => {
+    const blogItems = getBlog()
+    const allBlogs = blogItems.filter((b: { status: string }) => b.status === 'published')
+    setPosts(allBlogs)
+
+    // Only fetch details for blogs missing images (avoid N+1 API calls)
+    const blogsWithoutImage = allBlogs.filter((b) => !b.image)
+    if (blogsWithoutImage.length === 0) return
+    const loadMissingImages = async () => {
+      await Promise.all(blogsWithoutImage.map((b) => loadCollection(`col_blog_detail_${b.slug}`)))
+      setPosts(allBlogs.map((b) => {
         if (!b.image) {
           const detail = getBlogDetail(b.slug)
           if (detail?.image) return { ...b, image: detail.image }
         }
         return b
-      })
-      setPosts(withImages)
+      }))
     }
-    loadBlogs()
+    loadMissingImages()
   }, [loaded])
 
   useEffect(() => {
@@ -156,6 +161,7 @@ export default function BlogPage() {
 
   return (
     <main>
+      <PageSEO title={content.seoTitle} description={content.seoDescription} image={content.seoImage} />
       {/* Hero */}
       <section className="pt-32 pb-10">
         <div className="container-main">
@@ -219,7 +225,7 @@ export default function BlogPage() {
                   backgroundSize: '40px 40px',
                 }} />
                 )}
-                <div className="absolute top-4 left-4 badge">Featured</div>
+                <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-wider bg-brand-gold text-brand-darkest shadow-lg">Featured</div>
                 <div className="absolute top-4 right-4 w-9 h-9 rounded-full border border-brand-cream/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all bg-brand-darkest/30 backdrop-blur-sm">
                   <ArrowUpRight className="w-4 h-4 text-brand-gold" />
                 </div>
@@ -228,8 +234,8 @@ export default function BlogPage() {
               <div className="md:w-[55%] p-7 md:p-9 flex flex-col justify-center">
                 <div className="flex items-center gap-3 mb-4">
                   <span className="text-[12px] font-semibold tracking-wider uppercase text-brand-mid">{fp.category}</span>
-                  <span className="text-[12px] text-brand-cream/35 flex items-center gap-1"><Calendar className="w-3 h-3" />{fp.date}</span>
-                  <span className="text-[12px] text-brand-cream/35 flex items-center gap-1"><Clock className="w-3 h-3" />{fp.readTime}</span>
+                  {fp.date && <span className="text-[12px] text-brand-cream/50 flex items-center gap-1"><Calendar className="w-3 h-3" />{fp.date}</span>}
+                  {fp.readTime && <span className="text-[12px] text-brand-cream/50 flex items-center gap-1"><Clock className="w-3 h-3" />{fp.readTime}</span>}
                 </div>
                 <h2 className="text-[24px] md:text-[28px] font-display font-bold text-brand-cream group-hover:text-brand-gold transition-colors leading-tight">
                   {fp.title}
@@ -248,7 +254,7 @@ export default function BlogPage() {
       {/* Blog Grid */}
       <section className="pb-16 pt-4">
         <div className="container-main">
-          {rest.length === 0 && filtered.length === 0 && (
+          {loaded && rest.length === 0 && filtered.length === 0 && (
             <p className="text-center text-brand-cream/30 py-16 body-base">No articles found.</p>
           )}
 
@@ -275,14 +281,14 @@ export default function BlogPage() {
                   <div className="p-5 flex flex-col flex-1">
                     <div className="flex items-center gap-3 mb-3">
                       <span className="text-[11px] font-semibold tracking-[0.12em] uppercase text-brand-mid">{post.category}</span>
-                      <span className="text-[11px] text-brand-cream/35">{post.readTime}</span>
+                      {post.readTime && <span className="text-[11px] text-brand-cream/50">{post.readTime}</span>}
                     </div>
                     <h3 className="text-[16px] font-semibold text-brand-cream leading-snug group-hover:text-brand-gold transition-colors">
                       {post.title}
                     </h3>
                     <p className="mt-2 text-[13px] text-brand-cream/60 leading-[1.6] flex-1 line-clamp-2">{post.excerpt}</p>
                     <div className="mt-4 pt-3 border-t border-brand-mid/10 flex items-center justify-between">
-                      <span className="text-[12px] text-brand-cream/35 flex items-center gap-1"><Calendar className="w-3 h-3" />{post.date}</span>
+                      {post.date && <span className="text-[12px] text-brand-cream/50 flex items-center gap-1"><Calendar className="w-3 h-3" />{post.date}</span>}
                       <span className="text-[13px] font-medium text-brand-gold opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
                         Read <ArrowRight className="w-3 h-3" />
                       </span>

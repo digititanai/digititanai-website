@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { Shield, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { defaultPageContent } from '@/lib/pageContent'
+import PageSEO from '@/components/layout/PageSEO'
 
 // Simple markdown-to-HTML converter for legal pages
 function markdownToHtml(md: string): string {
@@ -63,6 +64,7 @@ export default function PrivacyPolicyPage() {
 
   return (
     <main>
+      <PageSEO title={content.seoTitle} description={content.seoDescription} image={content.seoImage} />
       <section className="pt-32 pb-12">
         <div className="container-main">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>

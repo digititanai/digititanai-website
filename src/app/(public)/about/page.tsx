@@ -9,6 +9,7 @@ import {
   Briefcase, GraduationCap, Award, MapPin, Calendar
 } from 'lucide-react'
 import { defaultAboutContent, type AboutPageContent } from '@/lib/pageContent'
+import PageSEO from '@/components/layout/PageSEO'
 import { getIcon } from '@/lib/iconMap'
 
 const fadeUp = {
@@ -36,6 +37,7 @@ export default function AboutPage() {
 
   return (
     <main>
+      <PageSEO title={(content as unknown as Record<string, string>).seoTitle} description={(content as unknown as Record<string, string>).seoDescription} image={(content as unknown as Record<string, string>).seoImage} />
       {/* ═══ Hero Section ═══ */}
       <section className="pt-32 pb-20">
         <div className="container-main">

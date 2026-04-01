@@ -28,6 +28,9 @@ export interface ServiceDetail {
   faqs: FAQItem[]
   relatedSectionTitle: string
   relatedSlugs: string[]
+  seoTitle?: string
+  seoDescription?: string
+  seoImage?: string
 }
 
 export interface ServiceItem {
@@ -180,6 +183,9 @@ export interface PortfolioDetail {
   metrics: { label: string; value: string }[]
   testimonial: { quote: string; author: string; role: string }
   related: string[]
+  seoTitle?: string
+  seoDescription?: string
+  seoImage?: string
 }
 
 // ── Blog detail interface ──
@@ -203,6 +209,9 @@ export interface BlogDetail {
   ctaSubtext: string
   relatedSectionTitle: string
   featured: boolean
+  seoTitle?: string
+  seoDescription?: string
+  seoImage?: string
 }
 
 // ── Categories ──
@@ -251,8 +260,11 @@ const defaultCategories: Category[] = [
 // Supabase-backed storage with in-memory cache + localStorage fallback
 // ══════════════════════════════════════════════════════════════════════════════
 
-// Module-level cache — populated by loadAllCollections() or lazily by save functions
+// Module-level cache — populated by loadAllCollections() or preloaded data
 const cache: Record<string, unknown> = {}
+
+// Allow external population of cache (used by DataPreloader)
+export function setCache(key: string, value: unknown) { cache[key] = value }
 
 // ── Supabase API helpers ──
 

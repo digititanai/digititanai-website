@@ -12,6 +12,7 @@ import {
   CalendarDays,
 } from 'lucide-react';
 import { defaultPageContent } from '@/lib/pageContent';
+import PageSEO from '@/components/layout/PageSEO';
 
 /* ------------------------------------------------------------------ */
 /*  Data — fetched from admin services                                 */
@@ -68,7 +69,7 @@ function getFirstDayOfMonth(year: number, month: number) {
 }
 function isWeekend(year: number, month: number, day: number) {
   const d = new Date(year, month, day).getDay();
-  return d === 5 || d === 6;
+  return d === 0 || d === 6; // Saturday & Sunday
 }
 function isPast(year: number, month: number, day: number) {
   const today = new Date();
@@ -356,6 +357,7 @@ export default function BookingPage() {
   /* ---- Main Booking UI ---- */
   return (
     <main className="min-h-screen bg-brand-darkest">
+      <PageSEO title={pageContent.seoTitle} description={pageContent.seoDescription} image={pageContent.seoImage} />
       {/* ---- Hero ---- */}
       <section className="pt-28 md:pt-36 pb-12">
         <div className="container-main text-center">

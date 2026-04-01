@@ -8,6 +8,7 @@ import { getPortfolio, type PortfolioItem } from '@/lib/collections'
 import { useData } from '@/lib/useData'
 import { getIcon } from '@/lib/iconMap'
 import { defaultPageContent } from '@/lib/pageContent'
+import PageSEO from '@/components/layout/PageSEO'
 
 type FilterCategory = string
 
@@ -58,6 +59,7 @@ export default function PortfolioPage() {
 
   return (
     <main>
+      <PageSEO title={content.seoTitle} description={content.seoDescription} image={content.seoImage} />
       {/* Hero */}
       <section className="pt-32 pb-10">
         <div className="container-main">

@@ -3,8 +3,8 @@ import { createServerClient } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
-const WORK_START = 10 * 60 // 10:00 AM
-const WORK_END = 18 * 60   // 6:00 PM
+const WORK_START = 18 * 60 // 6:00 PM
+const WORK_END = 24 * 60   // 12:00 AM (midnight)
 const BUFFER_MINUTES = 15
 const SLOT_INTERVAL = 30
 

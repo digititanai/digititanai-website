@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { getBlogDetail, saveBlogDetail } from '@/lib/collections';
 import { useData, useDetailData } from '@/lib/useData';
+import PageSEO from '@/components/layout/PageSEO';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -189,6 +190,17 @@ function renderMarkdownContent(text: string): React.ReactNode[] {
         continue;
       }
 
+      // Image (![alt](url))
+      const imageMatch = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+      if (imageMatch) {
+        elements.push(
+          <div key={key++} className="my-6 rounded-xl overflow-hidden">
+            <img src={imageMatch[2]} alt={imageMatch[1]} className="w-full h-auto rounded-xl" />
+          </div>
+        );
+        continue;
+      }
+
       // Regular paragraph
       elements.push(<P key={key++}>{processInline(trimmed)}</P>);
     }
@@ -198,7 +210,7 @@ function renderMarkdownContent(text: string): React.ReactNode[] {
 }
 
 function processInline(text: string): React.ReactNode {
-  // Process **bold**, `code`, and [link](url)
+  // Process **bold**, `code`, ![image](url), and [link](url)
   const parts: React.ReactNode[] = [];
   let remaining = text;
   let key = 0;
@@ -208,12 +220,15 @@ function processInline(text: string): React.ReactNode {
     const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
     // Inline code
     const codeMatch = remaining.match(/`([^`]+)`/);
+    // Image
+    const imageMatch = remaining.match(/!\[([^\]]*)\]\(([^)]+)\)/);
     // Link
     const linkMatch = remaining.match(/\[([^\]]+)\]\(([^)]+)\)/);
 
     const matches = [
       boldMatch ? { idx: boldMatch.index!, type: 'bold' as const, match: boldMatch } : null,
       codeMatch ? { idx: codeMatch.index!, type: 'code' as const, match: codeMatch } : null,
+      imageMatch ? { idx: imageMatch.index!, type: 'image' as const, match: imageMatch } : null,
       linkMatch ? { idx: linkMatch.index!, type: 'link' as const, match: linkMatch } : null,
     ].filter(Boolean).sort((a, b) => a!.idx - b!.idx);
 
@@ -230,6 +245,9 @@ function processInline(text: string): React.ReactNode {
       remaining = remaining.slice(first.idx + first.match[0].length);
     } else if (first.type === 'code') {
       parts.push(<Code key={key++}>{first.match[1]}</Code>);
+      remaining = remaining.slice(first.idx + first.match[0].length);
+    } else if (first.type === 'image') {
+      parts.push(<img key={key++} src={first.match[2]} alt={first.match[1]} className="my-4 w-full h-auto rounded-xl" />);
       remaining = remaining.slice(first.idx + first.match[0].length);
     } else {
       parts.push(<A key={key++} href={first.match[2]}>{first.match[1]}</A>);
@@ -1517,6 +1535,7 @@ export default function BlogPostPage() {
   }, [slug, loaded, detailLoaded]);
 
   const post = (mounted && dynamicPost) ? dynamicPost : hardcodedPost;
+  const isLoading = !loaded || !detailLoaded;
 
   // Intersection Observer for active TOC highlighting
   useEffect(() => {
@@ -1541,12 +1560,41 @@ export default function BlogPostPage() {
     return () => observer.disconnect();
   }, [post]);
 
-  if (!post) return <NotFoundPost />;
+  // Only show not-found after data has loaded — avoid flash for dynamic blogs
+  if (!post && !isLoading) return <NotFoundPost />;
+  if (!post) return (
+    <main className="min-h-screen bg-brand-darkest">
+      <section className="pt-28 pb-8">
+        <div className="container-main">
+          <div className="h-4 w-16 bg-brand-mid/10 rounded mb-8 animate-pulse" />
+          <div className="flex items-center gap-3 mb-5">
+            <div className="h-5 w-20 bg-brand-mid/10 rounded-full animate-pulse" />
+            <div className="h-4 w-24 bg-brand-mid/10 rounded animate-pulse" />
+          </div>
+          <div className="space-y-3 mb-6">
+            <div className="h-10 w-full max-w-2xl bg-brand-mid/10 rounded animate-pulse" />
+            <div className="h-10 w-3/4 max-w-xl bg-brand-mid/10 rounded animate-pulse" />
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-brand-mid/10 animate-pulse" />
+            <div className="space-y-1.5">
+              <div className="h-4 w-28 bg-brand-mid/10 rounded animate-pulse" />
+              <div className="h-3 w-40 bg-brand-mid/10 rounded animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </section>
+      <div className="container-main pb-10">
+        <div className="aspect-[21/9] rounded-2xl bg-brand-mid/10 animate-pulse" />
+      </div>
+    </main>
+  );
 
   const relatedPosts = getRelatedPosts(slug);
 
   return (
     <main className="min-h-screen bg-brand-darkest">
+      {(() => { const bd = mounted ? getBlogDetail(slug) : null; return bd ? <PageSEO title={bd.seoTitle || post.title} description={bd.seoDescription || post.excerpt} image={bd.seoImage} /> : null })()}
       {/* ---- Header ---- */}
       <section className="pt-28 pb-8">
         <div className="container-main">

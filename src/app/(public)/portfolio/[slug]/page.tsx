@@ -8,6 +8,7 @@ import { ArrowLeft } from 'lucide-react';
 import { getPortfolioDetail, savePortfolioDetail } from '@/lib/collections';
 import { useData, useDetailData } from '@/lib/useData';
 import { portfolioDetailDefaults } from '@/lib/portfolioDetailDefaults';
+import PageSEO from '@/components/layout/PageSEO';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -342,6 +343,7 @@ export default function PortfolioDetailPage() {
 
   return (
     <main className="min-h-screen bg-brand-darkest">
+      {(() => { const pd = mounted ? getPortfolioDetail(slug ?? '') : null; return pd ? <PageSEO title={pd.seoTitle || project.title} description={pd.seoDescription || project.description} image={pd.seoImage} /> : null })()}
       {/* ---- Hero ---- */}
       <section className="pt-28 pb-10">
         <div className="container-main">

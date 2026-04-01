@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Linkedin, Twitter, Github, Youtube, Instagram, Facebook, Mail, MapPin, Clock, Phone, ArrowUpRight, Activity } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { defaultPageContent } from '@/lib/pageContent'
+import { readPreloadedData } from '@/lib/useData'
 
 const defaultFooter = defaultPageContent.footer
 const defaultHeader = defaultPageContent.header
@@ -31,28 +32,16 @@ export default function Footer() {
   const [content, setContent] = useState(defaultFooter)
   const [headerContent, setHeaderContent] = useState(defaultHeader)
 
-  // Fetch editable footer content
+  // Read from preloaded data (instant) or fallback to API
   useEffect(() => {
-    fetch('/api/data/page_content_footer', { cache: 'no-store' })
-      .then(r => r.ok ? r.json() : null)
-      .then(data => {
-        if (data && typeof data === 'object') {
-          setContent(prev => ({ ...prev, ...data }))
-        }
-      })
-      .catch(() => {})
-  }, [])
-
-  // Fetch header content for nav links + logo
-  useEffect(() => {
-    fetch('/api/data/page_content_header', { cache: 'no-store' })
-      .then(r => r.ok ? r.json() : null)
-      .then(data => {
-        if (data && typeof data === 'object') {
-          setHeaderContent(prev => ({ ...prev, ...data }))
-        }
-      })
-      .catch(() => {})
+    const preloaded = readPreloadedData()
+    if (preloaded) {
+      if (preloaded.page_content_footer) setContent(prev => ({ ...prev, ...(preloaded.page_content_footer as typeof prev) }))
+      if (preloaded.page_content_header) setHeaderContent(prev => ({ ...prev, ...(preloaded.page_content_header as typeof prev) }))
+      return
+    }
+    fetch('/api/data/page_content_footer', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(data => { if (data) setContent(prev => ({ ...prev, ...data })) }).catch(() => {})
+    fetch('/api/data/page_content_header', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(data => { if (data) setHeaderContent(prev => ({ ...prev, ...data })) }).catch(() => {})
   }, [])
 
   // Parse nav links from footer content (independent from header)

@@ -1,6 +1,7 @@
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import DataLoader from '@/components/layout/DataLoader'
+import ButtonClickTracker from '@/components/layout/ButtonClickTracker'
 
 export default function PublicLayout({
   children,
@@ -9,6 +10,7 @@ export default function PublicLayout({
 }) {
   return (
     <DataLoader>
+      <ButtonClickTracker />
       <Navbar />
       <main className="min-h-screen">{children}</main>
       <Footer />

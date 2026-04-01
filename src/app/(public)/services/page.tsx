@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight, ArrowUpRight, CheckCircle2, Check, X as XIcon, DollarSign } from 'lucide-react'
 import { getServices, getCategories, type ServiceItem, type PricingTier } from '@/lib/collections'
 import { defaultPageContent } from '@/lib/pageContent'
+import PageSEO from '@/components/layout/PageSEO'
 import { useData } from '@/lib/useData'
 import { getIcon } from '@/lib/iconMap'
 
@@ -225,6 +226,7 @@ export default function ServicesPage() {
 
   return (
     <main>
+      <PageSEO title={content.seoTitle} description={content.seoDescription} image={content.seoImage} />
       {/* Hero */}
       <section className="pt-32 pb-16">
         <div className="container-main">

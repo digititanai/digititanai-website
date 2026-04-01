@@ -223,6 +223,15 @@ export default function PortfolioDetailEditor() {
           })()}
         </div>
       </SectionBlock>
+
+      {/* SEO */}
+      <SectionBlock title="SEO" color="blue">
+        <div className="space-y-3">
+          <div><label className="block text-[11px] text-brand-cream/50 uppercase tracking-wider mb-1.5 font-medium">Meta Title</label><input type="text" value={d.seoTitle || ''} onChange={(e) => setD((p) => ({ ...p, seoTitle: e.target.value }))} placeholder={d.title} className={inp} /><p className="text-[10px] text-brand-cream/25 mt-1">{(d.seoTitle || d.title || '').length}/60</p></div>
+          <div><label className="block text-[11px] text-brand-cream/50 uppercase tracking-wider mb-1.5 font-medium">Meta Description</label><textarea value={d.seoDescription || ''} onChange={(e) => setD((p) => ({ ...p, seoDescription: e.target.value }))} placeholder={d.description} rows={2} className={ta} /><p className="text-[10px] text-brand-cream/25 mt-1">{(d.seoDescription || d.description || '').length}/160</p></div>
+          <ImageUploader label="OG Image" value={d.seoImage || ''} onChange={(v) => setD((p) => ({ ...p, seoImage: v }))} hint="1200x630 for social sharing" />
+        </div>
+      </SectionBlock>
     </div>
   )
 }

@@ -21,6 +21,19 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
     domAttributes: {
       editor: { class: 'bn-dark-editor' },
     },
+    uploadFile: async (file: File) => {
+      // Upload pasted/dropped images to Supabase Storage
+      const formData = new FormData()
+      formData.append('file', file)
+      try {
+        const res = await fetch('/api/admin/upload', { method: 'POST', body: formData })
+        if (res.ok) {
+          const data = await res.json()
+          return data.url
+        }
+      } catch {}
+      return ''
+    },
   })
 
   // Load initial content from markdown using BlockNote's built-in parser

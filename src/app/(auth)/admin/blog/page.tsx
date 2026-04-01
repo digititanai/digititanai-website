@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Plus, Edit3, Trash2, X, Save, Search, Loader2, FileText, ExternalLink } from 'lucide-react'
+import { Plus, Edit3, Trash2, X, Save, Search, Loader2, FileText, ExternalLink, GripVertical, ArrowUp, ArrowDown } from 'lucide-react'
 import { getBlog, saveBlog, getBlogDetail, loadCollection, type BlogItem } from '@/lib/collections'
 import { useData } from '@/lib/useData'
 import CategoryPicker from '@/components/admin/CategoryPicker'
@@ -18,6 +18,8 @@ export default function BlogManagement() {
   const [saving, setSaving] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  const [dragId, setDragId] = useState<string | null>(null)
+  const [dragOverId, setDragOverId] = useState<string | null>(null)
 
   useEffect(() => {
     if (!loaded) return
@@ -53,6 +55,34 @@ export default function BlogManagement() {
   }
 
   const handleDelete = (id: string) => { persist(items.filter((i) => i.id !== id)); setDeleteConfirm(null) }
+  const toggleStatus = (id: string) => { persist(items.map((i) => i.id === id ? { ...i, status: i.status === 'published' ? 'draft' as const : 'published' as const } : i)) }
+
+  const moveItem = (id: string, direction: 'up' | 'down') => {
+    const idx = items.findIndex((i) => i.id === id)
+    if (idx < 0) return
+    const newIdx = direction === 'up' ? idx - 1 : idx + 1
+    if (newIdx < 0 || newIdx >= items.length) return
+    const next = [...items]
+    ;[next[idx], next[newIdx]] = [next[newIdx], next[idx]]
+    persist(next)
+  }
+
+  const handleDragStart = (id: string) => { setDragId(id) }
+  const handleDragOver = (e: React.DragEvent, id: string) => { e.preventDefault(); if (id !== dragId) setDragOverId(id) }
+  const handleDragEnd = () => {
+    if (dragId && dragOverId && dragId !== dragOverId) {
+      const fromIdx = items.findIndex((i) => i.id === dragId)
+      const toIdx = items.findIndex((i) => i.id === dragOverId)
+      if (fromIdx >= 0 && toIdx >= 0) {
+        const next = [...items]
+        const [moved] = next.splice(fromIdx, 1)
+        next.splice(toIdx, 0, moved)
+        persist(next)
+      }
+    }
+    setDragId(null)
+    setDragOverId(null)
+  }
 
   const gradients = ['linear-gradient(135deg, #215F47 0%, #4B8A6C 100%)', 'linear-gradient(135deg, #0E3529 0%, #215F47 100%)', 'linear-gradient(135deg, #4B8A6C 0%, #6BA88A 100%)']
 
@@ -70,14 +100,36 @@ export default function BlogManagement() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
         {filtered.map((post, idx) => (
-          <div key={post.id} className="bg-surface-200/80 border border-brand-mid/[0.08] rounded-2xl shadow-card overflow-hidden group hover:border-brand-mid/10 transition-all">
+          <div
+            key={post.id}
+            draggable={!searchQuery}
+            onDragStart={() => handleDragStart(post.id)}
+            onDragOver={(e) => handleDragOver(e, post.id)}
+            onDragEnd={handleDragEnd}
+            onDragLeave={() => setDragOverId(null)}
+            className={`bg-surface-200/80 border rounded-2xl shadow-card overflow-hidden group transition-all ${
+              dragOverId === post.id ? 'border-brand-gold/40 ring-1 ring-brand-gold/20' :
+              dragId === post.id ? 'opacity-50 border-brand-mid/[0.08]' : 'border-brand-mid/[0.08] hover:border-brand-mid/10'
+            }`}
+          >
             <div className="aspect-[16/9] relative overflow-hidden" style={{ background: gradients[idx % gradients.length] }}>
               {post.image && <img src={post.image} alt={post.title} className="absolute inset-0 w-full h-full object-cover" />}
+              {!searchQuery && (
+                <div className="absolute top-2 left-2 flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onClick={() => moveItem(post.id, 'up')} disabled={idx === 0} className="p-1 rounded bg-black/50 backdrop-blur-sm text-white/70 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed" title="Move up"><ArrowUp className="w-3 h-3" /></button>
+                  <button onClick={() => moveItem(post.id, 'down')} disabled={idx === filtered.length - 1} className="p-1 rounded bg-black/50 backdrop-blur-sm text-white/70 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed" title="Move down"><ArrowDown className="w-3 h-3" /></button>
+                </div>
+              )}
+              {!searchQuery && (
+                <div className="absolute top-2 right-2 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded bg-black/50 backdrop-blur-sm text-white/70 hover:text-white" title="Drag to reorder">
+                  <GripVertical className="w-3.5 h-3.5" />
+                </div>
+              )}
             </div>
             <div className="p-4">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-[10px] font-medium uppercase tracking-wider text-brand-gold bg-brand-gold/10 px-2 py-0.5 rounded">{post.category}</span>
-                <span className={`text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded ${post.status === 'published' ? 'text-emerald-400 bg-emerald-500/10' : 'text-amber-400 bg-amber-500/10'}`}>{post.status}</span>
+                <button onClick={() => toggleStatus(post.id)} className={`text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded cursor-pointer hover:opacity-80 transition-opacity ${post.status === 'published' ? 'text-emerald-400 bg-emerald-500/10' : 'text-amber-400 bg-amber-500/10'}`} title={post.status === 'published' ? 'Click to unpublish' : 'Click to publish'}>{post.status}</button>
               </div>
               <div className="flex items-start gap-1.5">
                 <h3 className="text-[14px] font-medium text-brand-cream line-clamp-2">{post.title}</h3>

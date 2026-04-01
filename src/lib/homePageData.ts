@@ -203,6 +203,13 @@ export const defaultHomePageData: HomePageData = {
 // In-memory cache for home page data
 let homeCache: HomePageData | null = null
 
+// Allow external population of cache (used by DataPreloader)
+export function setHomeCache(data: unknown) {
+  if (data && typeof data === 'object') {
+    homeCache = { ...defaultHomePageData, ...(data as Record<string, unknown>) } as HomePageData
+  }
+}
+
 export function getHomePageData(): HomePageData {
   if (homeCache) return homeCache
   return defaultHomePageData

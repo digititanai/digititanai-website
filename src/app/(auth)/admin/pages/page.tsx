@@ -551,7 +551,7 @@ export default function PagesManagement() {
                     style={{ width: `${Math.min((data.seo.metaDescription.length / 160) * 100, 100)}%` }} />
                 </div>
               </div>
-              <Field label="OG Image URL" value={data.seo.ogImage} onChange={(v) => update('seo', (s) => ({ ...s, ogImage: v }))} mono />
+              <ImageUploader label="OG Image (1200x630)" value={data.seo.ogImage} onChange={(v) => update('seo', (s) => ({ ...s, ogImage: v }))} />
             </div>
 
             {/* Search Preview */}
@@ -694,6 +694,9 @@ export default function PagesManagement() {
       privacyLink: 'Privacy Link URL',
       termsText: 'Terms Link Text',
       termsLink: 'Terms Link URL',
+      seoTitle: 'Meta Title',
+      seoDescription: 'Meta Description',
+      seoImage: 'OG Image',
     }
 
     return (
@@ -1006,6 +1009,35 @@ export default function PagesManagement() {
             </SectionWrapper>
           )
         })()}
+
+        {/* SEO */}
+        {editingPage !== 'header' && editingPage !== 'footer' && (
+        <SectionWrapper title="SEO" icon={<Search className="w-4 h-4" />}>
+          <div className="space-y-4">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-[11px] text-brand-cream/50 font-medium uppercase tracking-wider">Meta Title</label>
+                <span className="text-[10px] font-mono text-brand-cream/30">{(pageContentData.seoTitle || '').length}/60</span>
+              </div>
+              <input type="text" value={pageContentData.seoTitle || ''} onChange={(e) => { setPageContentData((prev: typeof pageContentData) => prev ? { ...prev, seoTitle: e.target.value } : prev); setPageContentSaved(false) }} placeholder="Page title for search engines" className="w-full h-10 px-3.5 text-[13px] bg-brand-darkest/40 border border-brand-mid/[0.06] rounded-lg text-brand-cream focus:outline-none focus:border-brand-mid/15" />
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-[11px] text-brand-cream/50 font-medium uppercase tracking-wider">Meta Description</label>
+                <span className="text-[10px] font-mono text-brand-cream/30">{(pageContentData.seoDescription || '').length}/160</span>
+              </div>
+              <textarea value={pageContentData.seoDescription || ''} onChange={(e) => { setPageContentData((prev: typeof pageContentData) => prev ? { ...prev, seoDescription: e.target.value } : prev); setPageContentSaved(false) }} rows={3} placeholder="Brief description for search engines" className="w-full px-3.5 py-2.5 text-[13px] bg-brand-darkest/40 border border-brand-mid/[0.06] rounded-lg text-brand-cream focus:outline-none focus:border-brand-mid/15 resize-none" />
+            </div>
+            <ImageUploader label="OG Image (1200x630)" value={pageContentData.seoImage || ''} onChange={(v) => { setPageContentData((prev: typeof pageContentData) => prev ? { ...prev, seoImage: v } : prev); setPageContentSaved(false) }} />
+            {/* Search Preview */}
+            <div className="bg-white rounded-lg p-4 max-w-lg">
+              <p className="text-[#1a0dab] text-[16px] font-medium truncate">{pageContentData.seoTitle || pageContentData.heading || 'Page Title'}</p>
+              <p className="text-[#006621] text-[13px] mt-1">sabbirahsan.com{page?.slug}</p>
+              <p className="text-[#545454] text-[13px] mt-1 line-clamp-2">{pageContentData.seoDescription || pageContentData.subtitle || 'Meta description...'}</p>
+            </div>
+          </div>
+        </SectionWrapper>
+        )}
       </div>
     )
   }

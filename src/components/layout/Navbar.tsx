@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { Menu, X, Activity, CalendarDays } from 'lucide-react'
 import { motion, AnimatePresence, useMotionValueEvent, useScroll } from 'framer-motion'
 import { defaultPageContent } from '@/lib/pageContent'
+import { readPreloadedData } from '@/lib/useData'
 
 const defaultHeader = defaultPageContent.header
 
@@ -18,15 +19,13 @@ export default function Navbar() {
   const { scrollY } = useScroll()
   const lastScrollY = useRef(0)
 
-  // Fetch editable header content
+  // Read from preloaded data (instant) or fallback to API
   useEffect(() => {
+    const preloaded = readPreloadedData()
+    if (preloaded?.page_content_header) { setContent(prev => ({ ...prev, ...preloaded.page_content_header as typeof prev })); return }
     fetch('/api/data/page_content_header', { cache: 'no-store' })
       .then(r => r.ok ? r.json() : null)
-      .then(data => {
-        if (data && typeof data === 'object') {
-          setContent(prev => ({ ...prev, ...data }))
-        }
-      })
+      .then(data => { if (data && typeof data === 'object') setContent(prev => ({ ...prev, ...data })) })
       .catch(() => {})
   }, [])
 

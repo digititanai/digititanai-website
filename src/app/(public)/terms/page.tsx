@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { FileText, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { defaultPageContent } from '@/lib/pageContent'
+import PageSEO from '@/components/layout/PageSEO'
 
 function markdownToHtml(md: string): string {
   if (!md) return ''
@@ -52,6 +53,7 @@ export default function TermsOfServicePage() {
 
   return (
     <main>
+      <PageSEO title={content.seoTitle} description={content.seoDescription} image={content.seoImage} />
       <section className="pt-32 pb-12">
         <div className="container-main">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>

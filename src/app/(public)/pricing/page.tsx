@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Check, X as XIcon } from 'lucide-react'
+import { Plus, Check, X as XIcon, ChevronRight } from 'lucide-react'
 import { defaultPageContent } from '@/lib/pageContent'
+import PageSEO from '@/components/layout/PageSEO'
 import { getIcon } from '@/lib/iconMap'
 import { useData } from '@/lib/useData'
 
@@ -32,6 +33,19 @@ export default function PricingPage() {
   const [selectedService, setSelectedService] = useState<string | null>(null)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [content, setContent] = useState(defaultPageContent.pricing)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const selectService = useCallback((id: string) => {
+    setSelectedService(id)
+    // Scroll the selected tab to the left so tabs after it are visible
+    requestAnimationFrame(() => {
+      const container = scrollRef.current
+      if (!container) return
+      const btn = container.querySelector(`[data-service-id="${id}"]`) as HTMLElement
+      if (!btn) return
+      container.scrollTo({ left: btn.offsetLeft - 4, behavior: 'smooth' })
+    })
+  }, [])
 
   useEffect(() => {
     fetch('/api/data/page_content_pricing', { cache: 'no-store' })
@@ -59,6 +73,7 @@ export default function PricingPage() {
 
   return (
     <main className="min-h-screen bg-brand-darkest">
+      <PageSEO title={content.seoTitle} description={content.seoDescription} image={content.seoImage} />
       {/* Hero */}
       <section className="section-gap">
         <div className="container-main text-center">
@@ -74,20 +89,41 @@ export default function PricingPage() {
       <section className="section-gap">
         <div className="container-main">
           {/* Service tabs */}
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="flex flex-wrap justify-center gap-2 mb-12">
-            {services.map((s) => {
-              const Icon = getIcon(s.icon)
-              return (
-                <button key={s.id} onClick={() => setSelectedService(s.id)}
-                  className={`px-4 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300 inline-flex items-center gap-2 ${
-                    selectedService === s.id
-                      ? 'bg-brand-gold text-brand-darkest shadow-lg shadow-brand-gold/20'
-                      : 'border border-brand-mid/15 text-brand-cream/50 hover:text-brand-cream hover:border-brand-mid/25'
-                  }`}>
-                  <Icon className="w-3.5 h-3.5" /> {s.title}
-                </button>
-              )
-            })}
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
+            {/* Mobile: horizontal scroll — shows partial items as scroll hint */}
+            <div className="md:hidden overflow-x-auto scrollbar-hide" ref={scrollRef}>
+              <div className="flex gap-1.5 pb-2">
+                {services.map((s) => {
+                  const Icon = getIcon(s.icon)
+                  return (
+                    <button key={s.id} data-service-id={s.id} onClick={() => selectService(s.id)}
+                      className={`px-3 py-2 rounded-lg text-[12px] font-medium transition-all duration-300 inline-flex items-center gap-1.5 whitespace-nowrap flex-shrink-0 ${
+                        selectedService === s.id
+                          ? 'bg-brand-gold text-brand-darkest shadow-lg shadow-brand-gold/20'
+                          : 'border border-brand-mid/15 text-brand-cream/50 hover:text-brand-cream hover:border-brand-mid/25'
+                      }`}>
+                      <Icon className="w-3 h-3" /> {s.title}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+            {/* Desktop: wrapped centered */}
+            <div className="hidden md:flex flex-wrap justify-center gap-2">
+              {services.map((s) => {
+                const Icon = getIcon(s.icon)
+                return (
+                  <button key={s.id} onClick={() => selectService(s.id)}
+                    className={`px-4 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300 inline-flex items-center gap-2 ${
+                      selectedService === s.id
+                        ? 'bg-brand-gold text-brand-darkest shadow-lg shadow-brand-gold/20'
+                        : 'border border-brand-mid/15 text-brand-cream/50 hover:text-brand-cream hover:border-brand-mid/25'
+                    }`}>
+                    <Icon className="w-3.5 h-3.5" /> {s.title}
+                  </button>
+                )
+              })}
+            </div>
           </motion.div>
 
           {/* Pricing cards for selected service */}
@@ -96,7 +132,7 @@ export default function PricingPage() {
               <div className="text-center mb-8">
                 <p className="text-[14px] text-brand-gold font-medium">{currentService.tagline}</p>
               </div>
-              <div className="grid gap-5 lg:grid-cols-3 items-stretch max-w-4xl mx-auto">
+              <div className="grid gap-5 grid-cols-1 md:grid-cols-3 items-stretch max-w-4xl mx-auto">
                 {currentService.pricing.map((tier, i) => (
                   <motion.div key={tier.name} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
                     className={`relative rounded-2xl border p-7 flex flex-col ${

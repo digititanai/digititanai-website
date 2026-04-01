@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { Send, AlertCircle, Mail, MapPin, Clock, Phone, CalendarDays, ArrowRight, CheckCircle2, Linkedin, Twitter, Facebook, Instagram, Github, Youtube } from 'lucide-react'
 import { defaultPageContent } from '@/lib/pageContent'
+import PageSEO from '@/components/layout/PageSEO'
 
 interface FormData { name: string; email: string; phone: string; service: string; budget: string; message: string }
 interface FormErrors { name?: string; email?: string; service?: string; message?: string }
@@ -80,6 +81,7 @@ export default function ContactPage() {
 
   return (
     <main>
+      <PageSEO title={content.seoTitle} description={content.seoDescription} image={content.seoImage} />
       {/* Hero */}
       <section className="pt-32 pb-10">
         <div className="container-main">

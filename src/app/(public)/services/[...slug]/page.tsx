@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, ArrowRight, ArrowLeft, Check, X, CheckCircle2, Layers, ListChecks, CreditCard, HeadphonesIcon } from 'lucide-react';
 import { getServiceDetail, saveServiceDetail, getServices, getCategories } from '@/lib/collections';
 import { useData, useDetailData } from '@/lib/useData';
+import PageSEO from '@/components/layout/PageSEO';
 import { getIcon } from '@/lib/iconMap';
 import { serviceDetailDefaults, type ServiceDetailPageData } from '@/lib/serviceDetailDefaults';
 
@@ -217,6 +218,7 @@ export default function ServiceDetailPage() {
 
   return (
     <main className="min-h-screen" suppressHydrationWarning>
+      {d ? <PageSEO title={d.seoTitle || s.title} description={d.seoDescription || s.description} image={d.seoImage} /> : null}
       {/* ================================================================ */}
       {/*  HERO                                                            */}
       {/* ================================================================ */}
