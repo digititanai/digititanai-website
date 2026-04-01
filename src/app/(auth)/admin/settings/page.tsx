@@ -68,11 +68,23 @@ export default function SettingsPage() {
   const handleSave = async () => {
     setSaving(true)
     try {
+      // Auto-update SEO meta title from site title + tagline
+      const updatedSettings = { ...settings }
+      const title = settings.general.siteTitle
+      const tagline = settings.general.tagline
+      if (title) {
+        updatedSettings.seo = {
+          ...updatedSettings.seo,
+          metaTitle: tagline ? `${title} | ${tagline}` : title,
+        }
+        setSettings(updatedSettings)
+      }
+
       // Save settings
       await fetch('/api/admin/data/site_settings_v2', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ value: settings }),
+        body: JSON.stringify({ value: updatedSettings }),
       })
 
       // Sync general settings → header (logo name, button)
