@@ -35,9 +35,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head suppressHydrationWarning>
         <HeadCodeInjection />
+        <DataPreloader />
       </head>
       <body className="bg-brand-darkest text-brand-cream antialiased font-sans" suppressHydrationWarning>
-        <DataPreloader />
         <BodyCodeInjection />
         <ThemeProvider>
           <Providers>
