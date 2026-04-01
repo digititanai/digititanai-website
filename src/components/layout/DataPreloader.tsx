@@ -17,12 +17,15 @@ export default async function DataPreloader() {
     preloadedData[row.key] = row.value
   }
 
+  // Escape </script> inside JSON to prevent breaking the script tag
+  const safeJson = JSON.stringify(preloadedData).replace(/<\/script>/gi, '<\\/script>')
+
   return (
     <script
       id="preloaded-data"
       type="application/json"
       suppressHydrationWarning
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(preloadedData) }}
+      dangerouslySetInnerHTML={{ __html: safeJson }}
     />
   )
 }

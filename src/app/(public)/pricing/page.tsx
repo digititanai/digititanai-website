@@ -156,6 +156,8 @@ export default function PricingPage() {
                       ))}
                     </ul>
                     <Link href={`/book?service=${encodeURIComponent(currentService.title)}&package=${encodeURIComponent(tier.name)}`}
+                      data-track-ignore
+                      onClick={() => { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'select_pricing', service_name: currentService.title, package_name: tier.name, package_amount: tier.price }) }}
                       className={tier.highlighted ? 'btn-primary w-full text-center' : 'btn-secondary w-full text-center'}>
                       Book Free Consultation
                     </Link>

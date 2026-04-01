@@ -1532,6 +1532,11 @@ export default function BlogPostPage() {
       setDynamicPost({ ...base, title: detail.title, category: detail.category, date: detail.date, readTime: detail.readTime, excerpt: detail.excerpt, toc: tocWithContent.length ? tocWithContent : base.toc });
     }
     setMounted(true);
+
+    // Fire view_blog dataLayer event
+    const blogTitle = detail?.title || hardcodedPost?.title || slug
+    window.dataLayer = window.dataLayer || []
+    window.dataLayer.push({ event: 'view_blog', blog_name: blogTitle, page_url: window.location.href })
   }, [slug, loaded, detailLoaded]);
 
   const post = (mounted && dynamicPost) ? dynamicPost : hardcodedPost;

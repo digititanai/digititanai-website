@@ -8,23 +8,25 @@ function injectHTML(html: string, target: HTMLElement) {
   const container = document.createElement('div')
   container.innerHTML = html
 
-  // Extract and execute scripts — innerHTML doesn't run <script> tags
-  const scripts = container.querySelectorAll('script')
-  scripts.forEach((oldScript) => {
+  // Execute scripts — innerHTML doesn't run <script> tags
+  container.querySelectorAll('script').forEach((oldScript) => {
     const newScript = document.createElement('script')
-    // Copy all attributes (src, async, id, etc.)
     Array.from(oldScript.attributes).forEach((attr) => {
       newScript.setAttribute(attr.name, attr.value)
     })
-    // Copy inline script content
     if (oldScript.textContent) newScript.textContent = oldScript.textContent
     oldScript.remove()
     target.appendChild(newScript)
   })
 
-  // Append remaining non-script elements (noscript, meta, link, etc.)
+  // Append only real elements (noscript, meta, link) — skip text nodes and comments
   while (container.firstChild) {
-    target.appendChild(container.firstChild)
+    const node = container.firstChild
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      target.appendChild(node)
+    } else {
+      container.removeChild(node)
+    }
   }
 }
 

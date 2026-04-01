@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Save, Globe, Search, Link2, Palette, CheckCircle2, XCircle, Loader2, Moon, Sun, Type, Code } from 'lucide-react'
+import { Save, Globe, Search, Link2, Palette, CheckCircle2, XCircle, Loader2, Moon, Sun, Type, Tag } from 'lucide-react'
 import ImageUploader from '@/components/admin/ImageUploader'
 
 type Tab = 'general' | 'seo' | 'integrations' | 'appearance' | 'code'
@@ -41,10 +41,9 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [settings, setSettings] = useState(defaultSettings)
-  const [headCode, setHeadCode] = useState('')
-  const [bodyCode, setBodyCode] = useState('')
-  const [codeSaving, setCodeSaving] = useState(false)
-  const [codeSaved, setCodeSaved] = useState(false)
+  const [gtmId, setGtmId] = useState('')
+  const [gtmSaving, setGtmSaving] = useState(false)
+  const [gtmSaved, setGtmSaved] = useState(false)
 
   // Load all settings from Supabase
   useEffect(() => {
@@ -61,7 +60,7 @@ export default function SettingsPage() {
 
     fetch('/api/data/site_code_injection', { cache: 'no-store' })
       .then(r => r.ok ? r.json() : null)
-      .then(data => { if (data) { setHeadCode(data.head || ''); setBodyCode(data.body || '') } })
+      .then(data => { if (data?.gtmId) setGtmId(data.gtmId) })
       .catch(() => {})
   }, [])
 
@@ -131,18 +130,23 @@ export default function SettingsPage() {
     setSaving(false)
   }
 
-  const saveCodeInjection = async () => {
-    setCodeSaving(true)
+  const saveGtm = async () => {
+    setGtmSaving(true)
     try {
+      const cleanId = gtmId.trim().toUpperCase()
+      // Generate GTM head and body code from the container ID
+      const head = cleanId ? `<!-- Google Tag Manager -->\n<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\nnew Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\nj=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);\n})(window,document,'script','dataLayer','${cleanId}');</script>\n<!-- End Google Tag Manager -->` : ''
+      const body = cleanId ? `<!-- Google Tag Manager (noscript) -->\n<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${cleanId}"\nheight="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>\n<!-- End Google Tag Manager (noscript) -->` : ''
+
       await fetch('/api/admin/data/site_code_injection', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ value: { head: headCode, body: bodyCode } }),
+        body: JSON.stringify({ value: { gtmId: cleanId, head, body } }),
       })
-      setCodeSaved(true)
-      setTimeout(() => setCodeSaved(false), 2000)
+      setGtmSaved(true)
+      setTimeout(() => setGtmSaved(false), 2000)
     } catch {}
-    setCodeSaving(false)
+    setGtmSaving(false)
   }
 
   const g = settings.general
@@ -157,7 +161,7 @@ export default function SettingsPage() {
     { key: 'seo', label: 'SEO', icon: Search },
     { key: 'appearance', label: 'Appearance', icon: Palette },
     { key: 'integrations', label: 'Integrations', icon: Link2 },
-    { key: 'code', label: 'Code Injection', icon: Code },
+    { key: 'code', label: 'Tag Manager', icon: Tag },
   ]
 
   const inp = 'w-full h-9 px-3 text-[13px] bg-brand-darkest/50 border border-brand-mid/10 rounded-lg text-brand-cream focus:outline-none focus:border-brand-mid/30 transition-colors'
@@ -372,25 +376,60 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {/* ═══ CODE INJECTION ═══ */}
+      {/* ═══ GOOGLE TAG MANAGER ═══ */}
       {activeTab === 'code' && (
         <div className="space-y-6">
-          <div className="bg-brand-dark/30 border border-brand-mid/10 rounded-xl p-6">
-            <h3 className="text-[14px] font-semibold text-brand-cream mb-1">Head Code</h3>
-            <p className="text-[11px] text-brand-cream/40 mb-4">Injected into &lt;head&gt; on every page. Use for analytics, fonts, meta tags.</p>
-            <textarea value={headCode} onChange={(e) => { setHeadCode(e.target.value); setCodeSaved(false) }} rows={10} placeholder="<!-- Google Analytics, fonts, etc. -->" className="w-full px-3.5 py-3 text-[13px] font-mono bg-brand-darkest/60 border border-brand-mid/10 rounded-lg text-brand-green-light placeholder-brand-cream/20 focus:outline-none focus:border-brand-mid/25 resize-y leading-relaxed" style={{ minHeight: '150px' }} />
-          </div>
-          <div className="bg-brand-dark/30 border border-brand-mid/10 rounded-xl p-6">
-            <h3 className="text-[14px] font-semibold text-brand-cream mb-1">Body Code</h3>
-            <p className="text-[11px] text-brand-cream/40 mb-4">Injected after &lt;body&gt; tag. Use for tag managers, chat widgets.</p>
-            <textarea value={bodyCode} onChange={(e) => { setBodyCode(e.target.value); setCodeSaved(false) }} rows={10} placeholder="<!-- GTM noscript, chat widgets, etc. -->" className="w-full px-3.5 py-3 text-[13px] font-mono bg-brand-darkest/60 border border-brand-mid/10 rounded-lg text-brand-green-light placeholder-brand-cream/20 focus:outline-none focus:border-brand-mid/25 resize-y leading-relaxed" style={{ minHeight: '150px' }} />
-          </div>
-          <div className="flex items-center gap-3">
-            <button onClick={saveCodeInjection} disabled={codeSaving} className="h-9 px-4 text-[13px] font-medium bg-brand-gold text-brand-darkest rounded-lg hover:bg-brand-gold-light disabled:opacity-50 transition-colors inline-flex items-center gap-1.5">
-              {codeSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : codeSaved ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Save className="w-3.5 h-3.5" />}
-              {codeSaved ? 'Saved!' : 'Save Code'}
-            </button>
-            <p className="text-[11px] text-brand-cream/30">Changes apply on next page load.</p>
+          <div className="bg-brand-dark/30 border border-brand-mid/10 rounded-xl p-6 space-y-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-[#246FDB]/10 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#246FDB]" fill="currentColor"><path d="M12.003 2L6.5 7.503l1.997 1.998 3.506-3.506 3.506 3.506L17.506 7.503 12.003 2zm0 20l5.503-5.503-1.997-1.998-3.506 3.506-3.506-3.506L6.5 16.497 12.003 22zm-10-10l5.503 5.503 1.998-1.997-3.506-3.506 3.506-3.506L7.506 6.497 2.003 12zm20 0l-5.503-5.503-1.998 1.997 3.506 3.506-3.506 3.506 1.998 1.997 5.503-5.503z"/></svg>
+              </div>
+              <div>
+                <h3 className="text-[15px] font-semibold text-brand-cream">Google Tag Manager</h3>
+                <p className="text-[12px] text-brand-cream/40">Connect GTM to track events, conversions, and analytics across your website.</p>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[11px] text-brand-cream/60 uppercase tracking-wider mb-1.5 font-medium">GTM Container ID</label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="text"
+                  value={gtmId}
+                  onChange={(e) => { setGtmId(e.target.value); setGtmSaved(false) }}
+                  placeholder="GTM-XXXXXXX"
+                  className={`flex-1 ${inp} font-mono text-[14px] tracking-wide`}
+                />
+                <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${gtmId.trim() ? 'bg-emerald-500' : 'bg-brand-cream/15'}`} />
+              </div>
+              <p className="text-[11px] text-brand-cream/30 mt-1.5">Find your Container ID in GTM → Admin → Container Settings (e.g. GTM-KTBP9LCD)</p>
+            </div>
+
+            {gtmId.trim() && (
+              <div className="p-4 bg-brand-darkest/40 border border-brand-mid/10 rounded-lg space-y-2">
+                <p className="text-[11px] text-brand-cream/50 font-medium uppercase tracking-wider">What gets installed</p>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                  <p className="text-[12px] text-brand-cream/60">GTM script in <code className="text-brand-green-light bg-brand-mid/10 px-1.5 py-0.5 rounded text-[11px]">&lt;head&gt;</code> — loads your GTM container</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                  <p className="text-[12px] text-brand-cream/60">GTM noscript fallback in <code className="text-brand-green-light bg-brand-mid/10 px-1.5 py-0.5 rounded text-[11px]">&lt;body&gt;</code> — works without JavaScript</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                  <p className="text-[12px] text-brand-cream/60">dataLayer <code className="text-brand-green-light bg-brand-mid/10 px-1.5 py-0.5 rounded text-[11px]">web_button_click</code> events on all button clicks</p>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-3 pt-2">
+              <button onClick={saveGtm} disabled={gtmSaving} className="h-9 px-4 text-[13px] font-medium bg-brand-gold text-brand-darkest rounded-lg hover:bg-brand-gold-light disabled:opacity-50 transition-colors inline-flex items-center gap-1.5">
+                {gtmSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : gtmSaved ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Save className="w-3.5 h-3.5" />}
+                {gtmSaved ? 'Saved!' : 'Save & Connect'}
+              </button>
+              {!gtmId.trim() && <p className="text-[11px] text-brand-cream/30">Save with empty ID to disconnect GTM.</p>}
+            </div>
           </div>
         </div>
       )}

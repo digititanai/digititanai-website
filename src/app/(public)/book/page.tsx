@@ -783,14 +783,33 @@ export default function BookingPage() {
               <button
                 onClick={goNext}
                 disabled={!canGoNext()}
+                data-track-ignore
                 className="btn-primary disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Next <ArrowRight size={14} />
               </button>
             ) : (
               <button
-                onClick={handleSubmit}
+                onClick={() => {
+                  const svc = services.find((s) => s.id === selectedService)
+                  const price = svc?.packages[selectedPackage as keyof typeof svc.packages] || ''
+                  window.dataLayer = window.dataLayer || []
+                  window.dataLayer.push({
+                    event: 'confirm_booking',
+                    service_name: serviceName,
+                    package_name: selectedPackage,
+                    package_price: price,
+                    booking_date: selectedDate ? selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '',
+                    booking_time: selectedTime,
+                    customer_name: details.name,
+                    customer_email: details.email,
+                    customer_phone: details.phone,
+                    customer_message: details.message,
+                  })
+                  handleSubmit()
+                }}
                 disabled={submitting}
+                data-track-ignore
                 className="btn-primary disabled:opacity-50"
               >
                 {submitting ? (

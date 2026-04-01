@@ -9,13 +9,15 @@ import { defaultPageContent } from '@/lib/pageContent'
 import PageSEO from '@/components/layout/PageSEO'
 
 interface FormData { name: string; email: string; phone: string; service: string; budget: string; message: string }
-interface FormErrors { name?: string; email?: string; service?: string; message?: string }
+interface FormErrors { name?: string; email?: string; phone?: string; service?: string; message?: string }
 
 function validate(data: FormData): FormErrors {
   const errors: FormErrors = {}
   if (!data.name.trim()) errors.name = 'Name is required'
   if (!data.email.trim()) errors.email = 'Email is required'
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errors.email = 'Invalid email'
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errors.email = 'Please enter a valid email address'
+  if (!data.phone.trim()) errors.phone = 'Phone number is required'
+  else if (!/^\+?[\d\s\-()]{7,20}$/.test(data.phone.trim())) errors.phone = 'Please enter a valid phone number'
   if (!data.service) errors.service = 'Please select a service'
   if (!data.message.trim()) errors.message = 'Please describe your project'
   return errors
@@ -65,7 +67,19 @@ export default function ContactPage() {
     try {
       const payload = { name: form.name, email: form.email, phone: form.phone, service_interest: form.service, budget_range: form.budget, message: form.message }
       const res = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-      if (res.ok) { setSubmitted(true); toast.success('Message sent!') }
+      if (res.ok) {
+        setSubmitted(true); toast.success('Message sent!')
+        window.dataLayer = window.dataLayer || []
+        window.dataLayer.push({
+          event: 'send_message',
+          customer_name: form.name,
+          customer_email: form.email,
+          customer_phone: form.phone,
+          service_interest: form.service,
+          budget_range: form.budget,
+          message: form.message,
+        })
+      }
       else {
         const err = await res.json().catch(() => ({}))
         if (err.details) {
@@ -158,8 +172,10 @@ export default function ContactPage() {
 
                     {/* Phone */}
                     <div>
-                      <label className="block text-[12px] uppercase tracking-wider text-brand-cream/40 font-medium mb-1.5">Phone (optional)</label>
-                      <input type="tel" name="phone" placeholder="+880 1XXX-XXXXXX" value={form.phone} onChange={handleChange} className="input-field" />
+                      <label className="block text-[12px] uppercase tracking-wider text-brand-cream/40 font-medium mb-1.5">Phone *</label>
+                      <input type="tel" name="phone" placeholder="+880 1XXX-XXXXXX" value={form.phone} onChange={handleChange}
+                        className={`input-field ${errors.phone ? 'border-red-500/40' : ''}`} />
+                      {errors.phone && <p className="mt-1 text-[12px] text-red-400/70 flex items-center gap-1"><AlertCircle size={11} />{errors.phone}</p>}
                     </div>
 
                     {/* Service + Budget row */}
@@ -191,7 +207,7 @@ export default function ContactPage() {
                     </div>
 
                     {/* Submit */}
-                    <button type="submit" disabled={submitting} className="btn-primary w-full gap-2">
+                    <button type="submit" disabled={submitting} data-track-ignore className="btn-primary w-full gap-2">
                       {submitting ? 'Sending...' : <><Send size={14} /> Send Message</>}
                     </button>
                   </div>

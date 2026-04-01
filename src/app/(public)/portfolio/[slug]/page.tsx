@@ -319,6 +319,11 @@ export default function PortfolioDetailPage() {
     const saved = getPortfolioDetail(slug);
     if (saved) setDynamicProject(saved as ProjectData);
     setMounted(true);
+
+    // Fire view_portfolio dataLayer event
+    const projectName = saved?.title || projectMap[slug ?? '']?.title || slug
+    window.dataLayer = window.dataLayer || []
+    window.dataLayer.push({ event: 'view_portfolio', portfolio_name: projectName, page_url: window.location.href })
   }, [slug, loaded, detailLoaded]);
 
   const project = (mounted && dynamicProject) ? dynamicProject : projectMap[slug ?? ''];

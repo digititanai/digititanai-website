@@ -161,6 +161,11 @@ export default function ServiceDetailPage() {
       });
     }
     setMounted(true);
+
+    // Fire view_service dataLayer event
+    const serviceName = getServices().find((sv) => sv.slug === slug)?.title || saved?.category || slug
+    window.dataLayer = window.dataLayer || []
+    window.dataLayer.push({ event: 'view_service', service_name: serviceName, page_url: window.location.href })
   }, [slug, loaded, detailLoaded]);
 
   // Use hardcoded for SSR, switch to dynamic after mount
@@ -443,7 +448,7 @@ export default function ServiceDetailPage() {
                     </ul>
 
                     {/* CTA */}
-                    <Link href={`/book?service=${encodeURIComponent(s.title)}&package=${encodeURIComponent(tier.name)}`} className={tier.highlighted ? 'btn-primary w-full text-center' : 'btn-secondary w-full text-center'}>
+                    <Link href={`/book?service=${encodeURIComponent(s.title)}&package=${encodeURIComponent(tier.name)}`} data-track-ignore onClick={() => { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'select_pricing', service_name: s.title, package_name: tier.name, package_amount: tier.price }) }} className={tier.highlighted ? 'btn-primary w-full text-center' : 'btn-secondary w-full text-center'}>
                       Book Free Consultation
                     </Link>
                     <p className="text-[11px] text-brand-cream/35 text-center mt-2">No payment required</p>

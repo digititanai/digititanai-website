@@ -191,7 +191,7 @@ function PricingModal({ service, onClose, content }: { service: ServiceItem; onC
                     </li>
                   ))}
                 </ul>
-                <Link href={`/book?service=${encodeURIComponent(service.title)}&package=${encodeURIComponent(tier.name)}`} onClick={onClose} className={tier.highlighted ? 'btn-primary w-full text-center text-[13px] h-10' : 'btn-secondary w-full text-center text-[13px] h-10'}>
+                <Link href={`/book?service=${encodeURIComponent(service.title)}&package=${encodeURIComponent(tier.name)}`} data-track-ignore onClick={() => { onClose(); window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'select_pricing', service_name: service.title, package_name: tier.name, package_amount: tier.price }) }} className={tier.highlighted ? 'btn-primary w-full text-center text-[13px] h-10' : 'btn-secondary w-full text-center text-[13px] h-10'}>
                   {content?.bookBtnText || 'Book Free Consultation'}
                 </Link>
               </div>

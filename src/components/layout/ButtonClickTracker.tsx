@@ -17,12 +17,20 @@ function getButtonName(el: HTMLElement): string | null {
   return el.getAttribute('aria-label') || el.getAttribute('title') || null
 }
 
-function findClickableParent(el: HTMLElement): HTMLElement | null {
+// Only track CTA buttons — not nav links, filters, toggles, etc.
+const CTA_SELECTORS = [
+  '.btn-primary',
+  '.btn-secondary',
+  '.btn-ghost',
+  '[data-track-click]',
+]
+
+function findCTAParent(el: HTMLElement): HTMLElement | null {
   let current: HTMLElement | null = el
   while (current) {
-    const tag = current.tagName
-    if (tag === 'BUTTON' || tag === 'A') return current
-    if (current.getAttribute('role') === 'button') return current
+    for (const sel of CTA_SELECTORS) {
+      if (current.matches(sel)) return current
+    }
     current = current.parentElement
   }
   return null
@@ -34,10 +42,11 @@ export default function ButtonClickTracker() {
 
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement
-      const clickable = findClickableParent(target)
-      if (!clickable) return
+      const cta = findCTAParent(target)
+      if (!cta) return
+      if (cta.hasAttribute('data-track-ignore')) return
 
-      const buttonName = getButtonName(clickable)
+      const buttonName = getButtonName(cta)
       if (!buttonName) return
 
       window.dataLayer.push({
