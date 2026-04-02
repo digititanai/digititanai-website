@@ -49,11 +49,11 @@ const P = ({ children }: { children: React.ReactNode }) => (
 );
 
 const UL = ({ children }: { children: React.ReactNode }) => (
-  <ul className="mb-5 space-y-2">{children}</ul>
+  <ul className="mb-5 space-y-2 pl-6">{children}</ul>
 );
 
 const OL = ({ children }: { children: React.ReactNode }) => (
-  <ol className="mb-5 space-y-2 counter-reset-none">{children}</ol>
+  <ol className="mb-5 space-y-2 pl-6 counter-reset-none">{children}</ol>
 );
 
 const LI = ({ children, ordered, num }: { children: React.ReactNode; ordered?: boolean; num?: number }) => (
@@ -187,6 +187,51 @@ function renderMarkdownContent(text: string): React.ReactNode[] {
       if (listLines.every((l: string) => /^\s*\d+\.\s/.test(l))) {
         const items = listLines.map((l: string) => l.replace(/^\s*\d+\.\s+/, ''));
         elements.push(<OL key={key++}>{items.map((item: string, i: number) => <LI key={i} ordered num={i + 1}>{processInline(item)}</LI>)}</OL>);
+        continue;
+      }
+
+      // Table (lines with | separators and a --- divider row)
+      const tableLines = trimmed.split('\n').filter((l: string) => l.trim());
+      if (tableLines.length >= 2 && tableLines[0].includes('|') && tableLines.some((l: string) => /^\s*\|?\s*[-:]+[-|:\s]*$/.test(l))) {
+        const dividerIdx = tableLines.findIndex((l: string) => /^\s*\|?\s*[-:]+[-|:\s]*$/.test(l));
+        const headerRow = tableLines[dividerIdx - 1] || tableLines[0];
+        const dividerRow = tableLines[dividerIdx];
+        const bodyRows = tableLines.slice(dividerIdx + 1);
+        const parseRow = (row: string) => row.split('|').map(c => c.trim()).filter((c, i, arr) => !(i === 0 && c === '') && !(i === arr.length - 1 && c === ''));
+        const headers = parseRow(headerRow);
+        // Parse alignment from divider row (:---, :---:, ---:)
+        const alignCells = parseRow(dividerRow);
+        const aligns = alignCells.map((c) => {
+          const t = c.trim();
+          if (t.startsWith(':') && t.endsWith(':')) return 'center';
+          if (t.endsWith(':')) return 'right';
+          return 'left';
+        });
+        elements.push(
+          <div key={key++} className="my-6 overflow-x-auto rounded-xl border border-brand-mid/10">
+            <table className="w-full text-[14px]">
+              <thead>
+                <tr className="border-b border-brand-mid/15 bg-brand-mid/5">
+                  {headers.map((h, i) => (
+                    <th key={i} className="px-4 py-3 text-[12px] font-semibold uppercase tracking-wider text-brand-cream/60" style={{ textAlign: aligns[i] || 'left' }}>{processInline(h)}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {bodyRows.map((row, ri) => {
+                  const cells = parseRow(row);
+                  return (
+                    <tr key={ri} className="border-b border-brand-mid/[0.06] last:border-0">
+                      {cells.map((cell, ci) => (
+                        <td key={ci} className="px-4 py-3 text-brand-cream/75" style={{ textAlign: aligns[ci] || 'left' }}>{processInline(cell)}</td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        );
         continue;
       }
 
