@@ -798,7 +798,7 @@ export default function BookingPage() {
                     event: 'confirm_booking',
                     service_name: serviceName,
                     package_name: selectedPackage,
-                    package_price: price,
+                    package_amount: price,
                     booking_date: selectedDate ? selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '',
                     booking_time: selectedTime,
                     customer_name: details.name,

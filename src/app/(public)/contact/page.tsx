@@ -75,9 +75,9 @@ export default function ContactPage() {
           customer_name: form.name,
           customer_email: form.email,
           customer_phone: form.phone,
-          service_interest: form.service,
+          service_name: form.service,
           budget_range: form.budget,
-          message: form.message,
+          customer_message: form.message,
         })
       }
       else {
