@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowUp } from 'lucide-react'
-import { loadHomePageData, defaultHomePageData } from '@/lib/homePageData'
+import { loadHomePageData, getHomePageData } from '@/lib/homePageData'
 import { useData } from '@/lib/useData'
 
 export default function ResultsShowcase() {
   const { loaded } = useData()
-  const [rData, setRData] = useState(defaultHomePageData.results)
+  const [rData, setRData] = useState(() => getHomePageData().results)
   useEffect(() => { if (loaded) loadHomePageData().then(d => setRData(d.results)) }, [loaded])
 
   return (

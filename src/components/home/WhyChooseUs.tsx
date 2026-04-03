@@ -3,13 +3,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import TiltCard from '@/components/ui/TiltCard'
-import { loadHomePageData, defaultHomePageData } from '@/lib/homePageData'
+import { loadHomePageData, getHomePageData } from '@/lib/homePageData'
 import { useData } from '@/lib/useData'
 import { getIcon } from '@/lib/iconMap'
 
 export default function WhyChooseUs() {
   const { loaded } = useData()
-  const [wData, setWData] = useState(defaultHomePageData.whyChooseUs)
+  const [wData, setWData] = useState(() => getHomePageData().whyChooseUs)
   useEffect(() => { if (loaded) loadHomePageData().then(d => setWData(d.whyChooseUs)) }, [loaded])
 
   const ref = useRef<HTMLElement>(null)

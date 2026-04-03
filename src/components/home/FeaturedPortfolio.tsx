@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight, ArrowUpRight } from 'lucide-react'
-import { loadHomePageData, defaultHomePageData } from '@/lib/homePageData'
+import { loadHomePageData, getHomePageData } from '@/lib/homePageData'
 import { useData } from '@/lib/useData'
 import { getIcon } from '@/lib/iconMap'
 import { getPortfolio } from '@/lib/collections'
@@ -22,7 +22,7 @@ const fadeUp = {
 
 export default function FeaturedPortfolio() {
   const { loaded } = useData()
-  const [pData, setPData] = useState(defaultHomePageData.portfolio)
+  const [pData, setPData] = useState(() => getHomePageData().portfolio)
   useEffect(() => { (async () => {
     if (!loaded) return
     const freshHome = await loadHomePageData()

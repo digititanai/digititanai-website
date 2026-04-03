@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Star } from 'lucide-react'
-import { loadHomePageData, defaultHomePageData } from '@/lib/homePageData'
+import { loadHomePageData, getHomePageData } from '@/lib/homePageData'
 import { useData } from '@/lib/useData'
 import { getTestimonials, type TestimonialItem } from '@/lib/collections'
 import TiltCard from '@/components/ui/TiltCard'
@@ -20,7 +20,7 @@ const fadeUp = {
 
 export default function TestimonialsSection() {
   const { loaded } = useData()
-  const [header, setHeader] = useState(defaultHomePageData.testimonials)
+  const [header, setHeader] = useState(() => getHomePageData().testimonials)
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>([])
   const sectionRef = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] })

@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { loadHomePageData, defaultHomePageData } from '@/lib/homePageData'
+import { loadHomePageData, getHomePageData } from '@/lib/homePageData'
 import { useData } from '@/lib/useData'
 
 export default function ClientLogos() {
   const { loaded } = useData()
-  const [data, setData] = useState(defaultHomePageData.clientLogos)
+  const [data, setData] = useState(() => getHomePageData().clientLogos)
   useEffect(() => { if (loaded) loadHomePageData().then(d => setData(d.clientLogos)) }, [loaded])
 
   return (

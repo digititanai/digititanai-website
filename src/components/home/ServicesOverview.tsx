@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-import { loadHomePageData, defaultHomePageData } from '@/lib/homePageData'
+import { loadHomePageData, getHomePageData } from '@/lib/homePageData'
 import { useData } from '@/lib/useData'
 import { getIcon } from '@/lib/iconMap'
 import { getServices, getCategories } from '@/lib/collections'
@@ -32,7 +32,7 @@ const fadeUp = {
 
 export default function ServicesOverview() {
   const { loaded } = useData()
-  const [sData, setSData] = useState(defaultHomePageData.services)
+  const [sData, setSData] = useState(() => getHomePageData().services)
   const [mounted, setMounted] = useState(false)
   useEffect(() => { (async () => {
     if (!loaded) return
@@ -44,7 +44,7 @@ export default function ServicesOverview() {
       const col = activeServices.find((s: { id: string }) => s.id === hs.id)
       return col ? { id: col.id, title: col.title, description: col.description, slug: col.slug, icon: col.icon } : hs
     }).filter((hs: { id: string }) => activeServices.some((s: { id: string }) => s.id === hs.id))
-    setSData({ ...homeData, services: merged } as typeof defaultHomePageData.services)
+    setSData({ ...homeData, services: merged } as ReturnType<typeof getHomePageData>['services'])
     setMounted(true)
   })() }, [loaded])
 

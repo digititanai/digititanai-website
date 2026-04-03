@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { getHomePageData, defaultHomePageData } from '@/lib/homePageData'
+import { getHomePageData } from '@/lib/homePageData'
 import { getBlog, getBlogDetail, loadCollection } from '@/lib/collections'
 import { useData } from '@/lib/useData'
 
@@ -67,9 +67,9 @@ export default function BlogPreview() {
     load()
   }, [loaded])
 
-  const badge = bData?.badge || defaultHomePageData.blog.badge
-  const heading = bData?.heading || defaultHomePageData.blog.heading
-  const linkText = bData?.linkText || defaultHomePageData.blog.linkText
+  const badge = bData?.badge || getHomePageData().blog.badge
+  const heading = bData?.heading || getHomePageData().blog.heading
+  const linkText = bData?.linkText || getHomePageData().blog.linkText
   const posts = bData?.posts || []
   const gridCols = posts.length === 4 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4' : posts.length === 2 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
 

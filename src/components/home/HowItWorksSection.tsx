@@ -3,13 +3,13 @@
 import { useRef, useState, useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-import { loadHomePageData, defaultHomePageData } from '@/lib/homePageData'
+import { loadHomePageData, getHomePageData } from '@/lib/homePageData'
 import { useData } from '@/lib/useData'
 import { getIcon } from '@/lib/iconMap'
 
 export default function HowItWorksSection() {
   const { loaded } = useData()
-  const [hData, setHData] = useState(defaultHomePageData.howItWorks)
+  const [hData, setHData] = useState(() => getHomePageData().howItWorks)
   useEffect(() => { if (loaded) loadHomePageData().then(d => setHData(d.howItWorks)) }, [loaded])
 
   const sectionRef = useRef<HTMLElement>(null)

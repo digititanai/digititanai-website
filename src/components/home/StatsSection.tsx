@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react'
 import { motion, useScroll, useTransform, useInView } from 'framer-motion'
-import { loadHomePageData, defaultHomePageData } from '@/lib/homePageData'
+import { loadHomePageData, getHomePageData } from '@/lib/homePageData'
 import { useData } from '@/lib/useData'
 
 function AnimatedCounter({ value, suffix = '' }: { value: number; suffix?: string }) {
@@ -36,7 +36,7 @@ function AnimatedCounter({ value, suffix = '' }: { value: number; suffix?: strin
 
 export default function StatsSection() {
   const { loaded } = useData()
-  const [sData, setSData] = useState(defaultHomePageData.stats)
+  const [sData, setSData] = useState(() => getHomePageData().stats)
   useEffect(() => { if (loaded) loadHomePageData().then(d => setSData(d.stats)) }, [loaded])
 
   const ref = useRef<HTMLElement>(null)

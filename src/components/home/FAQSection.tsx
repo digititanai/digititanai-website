@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
-import { loadHomePageData, defaultHomePageData } from '@/lib/homePageData'
+import { loadHomePageData, getHomePageData } from '@/lib/homePageData'
 import { useData } from '@/lib/useData'
 
 export default function FAQSection() {
   const { loaded } = useData()
   const [openIndex, setOpenIndex] = useState<number | null>(null)
-  const [fData, setFData] = useState(defaultHomePageData.faq)
+  const [fData, setFData] = useState(() => getHomePageData().faq)
   useEffect(() => { if (loaded) loadHomePageData().then(d => setFData(d.faq)) }, [loaded])
 
   return (

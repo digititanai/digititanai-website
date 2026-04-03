@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import TiltCard from '@/components/ui/TiltCard'
-import { loadHomePageData, defaultHomePageData } from '@/lib/homePageData'
+import { loadHomePageData, getHomePageData } from '@/lib/homePageData'
 import { useData } from '@/lib/useData'
 import { getIcon } from '@/lib/iconMap'
 
 export default function ToolsIntegrations() {
   const { loaded } = useData()
-  const [tData, setTData] = useState(defaultHomePageData.tools)
+  const [tData, setTData] = useState(() => getHomePageData().tools)
   useEffect(() => { if (loaded) loadHomePageData().then(d => setTData(d.tools)) }, [loaded])
 
   return (

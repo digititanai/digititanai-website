@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowRight, Sparkles, CalendarDays, Cpu, Globe, Layers, BarChart3, Orbit, Megaphone, Target } from 'lucide-react'
-import { loadHomePageData, defaultHomePageData } from '@/lib/homePageData'
+import { loadHomePageData, getHomePageData } from '@/lib/homePageData'
 import { useData } from '@/lib/useData'
 
 /* ── Single orbiting card ── */
@@ -110,7 +110,7 @@ function OrbitalHUD() {
 
 export default function HeroSection() {
   const { loaded } = useData()
-  const [hero, setHero] = useState(defaultHomePageData.hero)
+  const [hero, setHero] = useState(() => getHomePageData().hero)
   useEffect(() => { if (loaded) loadHomePageData().then(d => setHero(d.hero)) }, [loaded])
 
   const ref = useRef<HTMLElement>(null)
