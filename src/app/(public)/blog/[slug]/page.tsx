@@ -1253,7 +1253,7 @@ Expected recovery rate: 8-12% of abandoned carts`}
         <UL>
           <LI><Strong>Send times:</Strong> Tuesday-Thursday, 10 AM or 2 PM in the recipient&apos;s timezone. But test this — some audiences respond better at 7 AM or 8 PM</LI>
           <LI><Strong>Subject lines:</Strong> Keep under 50 characters. Personalization (using their name or company) increases open rates by 22%</LI>
-          <LI><Strong>From name:</Strong> Use a person&apos;s name, not a company name. &ldquo;Sabbir from [Company]&rdquo; outperforms &ldquo;[Company] Team&rdquo;</LI>
+          <LI><Strong>From name:</Strong> Use a person&apos;s name, not a company name. &ldquo;DigiTitan AI from [Company]&rdquo; outperforms &ldquo;[Company] Team&rdquo;</LI>
           <LI><Strong>Unsubscribe rate:</Strong> If any email in a sequence has an unsubscribe rate above 0.5%, rewrite it immediately</LI>
           <LI><Strong>A/B test continuously:</Strong> Test subject lines on every send. The winner becomes the default, the loser gets replaced</LI>
         </UL>
@@ -1553,8 +1553,8 @@ export default function BlogPostPage() {
     if (hardcodedPost && !saved) {
       saveBlogDetail(slug, {
         title: hardcodedPost.title, category: hardcodedPost.category, date: hardcodedPost.date,
-        readTime: hardcodedPost.readTime, excerpt: hardcodedPost.excerpt, author: 'Sabbir Ahsan',
-        authorRole: 'Digital Marketer & MarTech Specialist', authorInitials: 'SA',
+        readTime: hardcodedPost.readTime, excerpt: hardcodedPost.excerpt, author: 'DigiTitan AI',
+        authorRole: 'AI-Powered Digital Solutions', authorInitials: 'DT',
         intro: '', toc: hardcodedPost.toc.map(t => ({ ...t, content: '' })), ctaHeading: 'Want to implement this?',
         ctaDescription: "Let's discuss how to apply these strategies to your business.",
         ctaButtonText: 'Book a Free Consultation', ctaButtonLink: '/book', ctaSubtext: 'No payment required',
@@ -1643,50 +1643,39 @@ export default function BlogPostPage() {
   const relatedPosts = getRelatedPosts(slug);
 
   return (
-    <main className="min-h-screen bg-brand-darkest">
+    <main className="min-h-screen">
       {(() => { const bd = mounted ? getBlogDetail(slug) : null; return bd ? <PageSEO title={bd.seoTitle || post.title} description={bd.seoDescription || post.excerpt} image={bd.seoImage} /> : null })()}
-      {/* ---- Header ---- */}
-      <section className="pt-28 pb-8">
-        <div className="container-main">
-          <Link
-            href="/blog"
-            className="text-[14px] text-brand-green-light hover:text-brand-gold transition-colors mb-8 inline-block"
-          >
-            &larr; Blog
+
+      {/* ═══ HERO ═══ */}
+      <section className="relative pt-28 pb-8 overflow-hidden">
+        <div className="absolute inset-0 bg-grid opacity-20" />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(6,182,212,0.06) 0%, transparent 60%)' }} />
+
+        <div className="container-main relative z-10">
+          <Link href="/blog" className="inline-flex items-center gap-2 text-[14px] text-brand-cream/50 hover:text-brand-cream transition-colors mb-8">
+            <span>&larr;</span> Blog
           </Link>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <div className="flex flex-wrap items-center gap-3 mb-5">
               <span className="badge">{post.category}</span>
-              <span className="text-[13px] text-brand-cream/40">
-                {post.date}
-              </span>
+              <span className="text-[13px] text-brand-cream/40">{post.date}</span>
               <span className="w-1 h-1 rounded-full bg-brand-mid/40" />
-              <span className="text-[13px] text-brand-cream/40">
-                {post.readTime} read
-              </span>
+              <span className="text-[13px] text-brand-cream/40">{post.readTime} read</span>
             </div>
 
-            <h1 className="heading-lg text-brand-cream leading-[1.15]">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold leading-[1.08] tracking-tight text-brand-cream">
               {post.title}
             </h1>
 
             <div className="flex items-center gap-3 mt-6">
               {(() => { const bd = mounted ? getBlogDetail(slug) : null; return (<>
-              <div className="w-10 h-10 rounded-full bg-brand-mid/20 border border-brand-mid/30 flex items-center justify-center text-[14px] font-display font-bold text-brand-gold">
-                {bd?.authorInitials || 'SA'}
+              <div className="w-10 h-10 rounded-full bg-brand-mid/15 border border-brand-mid/20 flex items-center justify-center text-[14px] font-display font-bold text-brand-mid">
+                {bd?.authorInitials || 'DT'}
               </div>
               <div>
-                <p className="text-[14px] font-semibold text-brand-cream/90">
-                  {bd?.author || 'Sabbir Ahsan'}
-                </p>
-                <p className="text-[12px] text-brand-cream/40">
-                  {bd?.authorRole || 'Digital Marketer & MarTech Specialist'}
-                </p>
+                <p className="text-[14px] font-semibold text-brand-cream/90">{bd?.author || 'DigiTitan AI'}</p>
+                <p className="text-[12px] text-brand-cream-dark">{bd?.authorRole || 'AI-Powered Digital Solutions'}</p>
               </div>
               </>)})()}
             </div>
@@ -1694,21 +1683,14 @@ export default function BlogPostPage() {
         </div>
       </section>
 
-      {/* ---- Hero Image Area ---- */}
+      {/* ═══ HERO IMAGE ═══ */}
       <div className="container-main pb-10">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="aspect-[21/9] rounded-2xl bg-gradient-to-br from-brand-dark via-brand-mid/20 to-brand-dark relative overflow-hidden"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
+          className="aspect-[21/9] rounded-2xl bg-gradient-to-br from-surface-200 via-brand-mid/15 to-surface-200 relative overflow-hidden border border-surface-300">
           {(() => { const bd = mounted ? getBlogDetail(slug) : null; return bd?.image ? (
             <img src={bd.image} alt={post.title} className="absolute inset-0 w-full h-full object-cover" />
           ) : (
-            <div className="absolute inset-0 opacity-[0.05]" style={{
-              backgroundImage: 'linear-gradient(rgba(75,138,108,1) 1px, transparent 1px), linear-gradient(90deg, rgba(75,138,108,1) 1px, transparent 1px)',
-              backgroundSize: '48px 48px',
-            }} />
+            <div className="absolute inset-0 bg-grid opacity-10" />
           ) })()}
           <div className="absolute inset-0 bg-gradient-to-t from-brand-darkest/40 to-transparent" />
         </motion.div>
@@ -1760,29 +1742,18 @@ export default function BlogPostPage() {
         </div>
       </div>
 
-      {/* ---- CTA Box ---- */}
+      {/* ═══ CTA BOX ═══ */}
       <div className="container-main pb-16">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="rounded-2xl border border-brand-mid/[0.08] p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden"
-        >
-          <div
-            className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage:
-                'linear-gradient(rgba(75,138,108,1) 1px, transparent 1px), linear-gradient(90deg, rgba(75,138,108,1) 1px, transparent 1px)',
-              backgroundSize: '32px 32px',
-            }}
-          />
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
+          className="rounded-2xl bg-surface-200 border border-surface-300 p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+          <div className="absolute inset-0 card-shine pointer-events-none" />
+          <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 30% 50%, rgba(6,182,212,0.05) 0%, transparent 60%)' }} />
           {(() => { const bd = mounted ? getBlogDetail(slug) : null; return (<>
           <div className="relative z-10">
             <h3 className="text-[22px] md:text-[26px] font-display font-bold text-brand-cream">
               {bd?.ctaHeading || 'Want to implement this?'}
             </h3>
-            <p className="text-[15px] text-brand-cream/60 mt-2 max-w-md">
+            <p className="text-[15px] text-brand-cream-dark mt-2 max-w-md">
               {bd?.ctaDescription || "Let's discuss how to apply these strategies to your business."}
             </p>
           </div>
@@ -1796,54 +1767,31 @@ export default function BlogPostPage() {
         </motion.div>
       </div>
 
-      <div className="line-divider" />
-
-      {/* ---- Related Posts ---- */}
-      <section className="py-12">
+      {/* ═══ RELATED POSTS ═══ */}
+      <section className="py-20">
         <div className="container-main">
-          <h2 className="heading-sm text-brand-cream/85 mb-10">
-            {(() => { const bd = mounted ? getBlogDetail(slug) : null; return bd?.relatedSectionTitle || 'Keep Reading' })()}
-          </h2>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <span className="badge">More Articles</span>
+            <h2 className="mt-5 text-3xl sm:text-4xl font-display font-bold">
+              {(() => { const bd = mounted ? getBlogDetail(slug) : null; return bd?.relatedSectionTitle || 'Keep Reading' })()}
+            </h2>
+          </motion.div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {relatedPosts.map((rp, i) => (
-              <motion.article
-                key={rp.slug}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-              >
-                <Link
-                  href={`/blog/${rp.slug}`}
-                  className="group block h-full"
-                >
-                  <div className="card-hover h-full overflow-hidden rounded-2xl">
-                    <div className="aspect-video bg-gradient-to-br from-brand-dark via-brand-mid/20 to-brand-dark flex items-center justify-center overflow-hidden relative">
-                      <div
-                        className="absolute inset-0 opacity-[0.04]"
-                        style={{
-                          backgroundImage:
-                            'linear-gradient(rgba(75,138,108,1) 1px, transparent 1px), linear-gradient(90deg, rgba(75,138,108,1) 1px, transparent 1px)',
-                          backgroundSize: '32px 32px',
-                        }}
-                      />
-                      <div className="absolute inset-0 group-hover:scale-105 transition-transform duration-700 bg-gradient-to-br from-brand-dark via-brand-mid/30 to-brand-dark" />
+              <motion.article key={rp.slug} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.6 }}>
+                <Link href={`/blog/${rp.slug}`} className="group block h-full">
+                  <div className="h-full overflow-hidden rounded-2xl bg-surface-200 border border-surface-300 hover:border-brand-mid/20 transition-all duration-500">
+                    <div className="aspect-video bg-gradient-to-br from-surface-200 via-brand-mid/10 to-surface-200 overflow-hidden relative">
+                      <div className="absolute inset-0 bg-grid opacity-10" />
+                      <div className="absolute inset-0 group-hover:scale-105 transition-transform duration-700 bg-gradient-to-br from-surface-200/0 via-brand-mid/20 to-surface-200/0" />
                     </div>
                     <div className="p-5">
                       <div className="flex items-center gap-3 mb-2.5">
-                        <span className="text-[11px] font-semibold tracking-[0.12em] uppercase text-brand-mid">
-                          {rp.category}
-                        </span>
-                        <span className="text-[12px] text-brand-cream/30">
-                          {rp.date}
-                        </span>
+                        <span className="text-[11px] font-semibold tracking-[0.12em] uppercase text-brand-mid">{rp.category}</span>
+                        <span className="text-[12px] text-brand-cream/30">{rp.date}</span>
                       </div>
-                      <h3 className="text-[15px] text-brand-cream/75 font-semibold leading-snug group-hover:text-brand-cream transition-colors">
-                        {rp.title}
-                      </h3>
-                      <p className="mt-2 text-[13px] text-brand-cream/50 leading-[1.6] line-clamp-2">
-                        {rp.excerpt}
-                      </p>
+                      <h3 className="text-[15px] text-brand-cream/80 font-display font-bold leading-snug group-hover:text-brand-cream transition-colors">{rp.title}</h3>
+                      <p className="mt-2 text-[13px] text-brand-cream-dark leading-[1.6] line-clamp-2">{rp.excerpt}</p>
                     </div>
                   </div>
                 </Link>

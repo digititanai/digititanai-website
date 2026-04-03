@@ -70,7 +70,7 @@ export async function createCalendarEvent({
       },
       attendees: [
         { email: attendeeEmail, displayName: attendeeName },
-        { email: process.env.ADMIN_EMAIL || 'sabbirahsan73@gmail.com', displayName: 'Sabbir Ahsan', organizer: true },
+        { email: process.env.ADMIN_EMAIL || 'digititanai@gmail.com', displayName: 'DigiTitan AI', organizer: true },
       ],
       reminders: {
         useDefault: false,
@@ -129,7 +129,7 @@ export async function sendGmail({
     // Build MIME message
     const boundary = 'boundary_' + Date.now()
     const mimeMessage = [
-      `From: "Sabbir Ahsan" <${process.env.GMAIL_USER || 'sabbirahsan73@gmail.com'}>`,
+      `From: "DigiTitan AI" <${process.env.GMAIL_USER || 'digititanai@gmail.com'}>`,
       `To: ${to}`,
       `Subject: ${subject}`,
       `MIME-Version: 1.0`,

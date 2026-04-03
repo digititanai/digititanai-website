@@ -101,7 +101,7 @@ export async function PUT(request: Request) {
                 <tr><td style="padding:6px 12px;font-weight:bold;">Time</td><td style="padding:6px 12px;">${existing.booking_time}</td></tr>
               </table>
               <p>If you'd like to rebook, please visit <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:1234'}/book">our booking page</a>.</p>
-              <p style="color:#888;margin-top:20px;">— Sabbir Ahsan</p>
+              <p style="color:#888;margin-top:20px;">— DigiTitan AI</p>
             </div>
           `,
         }).catch((err) => console.error('Cancellation email failed:', err))
@@ -126,7 +126,7 @@ export async function PUT(request: Request) {
                 <tr><td style="padding:6px 12px;font-weight:bold;">Time</td><td style="padding:6px 12px;">${existing.booking_time}</td></tr>
               </table>
               <p>Looking forward to our meeting!</p>
-              <p style="color:#888;margin-top:20px;">— Sabbir Ahsan</p>
+              <p style="color:#888;margin-top:20px;">— DigiTitan AI</p>
             </div>
           `,
         }).catch((err) => console.error('Confirmation email failed:', err))

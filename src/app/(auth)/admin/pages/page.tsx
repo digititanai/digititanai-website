@@ -5,7 +5,8 @@ import {
   FileText, Save, Send, ChevronDown, ChevronRight, Plus, Trash2, Search, Globe,
   Loader2, Eye, Clock, Layers, Settings2, ExternalLink, Check, ArrowLeft,
   Star, HelpCircle, BookOpen, Sparkles, BarChart3, Briefcase, Zap,
-  Upload, X, Image as ImageIcon, ArrowUp, ArrowDown,
+  Upload, X, Image as ImageIcon, ArrowUp, ArrowDown, Users, TrendingUp,
+  Wrench, GitBranch, Rocket,
 } from 'lucide-react'
 import { getHomePageData, saveHomePageData, defaultHomePageData } from '@/lib/homePageData'
 import { defaultPageContent, defaultAboutContent } from '@/lib/pageContent'
@@ -30,8 +31,8 @@ interface PageListItem {
 }
 
 const pagesList: PageListItem[] = [
-  { id: 'home', title: 'Home', slug: '/', status: 'published', lastUpdated: '2024-03-20', sections: 6 },
-  { id: 'about', title: 'About', slug: '/about', status: 'published', lastUpdated: '2024-03-18', sections: 3 },
+  { id: 'home', title: 'Home', slug: '/', status: 'published', lastUpdated: '2024-03-20', sections: 12 },
+  { id: 'about', title: 'About', slug: '/about', status: 'published', lastUpdated: '2024-03-18', sections: 7 },
   { id: 'services', title: 'Services', slug: '/services', status: 'published', lastUpdated: '2024-03-15', sections: 2 },
   { id: 'portfolio', title: 'Portfolio', slug: '/portfolio', status: 'published', lastUpdated: '2024-03-14', sections: 2 },
   { id: 'blog', title: 'Blog', slug: '/blog', status: 'published', lastUpdated: '2024-03-12', sections: 2 },
@@ -292,6 +293,79 @@ export default function PagesManagement() {
               </div>
             </SectionWrapper>
 
+            {/* ═══ CLIENT LOGOS ═══ */}
+            <SectionWrapper title="Client Logos (Marquee)" icon={<Users className="w-4 h-4" />}>
+              <div className="space-y-4">
+                <Field label="Section Label" value={data.clientLogos.label} onChange={(v) => update('clientLogos', (c) => ({ ...c, label: v }))} />
+                <div className="pt-3 border-t border-brand-mid/6">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[11px] text-brand-cream/40 uppercase tracking-wider font-medium">Client Names ({data.clientLogos.clients.length})</span>
+                    <button onClick={() => update('clientLogos', (c) => ({ ...c, clients: [...c.clients, ''] }))}
+                      className="text-[11px] text-brand-gold hover:text-brand-gold-light flex items-center gap-1 transition-colors">
+                      <Plus className="w-3 h-3" /> Add Client
+                    </button>
+                  </div>
+                  <div className="space-y-1.5">
+                    {data.clientLogos.clients.map((client, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <span className="text-[10px] text-brand-cream/25 font-mono w-4 text-center">{i + 1}</span>
+                        <input value={client} onChange={(e) => update('clientLogos', (c) => ({ ...c, clients: c.clients.map((cl, j) => j === i ? e.target.value : cl) }))}
+                          className="flex-1 h-9 px-2.5 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-cream focus:outline-none focus:border-brand-mid/25 transition-all" placeholder="Client name" />
+                        <button onClick={() => update('clientLogos', (c) => ({ ...c, clients: c.clients.filter((_, j) => j !== i) }))}
+                          className="p-1 rounded hover:bg-red-500/10 text-brand-cream/40 hover:text-red-400 transition-all"><X className="w-3 h-3" /></button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </SectionWrapper>
+
+            {/* ═══ STATS ═══ */}
+            <SectionWrapper title="Stats Section" icon={<TrendingUp className="w-4 h-4" />}>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[11px] text-brand-cream/40 uppercase tracking-wider font-medium">Stats ({data.stats.stats.length})</span>
+                  <button onClick={() => update('stats', (s) => ({ ...s, stats: [...s.stats, { value: 0, suffix: '+', label: '', description: '' }] }))}
+                    className="text-[11px] text-brand-gold hover:text-brand-gold-light flex items-center gap-1 transition-colors">
+                    <Plus className="w-3 h-3" /> Add Stat
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {data.stats.stats.map((stat, i) => (
+                    <div key={i} className="bg-surface-200/30 border border-brand-mid/6 rounded-lg p-3.5 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] text-brand-cream/40 font-mono">Stat {i + 1}</span>
+                        <button onClick={() => update('stats', (s) => ({ ...s, stats: s.stats.filter((_, j) => j !== i) }))}
+                          className="text-red-400/60 hover:text-red-400 transition-colors"><Trash2 className="w-3 h-3" /></button>
+                      </div>
+                      <div className="grid grid-cols-4 gap-2">
+                        <div>
+                          <label className="block text-[10px] text-brand-cream/40 uppercase mb-1">Value</label>
+                          <input type="number" value={stat.value} onChange={(e) => update('stats', (s) => ({ ...s, stats: s.stats.map((st, j) => j === i ? { ...st, value: Number(e.target.value) } : st) }))}
+                            className="w-full h-9 px-2 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-cream focus:outline-none focus:border-brand-mid/25 text-center" />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] text-brand-cream/40 uppercase mb-1">Suffix</label>
+                          <input value={stat.suffix} onChange={(e) => update('stats', (s) => ({ ...s, stats: s.stats.map((st, j) => j === i ? { ...st, suffix: e.target.value } : st) }))}
+                            className="w-full h-9 px-2 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-cream focus:outline-none focus:border-brand-mid/25 text-center" placeholder="+" />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] text-brand-cream/40 uppercase mb-1">Label</label>
+                          <input value={stat.label} onChange={(e) => update('stats', (s) => ({ ...s, stats: s.stats.map((st, j) => j === i ? { ...st, label: e.target.value } : st) }))}
+                            className="w-full h-9 px-2 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-cream focus:outline-none focus:border-brand-mid/25" placeholder="Projects Delivered" />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] text-brand-cream/40 uppercase mb-1">Description</label>
+                          <input value={stat.description} onChange={(e) => update('stats', (s) => ({ ...s, stats: s.stats.map((st, j) => j === i ? { ...st, description: e.target.value } : st) }))}
+                            className="w-full h-9 px-2 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-cream/70 focus:outline-none focus:border-brand-mid/25" placeholder="Across 20+ industries" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </SectionWrapper>
+
             {/* ═══ SERVICES ═══ */}
             <SectionWrapper title="Services Overview" icon={<Layers className="w-4 h-4" />}>
               <div className="space-y-4">
@@ -383,6 +457,179 @@ export default function PagesManagement() {
                     className="w-full mt-2 flex items-center justify-center gap-1.5 py-2.5 border border-dashed border-brand-mid/12 hover:border-brand-mid/25 hover:bg-surface-100/30 rounded-lg text-brand-cream/40 hover:text-brand-cream/70 text-[11px] transition-all">
                     <Plus className="w-3 h-3" /> Add Project to Home
                   </button>
+                </div>
+              </div>
+            </SectionWrapper>
+
+            {/* ═══ WHY CHOOSE US ═══ */}
+            <SectionWrapper title="Why Choose Us" icon={<Zap className="w-4 h-4" />}>
+              <div className="space-y-4">
+                <Field label="Badge Text" value={data.whyChooseUs.badge} onChange={(v) => update('whyChooseUs', (w) => ({ ...w, badge: v }))} />
+                <Field label="Section Heading" value={data.whyChooseUs.heading} onChange={(v) => update('whyChooseUs', (w) => ({ ...w, heading: v }))} />
+                <Field label="Subtitle" value={data.whyChooseUs.subtitle} onChange={(v) => update('whyChooseUs', (w) => ({ ...w, subtitle: v }))} multiline />
+
+                <div className="pt-3 border-t border-brand-mid/6">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[11px] text-brand-cream/40 uppercase tracking-wider font-medium">Reasons ({data.whyChooseUs.reasons.length})</span>
+                    <button onClick={() => update('whyChooseUs', (w) => ({ ...w, reasons: [...w.reasons, { icon: 'Star', title: '', description: '' }] }))}
+                      className="text-[11px] text-brand-gold hover:text-brand-gold-light flex items-center gap-1 transition-colors">
+                      <Plus className="w-3 h-3" /> Add Reason
+                    </button>
+                  </div>
+                  <div className="space-y-3">
+                    {data.whyChooseUs.reasons.map((reason, i) => (
+                      <div key={i} className="bg-surface-200/30 border border-brand-mid/6 rounded-lg p-3.5 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[11px] text-brand-cream/40 font-mono">#{i + 1}</span>
+                            <label className="flex items-center gap-1.5 cursor-pointer">
+                              <input type="checkbox" checked={!!reason.highlight} onChange={(e) => update('whyChooseUs', (w) => ({ ...w, reasons: w.reasons.map((r, j) => j === i ? { ...r, highlight: e.target.checked } : r) }))}
+                                className="w-3.5 h-3.5 rounded border-brand-mid/20 bg-surface-100/50 text-brand-mid focus:ring-brand-mid/25" />
+                              <span className="text-[10px] text-brand-cream/40">Highlight</span>
+                            </label>
+                          </div>
+                          <div className="flex items-center gap-0.5">
+                            <button disabled={i === 0} onClick={() => update('whyChooseUs', (w) => { const arr = [...w.reasons]; [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]]; return { ...w, reasons: arr } })}
+                              className="p-1 rounded hover:bg-surface-300/60 text-brand-cream/40 hover:text-brand-cream disabled:opacity-20 transition-all"><ArrowUp className="w-3 h-3" /></button>
+                            <button disabled={i === data.whyChooseUs.reasons.length - 1} onClick={() => update('whyChooseUs', (w) => { const arr = [...w.reasons]; [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]]; return { ...w, reasons: arr } })}
+                              className="p-1 rounded hover:bg-surface-300/60 text-brand-cream/40 hover:text-brand-cream disabled:opacity-20 transition-all"><ArrowDown className="w-3 h-3" /></button>
+                            <button onClick={() => update('whyChooseUs', (w) => ({ ...w, reasons: w.reasons.filter((_, j) => j !== i) }))}
+                              className="p-1 rounded hover:bg-red-500/10 text-brand-cream/40 hover:text-red-400 transition-all"><Trash2 className="w-3 h-3" /></button>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-[100px_1fr] gap-2">
+                          <div><label className="block text-[10px] text-brand-cream/40 uppercase mb-1">Icon</label><IconPicker value={reason.icon} onChange={(v) => update('whyChooseUs', (w) => ({ ...w, reasons: w.reasons.map((r, j) => j === i ? { ...r, icon: v } : r) }))} /></div>
+                          <Field label="Title" value={reason.title} onChange={(v) => update('whyChooseUs', (w) => ({ ...w, reasons: w.reasons.map((r, j) => j === i ? { ...r, title: v } : r) }))} />
+                        </div>
+                        <Field label="Description" value={reason.description} onChange={(v) => update('whyChooseUs', (w) => ({ ...w, reasons: w.reasons.map((r, j) => j === i ? { ...r, description: v } : r) }))} multiline />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </SectionWrapper>
+
+            {/* ═══ RESULTS SHOWCASE ═══ */}
+            <SectionWrapper title="Results Showcase" icon={<TrendingUp className="w-4 h-4" />}>
+              <div className="space-y-4">
+                <Field label="Badge Text" value={data.results.badge} onChange={(v) => update('results', (r) => ({ ...r, badge: v }))} />
+                <Field label="Section Heading" value={data.results.heading} onChange={(v) => update('results', (r) => ({ ...r, heading: v }))} />
+                <Field label="Subtitle" value={data.results.subtitle} onChange={(v) => update('results', (r) => ({ ...r, subtitle: v }))} multiline />
+
+                <div className="pt-3 border-t border-brand-mid/6">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[11px] text-brand-cream/40 uppercase tracking-wider font-medium">Before/After Metrics ({data.results.results.length})</span>
+                    <button onClick={() => update('results', (r) => ({ ...r, results: [...r.results, { metric: '', before: '', after: '', improvement: '' }] }))}
+                      className="text-[11px] text-brand-gold hover:text-brand-gold-light flex items-center gap-1 transition-colors">
+                      <Plus className="w-3 h-3" /> Add Metric
+                    </button>
+                  </div>
+                  <div className="space-y-3">
+                    {data.results.results.map((result, i) => (
+                      <div key={i} className="bg-surface-200/30 border border-brand-mid/6 rounded-lg p-3.5">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-[11px] text-brand-cream/40 font-mono">Metric {i + 1}</span>
+                          <button onClick={() => update('results', (r) => ({ ...r, results: r.results.filter((_, j) => j !== i) }))}
+                            className="text-red-400/60 hover:text-red-400 transition-colors"><Trash2 className="w-3 h-3" /></button>
+                        </div>
+                        <div className="grid grid-cols-4 gap-2">
+                          <div>
+                            <label className="block text-[10px] text-brand-cream/40 uppercase mb-1">Metric Name</label>
+                            <input value={result.metric} onChange={(e) => update('results', (r) => ({ ...r, results: r.results.map((rs, j) => j === i ? { ...rs, metric: e.target.value } : rs) }))}
+                              className="w-full h-9 px-2 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-cream focus:outline-none focus:border-brand-mid/25" placeholder="Conversion Rate" />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] text-brand-cream/40 uppercase mb-1">Before</label>
+                            <input value={result.before} onChange={(e) => update('results', (r) => ({ ...r, results: r.results.map((rs, j) => j === i ? { ...rs, before: e.target.value } : rs) }))}
+                              className="w-full h-9 px-2 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-red-400/70 focus:outline-none focus:border-brand-mid/25 text-center" placeholder="1.2%" />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] text-brand-cream/40 uppercase mb-1">After</label>
+                            <input value={result.after} onChange={(e) => update('results', (r) => ({ ...r, results: r.results.map((rs, j) => j === i ? { ...rs, after: e.target.value } : rs) }))}
+                              className="w-full h-9 px-2 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-mid focus:outline-none focus:border-brand-mid/25 text-center" placeholder="4.8%" />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] text-brand-cream/40 uppercase mb-1">Change</label>
+                            <input value={result.improvement} onChange={(e) => update('results', (r) => ({ ...r, results: r.results.map((rs, j) => j === i ? { ...rs, improvement: e.target.value } : rs) }))}
+                              className="w-full h-9 px-2 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-gold focus:outline-none focus:border-brand-mid/25 text-center font-mono" placeholder="+300%" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </SectionWrapper>
+
+            {/* ═══ HOW IT WORKS ═══ */}
+            <SectionWrapper title="How It Works" icon={<Rocket className="w-4 h-4" />}>
+              <div className="space-y-4">
+                <Field label="Badge Text" value={data.howItWorks.badge} onChange={(v) => update('howItWorks', (h) => ({ ...h, badge: v }))} />
+                <Field label="Section Heading" value={data.howItWorks.heading} onChange={(v) => update('howItWorks', (h) => ({ ...h, heading: v }))} />
+                <Field label="Subtitle" value={data.howItWorks.subtitle} onChange={(v) => update('howItWorks', (h) => ({ ...h, subtitle: v }))} multiline />
+
+                <div className="pt-3 border-t border-brand-mid/6">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[11px] text-brand-cream/40 uppercase tracking-wider font-medium">Steps ({data.howItWorks.steps.length})</span>
+                    <button onClick={() => update('howItWorks', (h) => ({ ...h, steps: [...h.steps, { icon: 'Star', title: '', description: '' }] }))}
+                      className="text-[11px] text-brand-gold hover:text-brand-gold-light flex items-center gap-1 transition-colors">
+                      <Plus className="w-3 h-3" /> Add Step
+                    </button>
+                  </div>
+                  <div className="space-y-3">
+                    {data.howItWorks.steps.map((step, i) => (
+                      <div key={i} className="bg-surface-200/30 border border-brand-mid/6 rounded-lg p-3.5 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] text-brand-cream/40 font-mono">Step {String(i + 1).padStart(2, '0')}</span>
+                          <div className="flex items-center gap-0.5">
+                            <button disabled={i === 0} onClick={() => update('howItWorks', (h) => { const arr = [...h.steps]; [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]]; return { ...h, steps: arr } })}
+                              className="p-1 rounded hover:bg-surface-300/60 text-brand-cream/40 hover:text-brand-cream disabled:opacity-20 transition-all"><ArrowUp className="w-3 h-3" /></button>
+                            <button disabled={i === data.howItWorks.steps.length - 1} onClick={() => update('howItWorks', (h) => { const arr = [...h.steps]; [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]]; return { ...h, steps: arr } })}
+                              className="p-1 rounded hover:bg-surface-300/60 text-brand-cream/40 hover:text-brand-cream disabled:opacity-20 transition-all"><ArrowDown className="w-3 h-3" /></button>
+                            <button onClick={() => update('howItWorks', (h) => ({ ...h, steps: h.steps.filter((_, j) => j !== i) }))}
+                              className="p-1 rounded hover:bg-red-500/10 text-brand-cream/40 hover:text-red-400 transition-all"><Trash2 className="w-3 h-3" /></button>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-[100px_1fr] gap-2">
+                          <div><label className="block text-[10px] text-brand-cream/40 uppercase mb-1">Icon</label><IconPicker value={step.icon} onChange={(v) => update('howItWorks', (h) => ({ ...h, steps: h.steps.map((s, j) => j === i ? { ...s, icon: v } : s) }))} /></div>
+                          <Field label="Title" value={step.title} onChange={(v) => update('howItWorks', (h) => ({ ...h, steps: h.steps.map((s, j) => j === i ? { ...s, title: v } : s) }))} />
+                        </div>
+                        <Field label="Description" value={step.description} onChange={(v) => update('howItWorks', (h) => ({ ...h, steps: h.steps.map((s, j) => j === i ? { ...s, description: v } : s) }))} multiline />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </SectionWrapper>
+
+            {/* ═══ TOOLS & INTEGRATIONS ═══ */}
+            <SectionWrapper title="Tools & Integrations" icon={<Wrench className="w-4 h-4" />}>
+              <div className="space-y-4">
+                <Field label="Badge Text" value={data.tools.badge} onChange={(v) => update('tools', (t) => ({ ...t, badge: v }))} />
+                <Field label="Section Heading" value={data.tools.heading} onChange={(v) => update('tools', (t) => ({ ...t, heading: v }))} />
+                <Field label="Subtitle" value={data.tools.subtitle} onChange={(v) => update('tools', (t) => ({ ...t, subtitle: v }))} multiline />
+
+                <div className="pt-3 border-t border-brand-mid/6">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[11px] text-brand-cream/40 uppercase tracking-wider font-medium">Tools ({data.tools.tools.length})</span>
+                    <button onClick={() => update('tools', (t) => ({ ...t, tools: [...t.tools, { icon: 'Star', name: '', category: '' }] }))}
+                      className="text-[11px] text-brand-gold hover:text-brand-gold-light flex items-center gap-1 transition-colors">
+                      <Plus className="w-3 h-3" /> Add Tool
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {data.tools.tools.map((tool, i) => (
+                      <div key={i} className="grid grid-cols-[80px_1fr_120px_auto] gap-2 items-center">
+                        <IconPicker value={tool.icon} onChange={(v) => update('tools', (t) => ({ ...t, tools: t.tools.map((tl, j) => j === i ? { ...tl, icon: v } : tl) }))} />
+                        <input value={tool.name} onChange={(e) => update('tools', (t) => ({ ...t, tools: t.tools.map((tl, j) => j === i ? { ...tl, name: e.target.value } : tl) }))}
+                          className="h-9 px-2.5 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-cream focus:outline-none focus:border-brand-mid/25" placeholder="Tool name" />
+                        <input value={tool.category} onChange={(e) => update('tools', (t) => ({ ...t, tools: t.tools.map((tl, j) => j === i ? { ...tl, category: e.target.value } : tl) }))}
+                          className="h-9 px-2 text-[12px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-cream/60 focus:outline-none focus:border-brand-mid/25" placeholder="Category" />
+                        <button onClick={() => update('tools', (t) => ({ ...t, tools: t.tools.filter((_, j) => j !== i) }))}
+                          className="p-1 rounded hover:bg-red-500/10 text-brand-cream/40 hover:text-red-400 transition-all"><Trash2 className="w-3 h-3" /></button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </SectionWrapper>
@@ -562,7 +809,7 @@ export default function PagesManagement() {
               </div>
               <div className="bg-white rounded-lg p-4 max-w-lg">
                 <p className="text-[#1a0dab] text-[16px] leading-snug font-medium truncate">{data.seo.metaTitle || 'Home'}</p>
-                <p className="text-[#006621] text-[13px] mt-1 flex items-center gap-1"><ExternalLink className="w-3 h-3" />sabbirahsan.com</p>
+                <p className="text-[#006621] text-[13px] mt-1 flex items-center gap-1"><ExternalLink className="w-3 h-3" />digititanai.com</p>
                 <p className="text-[#545454] text-[13px] mt-1 line-clamp-2 leading-relaxed">{data.seo.metaDescription}</p>
               </div>
             </div>
@@ -658,6 +905,8 @@ export default function PagesManagement() {
       badge: 'Badge Text',
       heading: 'Main Heading',
       subtitle: 'Subtitle',
+      heroHeading: 'Hero Heading',
+      heroSubtitle: 'Hero Subtitle',
       bio1: 'Bio Paragraph 1',
       bio2: 'Bio Paragraph 2',
       email: 'Email Address',
@@ -735,19 +984,11 @@ export default function PagesManagement() {
           </div>
         </div>
 
-        {/* About Page — Photo */}
-        {editingPage === 'about' && (
-          <SectionWrapper title="Profile Photo" icon={<Star className="w-4 h-4" />} defaultOpen>
-            <ImageUploader label="About Page Photo" value={pageContentData.image || ''} onChange={(v) => { setPageContentData((prev: typeof pageContentData) => prev ? { ...prev, image: v } : prev); setPageContentSaved(false) }} hint="Recommended: Portrait photo, at least 600x800px" />
-          </SectionWrapper>
-        )}
-
         {/* Editor Content */}
         <SectionWrapper title={editingPage === 'header' ? 'Navbar Settings' : editingPage === 'footer' ? 'Footer Settings' : 'Hero Section'} icon={<Sparkles className="w-4 h-4" />} defaultOpen>
           <div className="space-y-4">
             {[
-              'badge', 'heading', 'subtitle',
-              ...(editingPage === 'about' ? ['bio1', 'bio2'] : []),
+              ...(editingPage === 'about' ? ['badge', 'heroHeading', 'heroSubtitle'] : ['badge', 'heading', 'subtitle']),
               ...(editingPage === 'contact' ? ['email', 'phone', 'location', 'hours', 'ctaHeading', 'ctaDescription', 'ctaButtonText', 'ctaButtonLink', 'followHeading'] : []),
               ...(editingPage === 'book' ? ['perks'] : []),
               ...(editingPage === 'services' ? ['viewDetailsText', 'pricingBtnText', 'consultationNote', 'bookBtnText', 'popularLabel'] : []),
@@ -772,21 +1013,23 @@ export default function PagesManagement() {
                 label={fieldLabels[field] || field.charAt(0).toUpperCase() + field.slice(1)}
                 value={pageContentData[field] || ''}
                 onChange={(v) => { setPageContentData((prev: typeof pageContentData) => prev ? { ...prev, [field]: v } : prev); setPageContentSaved(false) }}
-                multiline={field === 'subtitle' || field === 'bio1' || field === 'bio2' || field === 'perks' || field === 'consultationNote' || field === 'ctaDescription' || field === 'brandDescription'}
+                multiline={field === 'subtitle' || field === 'heroSubtitle' || field === 'bio1' || field === 'bio2' || field === 'perks' || field === 'consultationNote' || field === 'ctaDescription' || field === 'brandDescription'}
               />)
             ))}
           </div>
         </SectionWrapper>
 
-        {/* About Page — Stats */}
+        {/* ═══ ABOUT PAGE SECTIONS (in page order) ═══ */}
+
+        {/* About — Section 2: Stats */}
         {editingPage === 'about' && pageContentData.stats && (
           <SectionWrapper title="Stats" icon={<BarChart3 className="w-4 h-4" />}>
             <div className="space-y-3">
               {pageContentData.stats.map((s: { value: string; label: string }, i: number) => (
                 <div key={i} className="grid grid-cols-[80px_1fr_auto] gap-2 items-center">
-                  <input value={s.value} onChange={(e) => { const next = [...pageContentData.stats]; next[i] = { ...next[i], value: e.target.value }; setPageContentData((p: typeof pageContentData) => p ? { ...p, stats: next } : p); setPageContentSaved(false) }} className="h-9 px-2.5 text-[13px] font-bold bg-brand-darkest/40 border border-brand-mid/[0.06] rounded-lg text-brand-gold focus:outline-none focus:border-brand-mid/15 text-center" />
-                  <input value={s.label} onChange={(e) => { const next = [...pageContentData.stats]; next[i] = { ...next[i], label: e.target.value }; setPageContentData((p: typeof pageContentData) => p ? { ...p, stats: next } : p); setPageContentSaved(false) }} className="h-9 px-2.5 text-[13px] bg-brand-darkest/40 border border-brand-mid/[0.06] rounded-lg text-brand-cream focus:outline-none focus:border-brand-mid/15" />
-                  <button onClick={() => { const next = pageContentData.stats.filter((_: unknown, j: number) => j !== i); setPageContentData((p: typeof pageContentData) => p ? { ...p, stats: next } : p); setPageContentSaved(false) }} className="text-red-400/40 hover:text-red-400 p-1"><Trash2 className="w-3 h-3" /></button>
+                  <input value={s.value} onChange={(e) => { const next = [...pageContentData.stats]; next[i] = { ...next[i], value: e.target.value }; setPageContentData((p: typeof pageContentData) => p ? { ...p, stats: next } : p); setPageContentSaved(false) }} className="h-9 px-2.5 text-[13px] font-bold bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-gold focus:outline-none focus:border-brand-mid/25 text-center" />
+                  <input value={s.label} onChange={(e) => { const next = [...pageContentData.stats]; next[i] = { ...next[i], label: e.target.value }; setPageContentData((p: typeof pageContentData) => p ? { ...p, stats: next } : p); setPageContentSaved(false) }} placeholder="Label" className="h-9 px-2.5 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-cream focus:outline-none focus:border-brand-mid/25" />
+                  <button onClick={() => { const next = pageContentData.stats.filter((_: unknown, j: number) => j !== i); setPageContentData((p: typeof pageContentData) => p ? { ...p, stats: next } : p); setPageContentSaved(false) }} className="p-1 rounded hover:bg-red-500/10 text-brand-cream/40 hover:text-red-400 transition-all"><Trash2 className="w-3 h-3" /></button>
                 </div>
               ))}
               <button onClick={() => { setPageContentData((p: typeof pageContentData) => p ? { ...p, stats: [...(p.stats || []), { value: '', label: '' }] } : p); setPageContentSaved(false) }} className="w-full py-2 border border-dashed border-brand-mid/[0.08] rounded-lg text-[10px] text-brand-cream/30 hover:text-brand-cream/50 flex items-center justify-center gap-1"><Plus className="w-2.5 h-2.5" /> Add Stat</button>
@@ -794,70 +1037,213 @@ export default function PagesManagement() {
           </SectionWrapper>
         )}
 
-        {/* About Page — Skills */}
+        {/* About — Section 3: Who We Are */}
+        {editingPage === 'about' && pageContentData.checklist && (
+          <SectionWrapper title="Who We Are" icon={<Users className="w-4 h-4" />}>
+            <div className="space-y-4">
+              <FieldRow>
+                <Field label="Section Badge" value={pageContentData.whoWeAreBadge || ''} onChange={(v) => { setPageContentData((p: typeof pageContentData) => p ? { ...p, whoWeAreBadge: v } : p); setPageContentSaved(false) }} />
+                <Field label="Section Heading" value={pageContentData.whoWeAreHeading || ''} onChange={(v) => { setPageContentData((p: typeof pageContentData) => p ? { ...p, whoWeAreHeading: v } : p); setPageContentSaved(false) }} />
+              </FieldRow>
+              <Field label="Bio Paragraph 1" value={pageContentData.bio1 || ''} onChange={(v) => { setPageContentData((p: typeof pageContentData) => p ? { ...p, bio1: v } : p); setPageContentSaved(false) }} multiline />
+              <Field label="Bio Paragraph 2" value={pageContentData.bio2 || ''} onChange={(v) => { setPageContentData((p: typeof pageContentData) => p ? { ...p, bio2: v } : p); setPageContentSaved(false) }} multiline />
+
+              {/* Checklist */}
+              <div className="pt-3 border-t border-brand-mid/6">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[11px] text-brand-cream/40 uppercase tracking-wider font-medium">Checklist Items ({pageContentData.checklist.length})</span>
+                  <button onClick={() => { setPageContentData((p: typeof pageContentData) => p ? { ...p, checklist: [...(p.checklist || []), ''] } : p); setPageContentSaved(false) }}
+                    className="text-[11px] text-brand-gold hover:text-brand-gold-light flex items-center gap-1 transition-colors">
+                    <Plus className="w-3 h-3" /> Add Item
+                  </button>
+                </div>
+                <div className="space-y-1.5">
+                  {pageContentData.checklist.map((item: string, i: number) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <span className="text-[10px] text-brand-cream/25 font-mono w-4 text-center">{i + 1}</span>
+                      <input value={item} onChange={(e) => { const next = [...pageContentData.checklist]; next[i] = e.target.value; setPageContentData((p: typeof pageContentData) => p ? { ...p, checklist: next } : p); setPageContentSaved(false) }}
+                        className="flex-1 h-9 px-2.5 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-cream focus:outline-none focus:border-brand-mid/25 transition-all" placeholder="e.g. Server-side tracking experts" />
+                      <button onClick={() => { const next = pageContentData.checklist.filter((_: unknown, j: number) => j !== i); setPageContentData((p: typeof pageContentData) => p ? { ...p, checklist: next } : p); setPageContentSaved(false) }}
+                        className="p-1 rounded hover:bg-red-500/10 text-brand-cream/40 hover:text-red-400 transition-all"><X className="w-3 h-3" /></button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Credential Cards */}
+              <div className="pt-3 border-t border-brand-mid/6">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[11px] text-brand-cream/40 uppercase tracking-wider font-medium">Credential Cards ({(pageContentData.credentials || []).length})</span>
+                  <button onClick={() => { setPageContentData((p: typeof pageContentData) => p ? { ...p, credentials: [...(p.credentials || []), { icon: 'Star', label: '', sub: '' }] } : p); setPageContentSaved(false) }}
+                    className="text-[11px] text-brand-gold hover:text-brand-gold-light flex items-center gap-1 transition-colors">
+                    <Plus className="w-3 h-3" /> Add Credential
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {(pageContentData.credentials || []).map((card: { icon: string; label: string; sub: string }, i: number) => (
+                    <div key={i} className="grid grid-cols-[80px_1fr_1fr_auto] gap-2 items-center">
+                      <IconPicker value={card.icon} onChange={(v) => { const next = [...pageContentData.credentials]; next[i] = { ...next[i], icon: v }; setPageContentData((p: typeof pageContentData) => p ? { ...p, credentials: next } : p); setPageContentSaved(false) }} />
+                      <input value={card.label} onChange={(e) => { const next = [...pageContentData.credentials]; next[i] = { ...next[i], label: e.target.value }; setPageContentData((p: typeof pageContentData) => p ? { ...p, credentials: next } : p); setPageContentSaved(false) }}
+                        placeholder="Label" className="h-9 px-2.5 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-cream focus:outline-none focus:border-brand-mid/25" />
+                      <input value={card.sub} onChange={(e) => { const next = [...pageContentData.credentials]; next[i] = { ...next[i], sub: e.target.value }; setPageContentData((p: typeof pageContentData) => p ? { ...p, credentials: next } : p); setPageContentSaved(false) }}
+                        placeholder="Subtitle" className="h-9 px-2.5 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-cream/70 focus:outline-none focus:border-brand-mid/25" />
+                      <button onClick={() => { const next = pageContentData.credentials.filter((_: unknown, j: number) => j !== i); setPageContentData((p: typeof pageContentData) => p ? { ...p, credentials: next } : p); setPageContentSaved(false) }}
+                        className="p-1 rounded hover:bg-red-500/10 text-brand-cream/40 hover:text-red-400 transition-all"><Trash2 className="w-3 h-3" /></button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </SectionWrapper>
+        )}
+
+        {/* About — Section 4: Our Approach */}
+        {editingPage === 'about' && pageContentData.approach && (
+          <SectionWrapper title="Our Approach" icon={<Rocket className="w-4 h-4" />}>
+            <div className="space-y-4">
+              <FieldRow>
+                <Field label="Section Badge" value={pageContentData.approachBadge || ''} onChange={(v) => { setPageContentData((p: typeof pageContentData) => p ? { ...p, approachBadge: v } : p); setPageContentSaved(false) }} />
+                <Field label="Section Heading" value={pageContentData.approachHeading || ''} onChange={(v) => { setPageContentData((p: typeof pageContentData) => p ? { ...p, approachHeading: v } : p); setPageContentSaved(false) }} />
+              </FieldRow>
+
+              <div className="pt-3 border-t border-brand-mid/6">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[11px] text-brand-cream/40 uppercase tracking-wider font-medium">Steps ({pageContentData.approach.length})</span>
+                  <button onClick={() => { setPageContentData((p: typeof pageContentData) => p ? { ...p, approach: [...(p.approach || []), { num: String(p.approach.length + 1).padStart(2, '0'), title: '', desc: '' }] } : p); setPageContentSaved(false) }}
+                    className="text-[11px] text-brand-gold hover:text-brand-gold-light flex items-center gap-1 transition-colors">
+                    <Plus className="w-3 h-3" /> Add Step
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {pageContentData.approach.map((step: { num: string; title: string; desc: string }, i: number) => (
+                    <div key={i} className="bg-surface-200/30 border border-brand-mid/6 rounded-lg p-3.5 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] text-brand-cream/40 font-mono">Step {step.num}</span>
+                        <div className="flex items-center gap-0.5">
+                          <button disabled={i === 0} onClick={() => { const next = [...pageContentData.approach]; [next[i - 1], next[i]] = [next[i], next[i - 1]]; setPageContentData((p: typeof pageContentData) => p ? { ...p, approach: next } : p); setPageContentSaved(false) }}
+                            className="p-1 rounded hover:bg-surface-300/60 text-brand-cream/40 hover:text-brand-cream disabled:opacity-20 transition-all"><ArrowUp className="w-3 h-3" /></button>
+                          <button disabled={i === pageContentData.approach.length - 1} onClick={() => { const next = [...pageContentData.approach]; [next[i], next[i + 1]] = [next[i + 1], next[i]]; setPageContentData((p: typeof pageContentData) => p ? { ...p, approach: next } : p); setPageContentSaved(false) }}
+                            className="p-1 rounded hover:bg-surface-300/60 text-brand-cream/40 hover:text-brand-cream disabled:opacity-20 transition-all"><ArrowDown className="w-3 h-3" /></button>
+                          <button onClick={() => { const next = pageContentData.approach.filter((_: unknown, j: number) => j !== i); setPageContentData((p: typeof pageContentData) => p ? { ...p, approach: next } : p); setPageContentSaved(false) }}
+                            className="p-1 rounded hover:bg-red-500/10 text-brand-cream/40 hover:text-red-400 transition-all"><Trash2 className="w-3 h-3" /></button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-[60px_1fr] gap-2">
+                        <div>
+                          <label className="block text-[10px] text-brand-cream/40 uppercase mb-1">Num</label>
+                          <input value={step.num} onChange={(e) => { const next = [...pageContentData.approach]; next[i] = { ...next[i], num: e.target.value }; setPageContentData((p: typeof pageContentData) => p ? { ...p, approach: next } : p); setPageContentSaved(false) }}
+                            className="w-full h-9 px-2 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-mid font-mono font-bold focus:outline-none focus:border-brand-mid/25 text-center" />
+                        </div>
+                        <Field label="Title" value={step.title} onChange={(v) => { const next = [...pageContentData.approach]; next[i] = { ...next[i], title: v }; setPageContentData((p: typeof pageContentData) => p ? { ...p, approach: next } : p); setPageContentSaved(false) }} />
+                      </div>
+                      <Field label="Description" value={step.desc} onChange={(v) => { const next = [...pageContentData.approach]; next[i] = { ...next[i], desc: v }; setPageContentData((p: typeof pageContentData) => p ? { ...p, approach: next } : p); setPageContentSaved(false) }} multiline />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </SectionWrapper>
+        )}
+
+        {/* About — Section 5: Why Choose Us */}
+        {editingPage === 'about' && pageContentData.whyUs && (
+          <SectionWrapper title="Why Choose Us" icon={<Zap className="w-4 h-4" />}>
+            <div className="space-y-4">
+              <Field label="Section Badge" value={pageContentData.whyUsBadge || ''} onChange={(v) => { setPageContentData((p: typeof pageContentData) => p ? { ...p, whyUsBadge: v } : p); setPageContentSaved(false) }} />
+              <Field label="Section Heading" value={pageContentData.whyUsHeading || ''} onChange={(v) => { setPageContentData((p: typeof pageContentData) => p ? { ...p, whyUsHeading: v } : p); setPageContentSaved(false) }} />
+              <Field label="Section Subtitle (optional)" value={pageContentData.whyUsSubtitle || ''} onChange={(v) => { setPageContentData((p: typeof pageContentData) => p ? { ...p, whyUsSubtitle: v } : p); setPageContentSaved(false) }} multiline />
+
+              <div className="pt-3 border-t border-brand-mid/6">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[11px] text-brand-cream/40 uppercase tracking-wider font-medium">Reasons ({pageContentData.whyUs.length})</span>
+                  <button onClick={() => { setPageContentData((p: typeof pageContentData) => p ? { ...p, whyUs: [...(p.whyUs || []), { icon: 'Star', title: '', desc: '' }] } : p); setPageContentSaved(false) }}
+                    className="text-[11px] text-brand-gold hover:text-brand-gold-light flex items-center gap-1 transition-colors">
+                    <Plus className="w-3 h-3" /> Add Reason
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {pageContentData.whyUs.map((item: { icon: string; title: string; desc: string }, i: number) => (
+                    <div key={i} className="bg-surface-200/30 border border-brand-mid/6 rounded-lg p-3.5 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] text-brand-cream/40 font-mono">#{i + 1}</span>
+                        <div className="flex items-center gap-0.5">
+                          <button disabled={i === 0} onClick={() => { const next = [...pageContentData.whyUs]; [next[i - 1], next[i]] = [next[i], next[i - 1]]; setPageContentData((p: typeof pageContentData) => p ? { ...p, whyUs: next } : p); setPageContentSaved(false) }}
+                            className="p-1 rounded hover:bg-surface-300/60 text-brand-cream/40 hover:text-brand-cream disabled:opacity-20 transition-all"><ArrowUp className="w-3 h-3" /></button>
+                          <button disabled={i === pageContentData.whyUs.length - 1} onClick={() => { const next = [...pageContentData.whyUs]; [next[i], next[i + 1]] = [next[i + 1], next[i]]; setPageContentData((p: typeof pageContentData) => p ? { ...p, whyUs: next } : p); setPageContentSaved(false) }}
+                            className="p-1 rounded hover:bg-surface-300/60 text-brand-cream/40 hover:text-brand-cream disabled:opacity-20 transition-all"><ArrowDown className="w-3 h-3" /></button>
+                          <button onClick={() => { const next = pageContentData.whyUs.filter((_: unknown, j: number) => j !== i); setPageContentData((p: typeof pageContentData) => p ? { ...p, whyUs: next } : p); setPageContentSaved(false) }}
+                            className="p-1 rounded hover:bg-red-500/10 text-brand-cream/40 hover:text-red-400 transition-all"><Trash2 className="w-3 h-3" /></button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-[80px_1fr] gap-2">
+                        <div><label className="block text-[10px] text-brand-cream/40 uppercase mb-1">Icon</label><IconPicker value={item.icon} onChange={(v) => { const next = [...pageContentData.whyUs]; next[i] = { ...next[i], icon: v }; setPageContentData((p: typeof pageContentData) => p ? { ...p, whyUs: next } : p); setPageContentSaved(false) }} /></div>
+                        <Field label="Title" value={item.title} onChange={(v) => { const next = [...pageContentData.whyUs]; next[i] = { ...next[i], title: v }; setPageContentData((p: typeof pageContentData) => p ? { ...p, whyUs: next } : p); setPageContentSaved(false) }} />
+                      </div>
+                      <Field label="Description" value={item.desc} onChange={(v) => { const next = [...pageContentData.whyUs]; next[i] = { ...next[i], desc: v }; setPageContentData((p: typeof pageContentData) => p ? { ...p, whyUs: next } : p); setPageContentSaved(false) }} multiline />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </SectionWrapper>
+        )}
+
+        {/* About — Section 6: Skills */}
         {editingPage === 'about' && pageContentData.skills && (
           <SectionWrapper title="Skills" icon={<Zap className="w-4 h-4" />}>
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-4">
+              <FieldRow>
                 <Field label="Section Badge" value={pageContentData.skillsBadge || ''} onChange={(v) => { setPageContentData((p: typeof pageContentData) => p ? { ...p, skillsBadge: v } : p); setPageContentSaved(false) }} />
                 <Field label="Section Heading" value={pageContentData.skillsHeading || ''} onChange={(v) => { setPageContentData((p: typeof pageContentData) => p ? { ...p, skillsHeading: v } : p); setPageContentSaved(false) }} />
-              </div>
-              {pageContentData.skills.map((s: { name: string; icon: string; desc: string }, i: number) => (
-                <div key={i} className="grid grid-cols-[1fr_100px_1fr_auto] gap-2 items-center">
-                  <input value={s.name} onChange={(e) => { const next = [...pageContentData.skills]; next[i] = { ...next[i], name: e.target.value }; setPageContentData((p: typeof pageContentData) => p ? { ...p, skills: next } : p); setPageContentSaved(false) }} placeholder="Skill Name" className="h-9 px-2.5 text-[13px] bg-brand-darkest/40 border border-brand-mid/[0.06] rounded-lg text-brand-cream focus:outline-none focus:border-brand-mid/15" />
-                  <IconPicker value={s.icon} onChange={(v) => { const next = [...pageContentData.skills]; next[i] = { ...next[i], icon: v }; setPageContentData((p: typeof pageContentData) => p ? { ...p, skills: next } : p); setPageContentSaved(false) }} />
-                  <input value={s.desc} onChange={(e) => { const next = [...pageContentData.skills]; next[i] = { ...next[i], desc: e.target.value }; setPageContentData((p: typeof pageContentData) => p ? { ...p, skills: next } : p); setPageContentSaved(false) }} placeholder="Description" className="h-9 px-2.5 text-[13px] bg-brand-darkest/40 border border-brand-mid/[0.06] rounded-lg text-brand-cream/70 focus:outline-none focus:border-brand-mid/15" />
-                  <button onClick={() => { const next = pageContentData.skills.filter((_: unknown, j: number) => j !== i); setPageContentData((p: typeof pageContentData) => p ? { ...p, skills: next } : p); setPageContentSaved(false) }} className="text-red-400/40 hover:text-red-400 p-1"><Trash2 className="w-3 h-3" /></button>
+              </FieldRow>
+              <div className="pt-3 border-t border-brand-mid/6">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[11px] text-brand-cream/40 uppercase tracking-wider font-medium">Skills ({pageContentData.skills.length})</span>
+                  <button onClick={() => { setPageContentData((p: typeof pageContentData) => p ? { ...p, skills: [...(p.skills || []), { name: '', icon: 'Star', desc: '' }] } : p); setPageContentSaved(false) }}
+                    className="text-[11px] text-brand-gold hover:text-brand-gold-light flex items-center gap-1 transition-colors">
+                    <Plus className="w-3 h-3" /> Add Skill
+                  </button>
                 </div>
-              ))}
-              <button onClick={() => { setPageContentData((p: typeof pageContentData) => p ? { ...p, skills: [...(p.skills || []), { name: '', icon: 'Star', desc: '' }] } : p); setPageContentSaved(false) }} className="w-full py-2 border border-dashed border-brand-mid/[0.08] rounded-lg text-[10px] text-brand-cream/30 hover:text-brand-cream/50 flex items-center justify-center gap-1"><Plus className="w-2.5 h-2.5" /> Add Skill</button>
+                <div className="space-y-2">
+                  {pageContentData.skills.map((s: { name: string; icon: string; desc: string }, i: number) => (
+                    <div key={i} className="grid grid-cols-[1fr_80px_1fr_auto] gap-2 items-center">
+                      <input value={s.name} onChange={(e) => { const next = [...pageContentData.skills]; next[i] = { ...next[i], name: e.target.value }; setPageContentData((p: typeof pageContentData) => p ? { ...p, skills: next } : p); setPageContentSaved(false) }} placeholder="Skill Name" className="h-9 px-2.5 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-cream focus:outline-none focus:border-brand-mid/25" />
+                      <IconPicker value={s.icon} onChange={(v) => { const next = [...pageContentData.skills]; next[i] = { ...next[i], icon: v }; setPageContentData((p: typeof pageContentData) => p ? { ...p, skills: next } : p); setPageContentSaved(false) }} />
+                      <input value={s.desc} onChange={(e) => { const next = [...pageContentData.skills]; next[i] = { ...next[i], desc: e.target.value }; setPageContentData((p: typeof pageContentData) => p ? { ...p, skills: next } : p); setPageContentSaved(false) }} placeholder="Description" className="h-9 px-2.5 text-[13px] bg-surface-100/50 border border-brand-mid/10 rounded-lg text-brand-cream/70 focus:outline-none focus:border-brand-mid/25" />
+                      <button onClick={() => { const next = pageContentData.skills.filter((_: unknown, j: number) => j !== i); setPageContentData((p: typeof pageContentData) => p ? { ...p, skills: next } : p); setPageContentSaved(false) }} className="p-1 rounded hover:bg-red-500/10 text-brand-cream/40 hover:text-red-400 transition-all"><Trash2 className="w-3 h-3" /></button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </SectionWrapper>
         )}
 
-        {/* About Page — Experience */}
-        {editingPage === 'about' && pageContentData.experiences && (
-          <SectionWrapper title="Experience" icon={<Briefcase className="w-4 h-4" />}>
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Section Badge" value={pageContentData.experienceBadge || ''} onChange={(v) => { setPageContentData((p: typeof pageContentData) => p ? { ...p, experienceBadge: v } : p); setPageContentSaved(false) }} />
-                <Field label="Section Heading" value={pageContentData.experienceHeading || ''} onChange={(v) => { setPageContentData((p: typeof pageContentData) => p ? { ...p, experienceHeading: v } : p); setPageContentSaved(false) }} />
-              </div>
-              {pageContentData.experiences.map((exp: { year: string; role: string; company: string; desc: string }, i: number) => (
-                <div key={i} className="rounded-lg border border-brand-mid/[0.06] bg-brand-darkest/30 p-3 space-y-2">
-                  <div className="grid grid-cols-[120px_1fr_1fr] gap-2">
-                    <input value={exp.year} onChange={(e) => { const next = [...pageContentData.experiences]; next[i] = { ...next[i], year: e.target.value }; setPageContentData((p: typeof pageContentData) => p ? { ...p, experiences: next } : p); setPageContentSaved(false) }} placeholder="2022 – Present" className="h-8 px-2 text-[11px] bg-brand-darkest/50 border border-brand-mid/[0.06] rounded-md text-brand-gold font-mono focus:outline-none" />
-                    <input value={exp.role} onChange={(e) => { const next = [...pageContentData.experiences]; next[i] = { ...next[i], role: e.target.value }; setPageContentData((p: typeof pageContentData) => p ? { ...p, experiences: next } : p); setPageContentSaved(false) }} placeholder="Role" className="h-8 px-2 text-[12px] bg-brand-darkest/50 border border-brand-mid/[0.06] rounded-md text-brand-cream font-medium focus:outline-none" />
-                    <input value={exp.company} onChange={(e) => { const next = [...pageContentData.experiences]; next[i] = { ...next[i], company: e.target.value }; setPageContentData((p: typeof pageContentData) => p ? { ...p, experiences: next } : p); setPageContentSaved(false) }} placeholder="Company" className="h-8 px-2 text-[12px] bg-brand-darkest/50 border border-brand-mid/[0.06] rounded-md text-brand-cream/70 focus:outline-none" />
-                  </div>
-                  <div className="flex gap-2">
-                    <input value={exp.desc} onChange={(e) => { const next = [...pageContentData.experiences]; next[i] = { ...next[i], desc: e.target.value }; setPageContentData((p: typeof pageContentData) => p ? { ...p, experiences: next } : p); setPageContentSaved(false) }} placeholder="Description" className="flex-1 h-8 px-2 text-[12px] bg-brand-darkest/50 border border-brand-mid/[0.06] rounded-md text-brand-cream/60 focus:outline-none" />
-                    <button onClick={() => { const next = pageContentData.experiences.filter((_: unknown, j: number) => j !== i); setPageContentData((p: typeof pageContentData) => p ? { ...p, experiences: next } : p); setPageContentSaved(false) }} className="text-red-400/40 hover:text-red-400 p-1"><Trash2 className="w-3 h-3" /></button>
-                  </div>
-                </div>
-              ))}
-              <button onClick={() => { setPageContentData((p: typeof pageContentData) => p ? { ...p, experiences: [...(p.experiences || []), { year: '', role: '', company: '', desc: '' }] } : p); setPageContentSaved(false) }} className="w-full py-2 border border-dashed border-brand-mid/[0.08] rounded-lg text-[10px] text-brand-cream/30 hover:text-brand-cream/50 flex items-center justify-center gap-1"><Plus className="w-2.5 h-2.5" /> Add Experience</button>
-            </div>
-          </SectionWrapper>
-        )}
-
-        {/* About Page — Tools */}
+        {/* About — Section 7: Tools */}
         {editingPage === 'about' && pageContentData.tools && (
           <SectionWrapper title="Tech Stack & Tools" icon={<Settings2 className="w-4 h-4" />}>
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-4">
+              <FieldRow>
                 <Field label="Section Badge" value={pageContentData.toolsBadge || ''} onChange={(v) => { setPageContentData((p: typeof pageContentData) => p ? { ...p, toolsBadge: v } : p); setPageContentSaved(false) }} />
                 <Field label="Section Heading" value={pageContentData.toolsHeading || ''} onChange={(v) => { setPageContentData((p: typeof pageContentData) => p ? { ...p, toolsHeading: v } : p); setPageContentSaved(false) }} />
+              </FieldRow>
+              <div className="pt-3 border-t border-brand-mid/6">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[11px] text-brand-cream/40 uppercase tracking-wider font-medium">Tools ({pageContentData.tools.length})</span>
+                  <button onClick={() => { setPageContentData((p: typeof pageContentData) => p ? { ...p, tools: [...(p.tools || []), ''] } : p); setPageContentSaved(false) }}
+                    className="text-[11px] text-brand-gold hover:text-brand-gold-light flex items-center gap-1 transition-colors">
+                    <Plus className="w-3 h-3" /> Add Tool
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {pageContentData.tools.map((tool: string, i: number) => (
+                    <div key={i} className="flex items-center gap-1 bg-surface-100/50 border border-brand-mid/10 rounded-lg px-2.5 py-1.5">
+                      <input value={tool} onChange={(e) => { const next = [...pageContentData.tools]; next[i] = e.target.value; setPageContentData((p: typeof pageContentData) => p ? { ...p, tools: next } : p); setPageContentSaved(false) }} className="w-28 h-6 text-[12px] bg-transparent text-brand-cream focus:outline-none" />
+                      <button onClick={() => { const next = pageContentData.tools.filter((_: unknown, j: number) => j !== i); setPageContentData((p: typeof pageContentData) => p ? { ...p, tools: next } : p); setPageContentSaved(false) }} className="text-red-400/30 hover:text-red-400"><X className="w-2.5 h-2.5" /></button>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {pageContentData.tools.map((tool: string, i: number) => (
-                  <div key={i} className="flex items-center gap-1 bg-brand-darkest/40 border border-brand-mid/[0.06] rounded-lg px-2 py-1">
-                    <input value={tool} onChange={(e) => { const next = [...pageContentData.tools]; next[i] = e.target.value; setPageContentData((p: typeof pageContentData) => p ? { ...p, tools: next } : p); setPageContentSaved(false) }} className="w-28 h-6 text-[11px] bg-transparent text-brand-cream focus:outline-none" />
-                    <button onClick={() => { const next = pageContentData.tools.filter((_: unknown, j: number) => j !== i); setPageContentData((p: typeof pageContentData) => p ? { ...p, tools: next } : p); setPageContentSaved(false) }} className="text-red-400/30 hover:text-red-400"><X className="w-2.5 h-2.5" /></button>
-                  </div>
-                ))}
-              </div>
-              <button onClick={() => { setPageContentData((p: typeof pageContentData) => p ? { ...p, tools: [...(p.tools || []), ''] } : p); setPageContentSaved(false) }} className="w-full py-2 border border-dashed border-brand-mid/[0.08] rounded-lg text-[10px] text-brand-cream/30 hover:text-brand-cream/50 flex items-center justify-center gap-1"><Plus className="w-2.5 h-2.5" /> Add Tool</button>
             </div>
           </SectionWrapper>
         )}
@@ -1032,7 +1418,7 @@ export default function PagesManagement() {
             {/* Search Preview */}
             <div className="bg-white rounded-lg p-4 max-w-lg">
               <p className="text-[#1a0dab] text-[16px] font-medium truncate">{pageContentData.seoTitle || pageContentData.heading || 'Page Title'}</p>
-              <p className="text-[#006621] text-[13px] mt-1">sabbirahsan.com{page?.slug}</p>
+              <p className="text-[#006621] text-[13px] mt-1">digititanai.com{page?.slug}</p>
               <p className="text-[#545454] text-[13px] mt-1 line-clamp-2">{pageContentData.seoDescription || pageContentData.subtitle || 'Meta description...'}</p>
             </div>
           </div>

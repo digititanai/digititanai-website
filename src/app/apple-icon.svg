@@ -1,5 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180">
-  <rect width="180" height="180" rx="40" fill="#0E3529"/>
-  <rect x="3" y="3" width="174" height="174" rx="37" fill="none" stroke="#B89B4A" stroke-opacity="0.2" stroke-width="3"/>
-  <path d="M45 100 L67 68 L90 112 L113 56 L135 100" fill="none" stroke="#B89B4A" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1321"/>
+      <stop offset="100%" stop-color="#0a0f1a"/>
+    </linearGradient>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#0891b2"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="180" height="180" rx="40" fill="url(#bg)"/>
+  <rect x="2" y="2" width="176" height="176" rx="38" fill="none" stroke="url(#g)" stroke-opacity=".2" stroke-width="1.5"/>
+  <!-- D letterform as abstract titan shield -->
+  <path d="M55 40h32c32 0 50 20 50 50s-18 50-50 50H55z" fill="none" stroke="url(#g)" stroke-width="8" stroke-linejoin="round"/>
+  <!-- Circuit / data lines inside -->
+  <line x1="78" y1="68" x2="105" y2="68" stroke="#22d3ee" stroke-width="5" stroke-linecap="round" stroke-opacity=".7"/>
+  <line x1="78" y1="90" x2="115" y2="90" stroke="#06b6d4" stroke-width="5" stroke-linecap="round" filter="url(#glow)"/>
+  <line x1="78" y1="112" x2="97" y2="112" stroke="#22d3ee" stroke-width="5" stroke-linecap="round" stroke-opacity=".7"/>
+  <!-- Glow dot -->
+  <circle cx="118" cy="90" r="7" fill="#22d3ee" opacity=".9" filter="url(#glow)"/>
+  <circle cx="118" cy="90" r="14" fill="#22d3ee" opacity=".1"/>
 </svg>

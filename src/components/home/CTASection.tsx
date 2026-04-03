@@ -1,117 +1,95 @@
-'use client';
+'use client'
 
-import { useRef, useCallback } from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { useRef, useCallback } from 'react'
+import Link from 'next/link'
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion'
+import { ArrowRight } from 'lucide-react'
 
-/* ── Magnetic Button ── */
-function MagneticButton({
-  children,
-  className,
-  href,
-}: {
-  children: React.ReactNode;
-  className: string;
-  href: string;
-}) {
-  const ref = useRef<HTMLAnchorElement>(null);
+function MagneticButton({ children, href, className }: { children: React.ReactNode; href: string; className?: string }) {
+  const ref = useRef<HTMLAnchorElement>(null)
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const springX = useSpring(x, { stiffness: 150, damping: 15 })
+  const springY = useSpring(y, { stiffness: 150, damping: 15 })
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    ref.current.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
-  }, []);
+    if (!ref.current) return
+    const rect = ref.current.getBoundingClientRect()
+    x.set((e.clientX - rect.left - rect.width / 2) * 0.3)
+    y.set((e.clientY - rect.top - rect.height / 2) * 0.3)
+  }, [x, y])
 
   const handleMouseLeave = useCallback(() => {
-    if (!ref.current) return;
-    ref.current.style.transform = 'translate(0, 0)';
-  }, []);
+    x.set(0)
+    y.set(0)
+  }, [x, y])
 
   return (
-    <Link
-      ref={ref}
-      href={href}
-      className={`${className} magnetic-btn`}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-    >
-      {children}
-    </Link>
-  );
+    <motion.div style={{ x: springX, y: springY }}>
+      <Link ref={ref} href={href} className={`magnetic-btn ${className}`} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
+        {children}
+      </Link>
+    </motion.div>
+  )
 }
 
 export default function CTASection() {
+  const ref = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const bgY = useTransform(scrollYProgress, [0, 1], [60, -60])
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.98])
+  const rotateX = useTransform(scrollYProgress, [0, 0.5, 1], [4, 0, -2])
+  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.8, 1], [0, 1, 1, 0.5])
+
   return (
-    <section className="section-gap">
-      <div className="container-main">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.8, ease: [0.25, 0.4, 0, 1] }}
-          className="relative card-gold p-12 md:p-20 text-center overflow-hidden"
+    <section ref={ref} className="relative py-24 md:py-32 overflow-hidden perspective-2000">
+      {/* Background */}
+      <div className="absolute inset-0 bg-grid opacity-30" />
+      <motion.div
+        className="absolute inset-0"
+        style={{
+          y: bgY,
+          background: 'radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.08) 0%, transparent 60%)',
+        }}
+      />
+
+      <motion.div className="container-main relative z-10 text-center" style={{ opacity, scale, rotateX }}>
+        <motion.h2
+          className="heading-xl max-w-4xl mx-auto"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
         >
-          {/* Mesh gradient background */}
-          <div
-            className="pointer-events-none absolute inset-0 z-0"
-            style={{
-              background:
-                'radial-gradient(ellipse at 30% 30%, rgba(75,138,108,0.12) 0%, transparent 50%), radial-gradient(ellipse at 70% 70%, rgba(184,155,74,0.1) 0%, transparent 50%)',
-            }}
-          />
+          Ready to <span className="gradient-text">Transform</span> Your Digital Presence?
+        </motion.h2>
 
-          {/* Floating gold dots */}
-          <div className="absolute top-8 left-8 w-2 h-2 rounded-full bg-brand-gold/30 animate-float" />
-          <div className="absolute top-12 right-16 w-1.5 h-1.5 rounded-full bg-brand-gold/20 animate-float-slow" />
-          <div className="absolute bottom-10 left-20 w-1.5 h-1.5 rounded-full bg-brand-gold/25 animate-float" />
-          <div className="absolute bottom-16 right-12 w-2 h-2 rounded-full bg-brand-gold/20 animate-float-slow" />
-          <div className="absolute top-1/2 left-6 w-1 h-1 rounded-full bg-brand-gold/15 animate-bounce-subtle" />
-          <div className="absolute top-1/3 right-8 w-1 h-1 rounded-full bg-brand-gold/15 animate-bounce-subtle" />
+        <motion.p
+          className="mt-6 body-lg max-w-xl mx-auto text-brand-cream-dark"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1, duration: 0.6 }}
+        >
+          Book a free discovery call and let&apos;s discuss how we can drive measurable growth for your business.
+        </motion.p>
 
-          {/* Content */}
-          <div className="relative z-10">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2, duration: 0.7 }}
-              className="heading-lg"
-            >
-              Ready to Transform Your
-              <br />
-              Digital Presence?
-            </motion.h2>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.35, duration: 0.7 }}
-              className="body-lg mt-5 max-w-lg mx-auto"
-            >
-              Let&apos;s talk about what we can create together. From strategy to
-              execution, I&apos;m here to help your brand grow.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.5, duration: 0.7 }}
-              className="mt-10 flex items-center justify-center gap-4"
-            >
-              <MagneticButton href="/contact" className="btn-primary">
-                Start a Project
-              </MagneticButton>
-              <MagneticButton href="/book" className="btn-secondary">
-                Book a Free Call
-              </MagneticButton>
-            </motion.div>
-          </div>
+        <motion.div
+          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+        >
+          <MagneticButton href="/book" className="btn-primary animate-magnetic-pulse gap-2.5">
+            Book Free Consultation
+            <ArrowRight className="w-4 h-4" />
+          </MagneticButton>
+          <MagneticButton href="/services" className="btn-secondary gap-2.5">
+            Explore Services
+          </MagneticButton>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
-  );
+  )
 }

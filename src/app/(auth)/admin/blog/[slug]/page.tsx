@@ -591,7 +591,7 @@ Triggered when a customer reaches a specific milestone: 30 days after purchase, 
 Sent 7-14 days after purchase or project completion. First email asks for a rating. If positive (4-5 stars), the second email asks them to post on Google, G2, or Trustpilot with a direct link. If negative, it routes to customer support. This protects your public reputation while still collecting honest feedback.` },
     { id: 'timing-and-optimization', label: 'Timing & Optimization Best Practices', content: `- **Send times:** Tuesday-Thursday, 10 AM or 2 PM in the recipient's timezone. But test this — some audiences respond better at 7 AM or 8 PM
 - **Subject lines:** Keep under 50 characters. Personalization (using their name or company) increases open rates by 22%
-- **From name:** Use a person's name, not a company name. "Sabbir from [Company]" outperforms "[Company] Team"
+- **From name:** Use a person's name, not a company name. "DigiTitan AI from [Company]" outperforms "[Company] Team"
 - **Unsubscribe rate:** If any email in a sequence has an unsubscribe rate above 0.5%, rewrite it immediately
 - **A/B test continuously:** Test subject lines on every send. The winner becomes the default, the loser gets replaced
 
@@ -724,7 +724,7 @@ export default function BlogDetailEditor() {
       // Seed from collection data
       const seeded: BlogDetail = {
         title: post?.title || '', category: post?.category || '', date: post?.date || '', readTime: post?.readTime || '',
-        excerpt: post?.excerpt || '', image: post?.image || '', author: 'Sabbir Ahsan', authorRole: 'Digital Marketer & MarTech Specialist', authorInitials: 'SA',
+        excerpt: post?.excerpt || '', image: post?.image || '', author: 'DigiTitan AI', authorRole: 'AI-Powered Digital Solutions', authorInitials: 'DT',
         intro: defaultIntroSeeds[slug] || '', toc: defaultTocSeeds[slug] || [], ctaHeading: 'Want to implement this?', ctaDescription: "Let's discuss how to apply these strategies to your business.",
         ctaButtonText: 'Book a Free Consultation', ctaButtonLink: '/book', ctaSubtext: 'No payment required',
         relatedSectionTitle: 'Keep Reading', featured: post?.featured || false,
@@ -800,7 +800,7 @@ export default function BlogDetailEditor() {
           <div className="grid grid-cols-3 gap-3">
             <div><label className="block text-[11px] text-brand-cream/50 uppercase tracking-wider mb-1.5 font-medium">Name</label><input type="text" value={d.author} onChange={(e) => setD((p) => ({ ...p, author: e.target.value }))} className={inp} /></div>
             <div><label className="block text-[11px] text-brand-cream/50 uppercase tracking-wider mb-1.5 font-medium">Role / Title</label><input type="text" value={d.authorRole} onChange={(e) => setD((p) => ({ ...p, authorRole: e.target.value }))} className={inp} /></div>
-            <div><label className="block text-[11px] text-brand-cream/50 uppercase tracking-wider mb-1.5 font-medium">Avatar Initials</label><input type="text" value={d.authorInitials || ''} onChange={(e) => setD((p) => ({ ...p, authorInitials: e.target.value }))} placeholder="SA" maxLength={3} className={inp} /></div>
+            <div><label className="block text-[11px] text-brand-cream/50 uppercase tracking-wider mb-1.5 font-medium">Avatar Initials</label><input type="text" value={d.authorInitials || ''} onChange={(e) => setD((p) => ({ ...p, authorInitials: e.target.value }))} placeholder="DT" maxLength={3} className={inp} /></div>
           </div>
         </div>
       </SectionBlock>

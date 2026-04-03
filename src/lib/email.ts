@@ -26,11 +26,11 @@ async function getAccessToken(): Promise<string> {
 // Send email via Gmail API (OAuth2 — no app password needed)
 export async function sendEmail({ to, subject, html }: EmailOptions) {
   const accessToken = await getAccessToken()
-  const from = process.env.GMAIL_USER || 'sabbirahsan73@gmail.com'
+  const from = process.env.GMAIL_USER || 'digititanai@gmail.com'
 
   // Build MIME message
   const mimeMessage = [
-    `From: "Sabbir Ahsan" <${from}>`,
+    `From: "DigiTitan AI" <${from}>`,
     `To: ${to}`,
     `Subject: ${subject}`,
     'MIME-Version: 1.0',
@@ -72,7 +72,7 @@ export function contactNotificationEmail(data: {
     <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
       <div style="background: linear-gradient(135deg, #4c6ef5, #ff9800); padding: 30px; border-radius: 12px 12px 0 0;">
         <h1 style="color: white; margin: 0; font-size: 24px;">New Contact Submission</h1>
-        <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0;">sabbirahsan.com</p>
+        <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0;">digititanai.com</p>
       </div>
       <div style="background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
         <table style="width: 100%; border-collapse: collapse;">
@@ -100,8 +100,8 @@ export function contactAutoReplyEmail(name: string) {
       <div style="background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
         <p style="color: #475569; font-size: 16px; line-height: 1.6;">Hi ${name},</p>
         <p style="color: #475569; font-size: 16px; line-height: 1.6;">Thank you for contacting me! I've received your message and will get back to you within 24 hours.</p>
-        <p style="color: #475569; font-size: 16px; line-height: 1.6;">In the meantime, feel free to explore my <a href="https://sabbirahsan.com/portfolio" style="color: #4c6ef5;">portfolio</a> or <a href="https://sabbirahsan.com/blog" style="color: #4c6ef5;">blog</a>.</p>
-        <p style="color: #475569; font-size: 16px; line-height: 1.6;">Best regards,<br><strong>Md Sabbir Ahsan</strong><br>Digital Marketer & Martech Specialist</p>
+        <p style="color: #475569; font-size: 16px; line-height: 1.6;">In the meantime, feel free to explore our <a href="https://digititanai.com/portfolio" style="color: #4c6ef5;">portfolio</a> or <a href="https://digititanai.com/blog" style="color: #4c6ef5;">blog</a>.</p>
+        <p style="color: #475569; font-size: 16px; line-height: 1.6;">Best regards,<br><strong>DigiTitan AI</strong><br>AI-Powered Digital Solutions</p>
       </div>
     </div>
   `
@@ -131,7 +131,7 @@ export function bookingConfirmationEmail(data: {
           </table>
         </div>
         <p style="color: #475569; font-size: 16px;">Looking forward to speaking with you!</p>
-        <p style="color: #475569; font-size: 16px;">Best,<br><strong>Md Sabbir Ahsan</strong></p>
+        <p style="color: #475569; font-size: 16px;">Best,<br><strong>DigiTitan AI</strong></p>
       </div>
     </div>
   `

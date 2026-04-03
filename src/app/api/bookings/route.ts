@@ -76,7 +76,7 @@ export async function POST(request: Request) {
     }
 
     const serviceLine = `${data.service_name}${data.package_name ? ` (${data.package_name})` : ''}`
-    const adminEmail = process.env.ADMIN_EMAIL || 'sabbirahsan73@gmail.com'
+    const adminEmail = process.env.ADMIN_EMAIL || 'digititanai@gmail.com'
 
     // 1. Create Google Calendar event -both admin and client get calendar invites automatically from Google
     let calendarEventId: string | null = null

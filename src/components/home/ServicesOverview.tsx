@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useCallback, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
@@ -8,6 +8,7 @@ import { loadHomePageData, defaultHomePageData } from '@/lib/homePageData'
 import { useData } from '@/lib/useData'
 import { getIcon } from '@/lib/iconMap'
 import { getServices, getCategories } from '@/lib/collections'
+import TiltCard from '@/components/ui/TiltCard'
 
 function buildServiceUrl(serviceSlug: string, categoryName?: string): string {
   if (!categoryName) return `/services/${serviceSlug}`
@@ -27,31 +28,6 @@ const stagger = {
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.4, 0, 1] } },
-}
-
-function TiltCard({ children }: { children: React.ReactNode }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [transform, setTransform] = useState('perspective(800px) rotateX(0deg) rotateY(0deg)')
-
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return
-    const rect = ref.current.getBoundingClientRect()
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 8
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * -8
-    setTransform(`perspective(800px) rotateX(${y}deg) rotateY(${x}deg) scale3d(1.02,1.02,1.02)`)
-  }, [])
-
-  const handleMouseLeave = useCallback(() => {
-    setTransform('perspective(800px) rotateX(0deg) rotateY(0deg)')
-  }, [])
-
-  return (
-    <div ref={ref} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}
-      style={{ transform, transition: 'transform 0.3s ease-out', transformStyle: 'preserve-3d' }}
-      className="h-full">
-      {children}
-    </div>
-  )
 }
 
 export default function ServicesOverview() {
@@ -75,80 +51,88 @@ export default function ServicesOverview() {
   return (
     <section className="section-gap" suppressHydrationWarning>
       <div className="container-main">
-        {/* Header row */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8 md:mb-12">
-          <div>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="heading-lg"
-            >
-              {sData.heading}
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1, duration: 0.6 }}
-              className="mt-3 body-base max-w-lg"
-            >
-              {sData.subtitle}
-            </motion.p>
-          </div>
+        {/* Centered header */}
+        <motion.div
+          className="text-center mb-10 md:mb-14"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="badge">What We Do</span>
+          <h2 className="mt-5 heading-lg">
+            <span className="gradient-text">{sData.heading}</span>
+          </h2>
+          <p className="mt-4 body-base max-w-lg mx-auto">{sData.subtitle}</p>
+        </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
-            <Link href="/services" className="inline-flex items-center gap-2 text-[14px] font-medium text-brand-gold hover:text-brand-gold-light transition-colors">
-              {sData.linkText} <ArrowRight className="w-4 h-4" />
-            </Link>
-          </motion.div>
-        </div>
-
-        {/* 4-column grid */}
+        {/* 3-column grid */}
         <motion.div
           key={sData.services.length}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch"
           initial="hidden"
           animate={mounted ? 'visible' : 'hidden'}
           variants={stagger}
         >
-          {sData.services.map((service, idx) => {
+          {sData.services.slice(0, 6).map((service) => {
             const Icon = getIcon(service.icon)
             return (
               <motion.div key={service.title} variants={fadeUp} className="h-full">
-                <TiltCard>
+                <TiltCard tiltAmount={12}>
                   <Link href={mounted ? buildServiceUrl(service.slug, getServices().find((s) => s.slug === service.slug)?.category) : `/services/${service.slug}`}
-                    className="card-hover block h-full p-6 group flex flex-col">
-                    {/* Icon */}
-                    <div className="w-12 h-12 rounded-xl bg-brand-mid/10 border border-brand-mid/20 flex items-center justify-center mb-5">
-                      <Icon className="w-5 h-5 text-brand-mid" />
+                    className="card-hover card-shine block h-full p-6 group flex flex-col">
+                    {/* Icon + tag */}
+                    <div className="flex items-center justify-between mb-5">
+                      <div className="w-12 h-12 rounded-xl bg-brand-mid/10 border border-brand-mid/15 flex items-center justify-center">
+                        <Icon className="w-5 h-5 text-brand-mid" />
+                      </div>
+                      <span className="text-[10px] font-mono font-semibold tracking-[0.15em] uppercase text-surface-400 bg-surface-300 px-2.5 py-1 rounded-full">
+                        Service
+                      </span>
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-[17px] font-bold text-brand-cream leading-tight">
+                    <h3 className="text-[17px] font-display font-bold text-brand-cream leading-tight">
                       {service.title}
                     </h3>
 
                     {/* Description */}
-                    <p className="mt-3 text-[14px] leading-[1.6] text-brand-cream/70 flex-1">
+                    <p className="mt-3 text-[14px] leading-[1.7] text-brand-cream-dark flex-1">
                       {service.description}
                     </p>
 
-                    {/* Learn more */}
-                    <div className="mt-5 flex items-center gap-1.5 text-[13px] font-medium text-brand-gold group-hover:text-brand-gold-light transition-colors">
-                      Learn more <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    {/* Bottom accent line */}
+                    <div className="mt-5 pt-4 border-t border-surface-300">
+                      <div className="flex items-center gap-1.5 text-[13px] font-mono font-medium text-brand-mid group-hover:text-brand-gold-light transition-colors tracking-wide uppercase">
+                        Learn more <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      </div>
                     </div>
+
+                    {/* Accent bar that scales on hover */}
+                    <motion.div
+                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-brand-mid/0 via-brand-mid to-brand-mid/0"
+                      initial={{ scaleX: 0 }}
+                      whileHover={{ scaleX: 1 }}
+                      transition={{ duration: 0.3 }}
+                    />
                   </Link>
                 </TiltCard>
               </motion.div>
             )
           })}
+        </motion.div>
+
+        {/* View all link */}
+        <motion.div
+          className="mt-10 text-center"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3 }}
+        >
+          <Link href="/services" className="inline-flex items-center gap-2 text-[13px] font-mono font-medium text-brand-mid hover:text-brand-gold-light transition-colors tracking-[0.05em] uppercase">
+            {sData.linkText} <ArrowRight className="w-4 h-4" />
+          </Link>
         </motion.div>
       </div>
     </section>

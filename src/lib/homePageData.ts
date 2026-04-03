@@ -89,6 +89,76 @@ export interface FAQData {
   faqs: FAQItem[]
 }
 
+export interface ClientLogosData {
+  label: string
+  clients: string[]
+}
+
+export interface StatItem {
+  value: number
+  suffix: string
+  label: string
+  description: string
+}
+
+export interface StatsData {
+  stats: StatItem[]
+}
+
+export interface WhyChooseUsItem {
+  icon: string
+  title: string
+  description: string
+  highlight?: boolean
+}
+
+export interface WhyChooseUsData {
+  badge: string
+  heading: string
+  subtitle: string
+  reasons: WhyChooseUsItem[]
+}
+
+export interface ResultItem {
+  metric: string
+  before: string
+  after: string
+  improvement: string
+}
+
+export interface ResultsData {
+  badge: string
+  heading: string
+  subtitle: string
+  results: ResultItem[]
+}
+
+export interface HowItWorksStep {
+  icon: string
+  title: string
+  description: string
+}
+
+export interface HowItWorksData {
+  badge: string
+  heading: string
+  subtitle: string
+  steps: HowItWorksStep[]
+}
+
+export interface ToolItem {
+  icon: string
+  name: string
+  category: string
+}
+
+export interface ToolsData {
+  badge: string
+  heading: string
+  subtitle: string
+  tools: ToolItem[]
+}
+
 export interface SEOData {
   metaTitle: string
   metaDescription: string
@@ -97,8 +167,14 @@ export interface SEOData {
 
 export interface HomePageData {
   hero: HeroData
+  clientLogos: ClientLogosData
+  stats: StatsData
   services: ServicesData
+  whyChooseUs: WhyChooseUsData
   portfolio: PortfolioData
+  results: ResultsData
+  howItWorks: HowItWorksData
+  tools: ToolsData
   testimonials: TestimonialsData
   blog: BlogData
   faq: FAQData
@@ -108,10 +184,77 @@ export interface HomePageData {
 const STORAGE_KEY = 'sabbirahsan_home_page_data'
 
 export const defaultHomePageData: HomePageData = {
+  clientLogos: {
+    label: 'Trusted by forward-thinking brands',
+    clients: ['FundedNext', 'TechBD', 'GrowthHive', 'EcomScale', 'NovaBridge', 'CloudScale', 'StyleNova', 'ScaleForce', 'MenaDigital', 'StartupLaunch'],
+  },
+  stats: {
+    stats: [
+      { value: 100, suffix: '+', label: 'Projects Delivered', description: 'Across 20+ industries' },
+      { value: 98, suffix: '%', label: 'Client Satisfaction', description: 'Based on client reviews' },
+      { value: 5, suffix: '+', label: 'Years Experience', description: 'In digital marketing' },
+      { value: 50, suffix: '+', label: 'Happy Clients', description: 'Worldwide partnerships' },
+    ],
+  },
+  whyChooseUs: {
+    badge: 'Why DigiTitan AI',
+    heading: 'Why Brands Choose Us',
+    subtitle: 'We combine technical expertise with creative strategy to deliver results that matter.',
+    reasons: [
+      { icon: 'Zap', title: 'AI-Powered Execution', description: 'We use AI tools and automation to deliver faster, smarter campaigns that outperform traditional approaches.', highlight: true },
+      { icon: 'Shield', title: 'Transparent Reporting', description: 'Real-time dashboards and weekly reports. You always know exactly where your budget goes and what it returns.' },
+      { icon: 'TrendingUp', title: 'Proven ROI Focus', description: 'Every strategy is tied to measurable KPIs. We optimize for revenue, not vanity metrics.' },
+      { icon: 'Clock', title: 'Fast Turnaround', description: 'From strategy to execution in days, not months. Our streamlined process gets you to market faster.' },
+      { icon: 'Headphones', title: 'Dedicated Support', description: 'A single point of contact who knows your business. No ticket queues, no runaround — just direct access.' },
+      { icon: 'BarChart3', title: 'Full-Stack Expertise', description: 'From tracking setup to creative ads to CRM integration — one agency handles everything under one roof.' },
+    ],
+  },
+  results: {
+    badge: 'Results',
+    heading: 'Before & After DigiTitan AI',
+    subtitle: 'Real metrics from real client engagements. The numbers speak for themselves.',
+    results: [
+      { metric: 'Conversion Rate', before: '1.2%', after: '4.8%', improvement: '+300%' },
+      { metric: 'Cost Per Lead', before: '$45', after: '$12', improvement: '-73%' },
+      { metric: 'Ad Spend Waste', before: '35%', after: '8%', improvement: '-77%' },
+      { metric: 'Organic Traffic', before: '2.1K/mo', after: '18K/mo', improvement: '+757%' },
+      { metric: 'Email Open Rate', before: '12%', after: '38%', improvement: '+217%' },
+      { metric: 'Page Load Time', before: '4.2s', after: '0.9s', improvement: '-79%' },
+    ],
+  },
+  howItWorks: {
+    badge: 'How It Works',
+    heading: 'Three Steps to Real Growth',
+    subtitle: 'From discovery call to measurable results — a proven process.',
+    steps: [
+      { icon: 'Phone', title: 'Discovery Call', description: 'We start with a free 30-minute call to understand your goals, challenges, and current marketing stack. No commitment, just clarity.' },
+      { icon: 'Lightbulb', title: 'Strategy & Build', description: 'We craft a tailored strategy and execute — from tracking setup and automation to campaigns and content, all delivered on time.' },
+      { icon: 'Rocket', title: 'Launch & Optimize', description: 'We launch, monitor, and continuously optimize for maximum ROI. You get regular reports and a dedicated partner for growth.' },
+    ],
+  },
+  tools: {
+    badge: 'Integrations',
+    heading: 'Tools We Master',
+    subtitle: 'We work with 50+ platforms to build connected marketing ecosystems.',
+    tools: [
+      { icon: 'Code2', name: 'Google Tag Manager', category: 'Tracking' },
+      { icon: 'BarChart', name: 'Google Analytics 4', category: 'Analytics' },
+      { icon: 'Share2', name: 'Meta Ads', category: 'Advertising' },
+      { icon: 'LineChart', name: 'Google Ads', category: 'Advertising' },
+      { icon: 'ShoppingBag', name: 'Shopify', category: 'E-commerce' },
+      { icon: 'GitBranch', name: 'HubSpot', category: 'CRM' },
+      { icon: 'CreditCard', name: 'Stripe', category: 'Payments' },
+      { icon: 'Workflow', name: 'n8n', category: 'Automation' },
+      { icon: 'Mail', name: 'Mailchimp', category: 'Email' },
+      { icon: 'Database', name: 'Supabase', category: 'Database' },
+      { icon: 'Globe', name: 'WordPress', category: 'CMS' },
+      { icon: 'Boxes', name: 'Looker Studio', category: 'Reporting' },
+    ],
+  },
   hero: {
-    badge: 'Digital Marketer & Martech Specialist',
+    badge: 'AI-Powered Digital Solutions',
     heading: "Let's Work Together to Create Wonders.",
-    subtitle: 'A visionary martech specialist crafting data-driven growth systems. I bridge the gap between creative marketing and technical execution.',
+    subtitle: 'A visionary digital solutions agency crafting data-driven growth systems. We bridge the gap between creative marketing and technical execution.',
     heroImage: '',
     primaryBtnText: 'Book Appointment',
     primaryBtnLink: '/book',
@@ -159,12 +302,12 @@ export const defaultHomePageData: HomePageData = {
     heading: 'What Our Clients Say',
     subtitle: "Real results from real partnerships. Here's what it's like working together.",
     testimonials: [
-      { id: 't1', quote: 'Working with Sabbir on our marketing automation was a game-changer. We reduced manual tasks by 70% and saw a 45% increase in qualified leads.', name: 'Michael Chen', company: 'GrowthHub', role: 'Head of Marketing', initials: 'MC' },
-      { id: 't2', quote: 'The PPC campaigns Sabbir managed delivered an exceptional 8x ROAS. His data-driven approach and constant optimization made all the difference.', name: 'Emily Rodriguez', company: 'Bloom Commerce', role: 'Founder & CEO', initials: 'ER' },
-      { id: 't3', quote: 'Sabbir rebuilt our entire MarTech stack from the ground up. The efficiency gains were immediate and the long-term impact has been extraordinary.', name: 'David Park', company: 'ScaleForce AI', role: 'CTO', initials: 'DP' },
-      { id: 't4', quote: 'From brand strategy to execution, Sabbir delivered beyond expectations. Social engagement grew 5x and we saw record-breaking conversions.', name: 'Amara Osei', company: 'Luxe Digital', role: 'Brand Director', initials: 'AO' },
+      { id: 't1', quote: 'Working with DigiTitan AI on our marketing automation was a game-changer. We reduced manual tasks by 70% and saw a 45% increase in qualified leads.', name: 'Michael Chen', company: 'GrowthHub', role: 'Head of Marketing', initials: 'MC' },
+      { id: 't2', quote: 'The PPC campaigns DigiTitan AI managed delivered an exceptional 8x ROAS. Their data-driven approach and constant optimization made all the difference.', name: 'Emily Rodriguez', company: 'Bloom Commerce', role: 'Founder & CEO', initials: 'ER' },
+      { id: 't3', quote: 'DigiTitan AI rebuilt our entire MarTech stack from the ground up. The efficiency gains were immediate and the long-term impact has been extraordinary.', name: 'David Park', company: 'ScaleForce AI', role: 'CTO', initials: 'DP' },
+      { id: 't4', quote: 'From brand strategy to execution, DigiTitan AI delivered beyond expectations. Social engagement grew 5x and we saw record-breaking conversions.', name: 'Amara Osei', company: 'Luxe Digital', role: 'Brand Director', initials: 'AO' },
       { id: 't5', quote: 'The server-side tracking setup was flawless. We finally have accurate attribution data, and our ad spend efficiency improved by 35% overnight.', name: 'James Wilson', company: 'TechVentures', role: 'VP Growth', initials: 'JW' },
-      { id: 't6', quote: 'Sabbir automated our entire lead nurturing pipeline with n8n. What used to take 15 hours a week now runs on autopilot with better results.', name: 'Sarah Ahmed', company: 'NovaBridge', role: 'Operations Lead', initials: 'SA' },
+      { id: 't6', quote: 'DigiTitan AI automated our entire lead nurturing pipeline with n8n. What used to take 15 hours a week now runs on autopilot with better results.', name: 'Sarah Ahmed', company: 'NovaBridge', role: 'Operations Lead', initials: 'SA' },
     ],
   },
   blog: {
@@ -194,7 +337,7 @@ export const defaultHomePageData: HomePageData = {
     ],
   },
   seo: {
-    metaTitle: 'Sabbir Ahsan | Digital Marketer & MarTech Specialist',
+    metaTitle: 'DigiTitan AI | AI-Powered Digital Solutions',
     metaDescription: 'Transforming brands through data-driven digital strategies and cutting-edge marketing technology.',
     ogImage: '/og/home.jpg',
   },

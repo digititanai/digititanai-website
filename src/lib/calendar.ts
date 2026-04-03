@@ -38,13 +38,13 @@ export function generateICS({
     return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
   }
 
-  const uid = `booking-${Date.now()}-${Math.random().toString(36).slice(2)}@sabbirahsan.com`
+  const uid = `booking-${Date.now()}-${Math.random().toString(36).slice(2)}@digititanai.com`
   const now = formatDT(new Date())
 
   const ics = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//SabbirAhsan//Booking//EN',
+    'PRODID:-//DigiTitanAI//Booking//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:REQUEST',
     'BEGIN:VEVENT',

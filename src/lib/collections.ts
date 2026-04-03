@@ -156,12 +156,12 @@ const defaultBlog: BlogItem[] = [
 ]
 
 const defaultTestimonials: TestimonialItem[] = [
-  { id: 't1', name: 'Michael Chen', company: 'GrowthHub', role: 'Head of Marketing', initials: 'MC', quote: 'Working with Sabbir on our marketing automation was a game-changer. We reduced manual tasks by 70% and saw a 45% increase in qualified leads.', rating: 5, active: true },
-  { id: 't2', name: 'Emily Rodriguez', company: 'Bloom Commerce', role: 'Founder & CEO', initials: 'ER', quote: 'The PPC campaigns Sabbir managed delivered an exceptional 8x ROAS. His data-driven approach and constant optimization made all the difference.', rating: 5, active: true },
-  { id: 't3', name: 'David Park', company: 'ScaleForce AI', role: 'CTO', initials: 'DP', quote: 'Sabbir rebuilt our entire MarTech stack from the ground up. The efficiency gains were immediate and the long-term impact has been extraordinary.', rating: 5, active: true },
-  { id: 't4', name: 'Amara Osei', company: 'Luxe Digital', role: 'Brand Director', initials: 'AO', quote: 'From brand strategy to execution, Sabbir delivered beyond expectations. Social engagement grew 5x and we saw record-breaking conversions.', rating: 5, active: true },
+  { id: 't1', name: 'Michael Chen', company: 'GrowthHub', role: 'Head of Marketing', initials: 'MC', quote: 'Working with DigiTitan AI on our marketing automation was a game-changer. We reduced manual tasks by 70% and saw a 45% increase in qualified leads.', rating: 5, active: true },
+  { id: 't2', name: 'Emily Rodriguez', company: 'Bloom Commerce', role: 'Founder & CEO', initials: 'ER', quote: 'The PPC campaigns DigiTitan AI managed delivered an exceptional 8x ROAS. Their data-driven approach and constant optimization made all the difference.', rating: 5, active: true },
+  { id: 't3', name: 'David Park', company: 'ScaleForce AI', role: 'CTO', initials: 'DP', quote: 'DigiTitan AI rebuilt our entire MarTech stack from the ground up. The efficiency gains were immediate and the long-term impact has been extraordinary.', rating: 5, active: true },
+  { id: 't4', name: 'Amara Osei', company: 'Luxe Digital', role: 'Brand Director', initials: 'AO', quote: 'From brand strategy to execution, DigiTitan AI delivered beyond expectations. Social engagement grew 5x and we saw record-breaking conversions.', rating: 5, active: true },
   { id: 't5', name: 'James Wilson', company: 'TechVentures', role: 'VP Growth', initials: 'JW', quote: 'The server-side tracking setup was flawless. We finally have accurate attribution data, and our ad spend efficiency improved by 35% overnight.', rating: 5, active: true },
-  { id: 't6', name: 'Sarah Ahmed', company: 'NovaBridge', role: 'Operations Lead', initials: 'SA', quote: 'Sabbir automated our entire lead nurturing pipeline with n8n. What used to take 15 hours a week now runs on autopilot with better results.', rating: 5, active: true },
+  { id: 't6', name: 'Sarah Ahmed', company: 'NovaBridge', role: 'Operations Lead', initials: 'SA', quote: 'DigiTitan AI automated our entire lead nurturing pipeline with n8n. What used to take 15 hours a week now runs on autopilot with better results.', rating: 5, active: true },
 ]
 
 // ── Portfolio detail interface ──

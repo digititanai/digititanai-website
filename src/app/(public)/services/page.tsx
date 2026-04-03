@@ -1,14 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowRight, ArrowUpRight, CheckCircle2, Check, X as XIcon, DollarSign } from 'lucide-react'
-import { getServices, getCategories, type ServiceItem, type PricingTier } from '@/lib/collections'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import { ArrowRight, CheckCircle2, Check, X as XIcon, DollarSign } from 'lucide-react'
+import { getServices, getCategories, type ServiceItem } from '@/lib/collections'
 import { defaultPageContent } from '@/lib/pageContent'
 import PageSEO from '@/components/layout/PageSEO'
 import { useData } from '@/lib/useData'
 import { getIcon } from '@/lib/iconMap'
+import TiltCard from '@/components/ui/TiltCard'
 
 function buildServiceUrl(serviceSlug: string, categoryName?: string): string {
   if (!categoryName) return `/services/${serviceSlug}`
@@ -20,116 +21,6 @@ function buildServiceUrl(serviceSlug: string, categoryName?: string): string {
   return `/services/${cat.slug}/${serviceSlug}`
 }
 
-const _defaultServices = [
-  {
-    title: 'Tracking & Analytics',
-    slug: 'tracking-analytics',
-    icon: 'BarChart3',
-    tagline: 'Measure what matters',
-    description: 'Server-side tracking, GA4, GTM, and advanced conversion setup. Get accurate data to make confident marketing decisions.',
-    features: ['GA4 & GTM Setup', 'Server-Side Tracking', 'Conversion Tracking', 'Custom Dashboards', 'Attribution Modeling', 'Data Layer Implementation'],
-    pricing: [
-      { name: 'Starter', price: '$500', features: [{ text: 'GA4 setup & configuration', included: true }, { text: 'GTM container with core tags', included: true }, { text: 'Up to 10 custom events', included: true }, { text: 'Basic conversion tracking', included: true }, { text: 'Server-side tracking', included: false }, { text: 'Attribution modeling', included: false }] },
-      { name: 'Professional', price: '$1,200', highlighted: true, features: [{ text: 'Everything in Starter', included: true }, { text: 'Server-side GTM container', included: true }, { text: 'Up to 30 custom events', included: true }, { text: 'Enhanced conversions', included: true }, { text: 'Custom attribution model', included: true }, { text: 'Looker Studio dashboards', included: true }] },
-      { name: 'Enterprise', price: '$2,500', features: [{ text: 'Everything in Professional', included: true }, { text: 'BigQuery data pipeline', included: true }, { text: 'Unlimited custom events', included: true }, { text: 'Multi-property architecture', included: true }, { text: 'Custom API integrations', included: true }, { text: 'Team training workshop', included: true }] },
-    ],
-  },
-  {
-    title: 'Automation with n8n',
-    slug: 'automation-n8n',
-    icon: 'Zap',
-    tagline: 'Save 10+ hours weekly',
-    description: 'Connect your entire stack with intelligent workflow automation. From lead routing to reporting — fully automated.',
-    features: ['Workflow Design & Build', 'CRM Automation', 'Lead Routing & Scoring', 'Email Sequence Automation', 'Data Sync Between Tools', 'Custom API Integrations'],
-    pricing: [
-      { name: 'Starter', price: '$800', features: [{ text: '3 automated workflows', included: true }, { text: 'CRM integration', included: true }, { text: 'Email notifications', included: true }, { text: 'Basic lead routing', included: true }, { text: 'Custom API connections', included: false }, { text: 'Advanced logic & branching', included: false }] },
-      { name: 'Professional', price: '$1,800', highlighted: true, features: [{ text: 'Up to 10 workflows', included: true }, { text: 'Multi-tool integrations', included: true }, { text: 'Lead scoring system', included: true }, { text: 'Advanced branching logic', included: true }, { text: 'Error handling & monitoring', included: true }, { text: 'Slack/Teams notifications', included: true }] },
-      { name: 'Enterprise', price: '$3,500', features: [{ text: 'Unlimited workflows', included: true }, { text: 'Custom API development', included: true }, { text: 'Database integrations', included: true }, { text: 'Webhook management', included: true }, { text: 'Priority support (30 days)', included: true }, { text: 'Full documentation', included: true }] },
-    ],
-  },
-  {
-    title: 'Modern WordPress Dev',
-    slug: 'wordpress-development',
-    icon: 'Globe',
-    tagline: 'Built for conversions',
-    description: 'High-performance WordPress sites with Elementor, built for speed, SEO, and conversion optimization.',
-    features: ['Custom Elementor Design', 'Speed Optimization', 'SEO-Ready Structure', 'Mobile-First Development', 'WooCommerce Setup', 'Ongoing Maintenance'],
-    pricing: [
-      { name: 'Starter', price: '$1,500', features: [{ text: 'Up to 5 pages', included: true }, { text: 'Elementor design', included: true }, { text: 'Mobile responsive', included: true }, { text: 'Basic SEO setup', included: true }, { text: 'WooCommerce', included: false }, { text: 'Custom functionality', included: false }] },
-      { name: 'Professional', price: '$3,000', highlighted: true, features: [{ text: 'Up to 15 pages', included: true }, { text: 'Custom Elementor widgets', included: true }, { text: 'Speed optimization', included: true }, { text: 'Advanced SEO setup', included: true }, { text: 'Contact form & CRM integration', included: true }, { text: 'Blog setup', included: true }] },
-      { name: 'Enterprise', price: '$6,000', features: [{ text: 'Unlimited pages', included: true }, { text: 'Full WooCommerce store', included: true }, { text: 'Custom plugin development', included: true }, { text: 'Multi-language support', included: true }, { text: 'Hosting setup & migration', included: true }, { text: '60-day support', included: true }] },
-    ],
-  },
-  {
-    title: 'Campaign Optimization',
-    slug: 'campaign-optimization',
-    icon: 'Target',
-    tagline: 'Maximum ROAS',
-    description: 'Scientific ad management across Google, Meta, and LinkedIn for maximum return on ad spend.',
-    features: ['Google Ads Management', 'Meta Ads (FB/IG)', 'LinkedIn Ads', 'A/B Testing', 'Audience Targeting', 'Performance Reporting'],
-    pricing: [
-      { name: 'Starter', price: '$800/mo', features: [{ text: '1 platform management', included: true }, { text: 'Campaign setup', included: true }, { text: 'Monthly optimization', included: true }, { text: 'Basic reporting', included: true }, { text: 'A/B testing', included: false }, { text: 'Retargeting campaigns', included: false }] },
-      { name: 'Professional', price: '$1,500/mo', highlighted: true, features: [{ text: '2 platforms', included: true }, { text: 'Advanced targeting', included: true }, { text: 'Bi-weekly optimization', included: true }, { text: 'A/B testing', included: true }, { text: 'Retargeting campaigns', included: true }, { text: 'Detailed reporting', included: true }] },
-      { name: 'Enterprise', price: '$3,000/mo', features: [{ text: 'All platforms', included: true }, { text: 'Full-funnel strategy', included: true }, { text: 'Weekly optimization', included: true }, { text: 'Dynamic creative', included: true }, { text: 'Custom dashboard', included: true }, { text: 'Dedicated manager', included: true }] },
-    ],
-  },
-  {
-    title: 'SEO & Content Strategy',
-    slug: 'seo-content-strategy',
-    icon: 'Search',
-    tagline: 'Rank and convert',
-    description: 'Data-driven SEO audits, keyword strategy, and content that ranks and converts.',
-    features: ['Technical SEO Audit', 'Keyword Research', 'On-Page Optimization', 'Content Strategy', 'Link Building', 'Monthly SEO Reports'],
-    pricing: [
-      { name: 'Starter', price: '$600/mo', features: [{ text: 'Technical SEO audit', included: true }, { text: '5 keyword targets', included: true }, { text: 'On-page optimization', included: true }, { text: 'Monthly report', included: true }, { text: 'Content creation', included: false }, { text: 'Link building', included: false }] },
-      { name: 'Professional', price: '$1,200/mo', highlighted: true, features: [{ text: '15 keyword targets', included: true }, { text: '4 blog posts/month', included: true }, { text: 'On-page + technical SEO', included: true }, { text: 'Link building outreach', included: true }, { text: 'Competitor analysis', included: true }, { text: 'Bi-weekly reports', included: true }] },
-      { name: 'Enterprise', price: '$2,500/mo', features: [{ text: '50+ keyword targets', included: true }, { text: '8 content pieces/month', included: true }, { text: 'Premium link building', included: true }, { text: 'Content strategy', included: true }, { text: 'Weekly reports', included: true }, { text: 'Dedicated SEO manager', included: true }] },
-    ],
-  },
-  {
-    title: 'MarTech Consulting',
-    slug: 'martech-consulting',
-    icon: 'Settings2',
-    tagline: 'Optimize your stack',
-    description: 'Stack audit, tool selection, CRM integration, and full marketing technology optimization.',
-    features: ['Tech Stack Audit', 'Tool Selection & Setup', 'CRM Integration', 'Data Migration', 'Team Training', 'Vendor Management'],
-    pricing: [
-      { name: 'Starter', price: '$1,000', features: [{ text: 'Stack audit & report', included: true }, { text: 'Tool recommendations', included: true }, { text: 'Integration plan', included: true }, { text: 'Basic implementation', included: true }, { text: 'Data migration', included: false }, { text: 'Team training', included: false }] },
-      { name: 'Professional', price: '$2,500', highlighted: true, features: [{ text: 'Everything in Starter', included: true }, { text: 'Full implementation', included: true }, { text: 'Data migration', included: true }, { text: 'CRM configuration', included: true }, { text: 'Team training (2 sessions)', included: true }, { text: '30-day support', included: true }] },
-      { name: 'Enterprise', price: '$5,000', features: [{ text: 'Everything in Professional', included: true }, { text: 'Custom development', included: true }, { text: 'API integrations', included: true }, { text: 'Ongoing management', included: true }, { text: 'Quarterly reviews', included: true }, { text: '90-day support', included: true }] },
-    ],
-  },
-  {
-    title: 'Social Media Marketing',
-    slug: 'social-media-marketing',
-    icon: 'Megaphone',
-    tagline: 'Build your presence',
-    description: 'Strategic content creation, community management, and paid social across all platforms.',
-    features: ['Content Strategy', 'Community Management', 'Paid Social Campaigns', 'Influencer Outreach', 'Analytics & Reporting', 'Brand Voice Development'],
-    pricing: [
-      { name: 'Starter', price: '$500/mo', features: [{ text: '2 platforms', included: true }, { text: '12 posts/month', included: true }, { text: 'Basic analytics', included: true }, { text: 'Monthly report', included: true }, { text: 'Community management', included: false }, { text: 'Paid social', included: false }] },
-      { name: 'Professional', price: '$1,000/mo', highlighted: true, features: [{ text: '4 platforms', included: true }, { text: '20 posts/month', included: true }, { text: 'Stories & Reels', included: true }, { text: 'Community management', included: true }, { text: 'Bi-weekly reports', included: true }, { text: 'Paid social campaigns', included: true }] },
-      { name: 'Enterprise', price: '$2,000/mo', features: [{ text: 'All platforms', included: true }, { text: '30+ posts/month', included: true }, { text: 'Influencer outreach', included: true }, { text: 'Full community mgmt', included: true }, { text: 'Weekly reports', included: true }, { text: 'Brand strategy', included: true }] },
-    ],
-  },
-  {
-    title: 'Email & CRM Systems',
-    slug: 'email-crm-systems',
-    icon: 'PenTool',
-    tagline: 'Nurture at scale',
-    description: 'Email automation, lead nurturing sequences, and CRM setup for scalable growth.',
-    features: ['Email Automation Setup', 'Lead Nurturing Flows', 'CRM Configuration', 'Segmentation Strategy', 'A/B Testing', 'Deliverability Optimization'],
-    pricing: [
-      { name: 'Starter', price: '$700', features: [{ text: 'CRM setup & configuration', included: true }, { text: '3 email sequences', included: true }, { text: 'Contact segmentation', included: true }, { text: 'Basic automation', included: true }, { text: 'A/B testing', included: false }, { text: 'Deliverability audit', included: false }] },
-      { name: 'Professional', price: '$1,500', highlighted: true, features: [{ text: 'Everything in Starter', included: true }, { text: '10 email sequences', included: true }, { text: 'Lead scoring setup', included: true }, { text: 'A/B testing framework', included: true }, { text: 'Deliverability optimization', included: true }, { text: 'Team training', included: true }] },
-      { name: 'Enterprise', price: '$3,000', features: [{ text: 'Everything in Professional', included: true }, { text: 'Unlimited sequences', included: true }, { text: 'Custom integrations', included: true }, { text: 'Advanced segmentation', included: true }, { text: 'Migration from existing CRM', included: true }, { text: '60-day support', included: true }] },
-    ],
-  },
-]
-
-const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }
-const fadeUp = { hidden: { opacity: 0, y: 25 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.4, 0, 1] } } }
-
 function PricingModal({ service, onClose, content }: { service: ServiceItem; onClose: () => void; content?: Record<string, string> }) {
   return (
     <motion.div
@@ -139,10 +30,7 @@ function PricingModal({ service, onClose, content }: { service: ServiceItem; onC
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-
-      {/* Modal */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -151,14 +39,11 @@ function PricingModal({ service, onClose, content }: { service: ServiceItem; onC
         onClick={(e) => e.stopPropagation()}
         className="relative w-full max-w-[900px] max-h-[90vh] overflow-y-auto rounded-2xl border border-brand-mid/[0.08] bg-brand-darkest p-6 md:p-8"
       >
-        {/* Grid pattern */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none rounded-2xl overflow-hidden" style={{
           backgroundImage: 'linear-gradient(rgba(75,138,108,1) 1px, transparent 1px), linear-gradient(90deg, rgba(75,138,108,1) 1px, transparent 1px)',
           backgroundSize: '32px 32px',
         }} />
-
         <div className="relative z-10">
-          {/* Header */}
           <div className="flex items-start justify-between mb-3">
             <div>
               <h3 className="text-[22px] font-display font-bold text-brand-cream">{service.title}</h3>
@@ -168,13 +53,10 @@ function PricingModal({ service, onClose, content }: { service: ServiceItem; onC
               <XIcon className="w-4 h-4" />
             </button>
           </div>
-
           <p className="text-[13px] text-brand-cream/50 mb-8 flex items-center gap-2">
             <Check className="w-4 h-4 text-brand-mid" />
             {content?.consultationNote || 'Book a free consultation first — no payment required to get started.'}
           </p>
-
-          {/* Pricing cards */}
           <div className="grid md:grid-cols-3 gap-4">
             {service.pricing.map((tier) => (
               <div key={tier.name} className={`rounded-xl p-5 flex flex-col border ${tier.highlighted ? 'border-brand-gold/25 bg-brand-gold/[0.03]' : 'border-brand-mid/[0.08]'}`}>
@@ -224,69 +106,114 @@ export default function ServicesPage() {
     load()
   }, [loaded])
 
+  const heroRef = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
+  const heroOp = useTransform(scrollYProgress, [0, 0.7], [1, 0])
+
   return (
     <main>
       <PageSEO title={content.seoTitle} description={content.seoDescription} image={content.seoImage} />
-      {/* Hero */}
-      <section className="pt-32 pb-16">
-        <div className="container-main">
-          <motion.span initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="badge">{content.badge}</motion.span>
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.6 }} className="mt-5 heading-lg max-w-2xl">
+
+      {/* ═══ HERO ═══ */}
+      <section ref={heroRef} className="relative pt-32 pb-24 overflow-hidden">
+        <div className="absolute inset-0 bg-grid opacity-20" />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(6,182,212,0.06) 0%, transparent 60%)' }} />
+
+        <motion.div style={{ y: heroY, opacity: heroOp }} className="relative z-10 container-main text-center">
+          <motion.span className="badge" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+            {content.badge}
+          </motion.span>
+
+          <motion.h1
+            className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-display font-extrabold leading-[1.08] tracking-tight max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 0.8 }}
+          >
             {content.heading}
           </motion.h1>
-          <motion.p initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }} className="mt-5 body-lg max-w-xl">
+
+          <motion.p
+            className="mt-6 text-lg text-brand-cream-dark max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
             {content.subtitle}
           </motion.p>
-        </div>
+        </motion.div>
       </section>
 
-      {/* Services Grid */}
-      <section className="pb-16 md:pb-20 lg:pb-24 pt-6">
-        <div className="container-main">
-          <motion.div key={services.length} className="grid md:grid-cols-2 gap-5 items-stretch" initial="hidden" animate={services.length > 0 ? 'visible' : 'hidden'} variants={stagger}>
-            {services.map((service) => {
+      {/* ═══ SERVICES GRID ═══ */}
+      <section className="pb-24 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-brand-mid/[0.03] rounded-full blur-[120px]" />
+        </div>
+
+        <div className="container-main relative z-10">
+          <div className="grid md:grid-cols-2 gap-6">
+            {services.map((service, i) => {
               const Icon = getIcon(service.icon)
               return (
-                <motion.div key={service.slug} variants={fadeUp} className="h-full">
-                  <div className="card-hover h-full p-5 sm:p-7 flex flex-col">
-                    {/* Header */}
-                    <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl bg-brand-mid/10 border border-brand-mid/20 flex items-center justify-center">
-                        <Icon className="w-5 h-5 text-brand-mid" />
+                <motion.div
+                  key={service.slug}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08, duration: 0.6 }}
+                  className="h-full"
+                >
+                  <TiltCard tiltAmount={6}>
+                    <div className="h-full p-7 rounded-2xl bg-surface-200 border border-surface-300 hover:border-brand-mid/20 transition-all duration-500 relative overflow-hidden group flex flex-col">
+                      <div className="absolute inset-0 card-shine pointer-events-none" />
+
+                      <div className="relative z-10 flex flex-col flex-1">
+                        {/* Icon */}
+                        <div className="w-12 h-12 rounded-xl bg-brand-mid/10 border border-brand-mid/15 flex items-center justify-center mb-5 group-hover:bg-brand-mid/15 transition-colors">
+                          <Icon className="w-6 h-6 text-brand-mid" />
+                        </div>
+
+                        {/* Title & tagline */}
+                        <h3 className="text-xl font-display font-bold text-brand-cream">{service.title}</h3>
+                        <p className="text-[13px] font-medium text-brand-gold mt-1">{service.tagline}</p>
+
+                        {/* Description */}
+                        <p className="mt-4 text-sm text-brand-cream-dark leading-relaxed">{service.description}</p>
+
+                        {/* Features */}
+                        <div className="mt-5 pt-5 border-t border-brand-mid/10 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5 flex-1">
+                          {service.features.map((f, fi) => (
+                            <motion.div
+                              key={f}
+                              className="flex items-center gap-2"
+                              initial={{ opacity: 0, x: -10 }}
+                              whileInView={{ opacity: 1, x: 0 }}
+                              viewport={{ once: true }}
+                              transition={{ delay: 0.3 + fi * 0.04 }}
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5 text-brand-mid shrink-0" />
+                              <span className="text-[13px] text-brand-cream/70">{f}</span>
+                            </motion.div>
+                          ))}
+                        </div>
+
+                        {/* Buttons */}
+                        <div className="mt-6 flex items-center gap-3">
+                          <Link href={buildServiceUrl(service.slug, service.category)} className="btn-secondary h-10 px-5 text-[13px] flex-1 text-center justify-center">
+                            {content.viewDetailsText || 'View Details'} <ArrowRight className="w-3.5 h-3.5" />
+                          </Link>
+                          <button onClick={() => setPricingService(service)} className="btn-primary h-10 px-5 text-[13px] flex-1 text-center justify-center">
+                            <DollarSign className="w-3.5 h-3.5" /> {content.pricingBtnText || 'Pricing'}
+                          </button>
+                        </div>
                       </div>
                     </div>
-
-                    {/* Title & tagline */}
-                    <h3 className="text-[20px] font-display font-bold text-brand-cream">{service.title}</h3>
-                    <p className="text-[13px] font-medium text-brand-gold mt-1">{service.tagline}</p>
-
-                    {/* Description */}
-                    <p className="mt-4 text-[14px] leading-[1.7] text-brand-cream/70">{service.description}</p>
-
-                    {/* Features */}
-                    <div className="mt-5 pt-5 border-t border-brand-mid/10 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 flex-1">
-                      {service.features.map((f) => (
-                        <div key={f} className="flex items-center gap-2">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-brand-mid shrink-0" />
-                          <span className="text-[12px] sm:text-[13px] text-brand-cream/60">{f}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Buttons */}
-                    <div className="mt-6 flex items-center gap-2 sm:gap-3">
-                      <Link href={buildServiceUrl(service.slug, service.category)} className="btn-secondary h-9 sm:h-10 px-4 sm:px-5 text-[12px] sm:text-[13px] flex-1 text-center justify-center">
-                        {content.viewDetailsText || 'View Details'} <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                      </Link>
-                      <button onClick={() => setPricingService(service)} className="btn-primary h-9 sm:h-10 px-4 sm:px-5 text-[12px] sm:text-[13px] flex-1 text-center justify-center">
-                        <DollarSign className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> {content.pricingBtnText || 'Pricing'}
-                      </button>
-                    </div>
-                  </div>
+                  </TiltCard>
                 </motion.div>
               )
             })}
-          </motion.div>
+          </div>
         </div>
       </section>
 

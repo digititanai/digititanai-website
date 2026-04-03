@@ -68,7 +68,7 @@ export async function POST(request: Request) {
           </div>
           <div style="background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
             <p style="color: #475569; font-size: 16px; line-height: 1.6;">Thanks for subscribing! You'll receive updates on digital marketing insights, new services, and tips to grow your business.</p>
-            <p style="color: #475569; font-size: 16px; line-height: 1.6;">Best,<br><strong>Md Sabbir Ahsan</strong></p>
+            <p style="color: #475569; font-size: 16px; line-height: 1.6;">Best,<br><strong>DigiTitan AI</strong></p>
           </div>
         </div>
       `,

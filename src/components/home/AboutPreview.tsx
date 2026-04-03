@@ -119,9 +119,9 @@ export default function AboutPreview() {
             </motion.h2>
 
             <motion.p variants={fadeUp} className="body-base mt-6">
-              I&apos;m Sabbir Ahsan -- a digital marketer and MarTech specialist
+              We&apos;re DigiTitan AI -- an AI-powered digital solutions agency
               with over five years of experience helping brands grow through
-              data-driven strategies. I combine creative thinking with technical
+              data-driven strategies. We combine creative thinking with technical
               expertise to deliver measurable, lasting results.
             </motion.p>
 

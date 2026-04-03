@@ -8,16 +8,16 @@ type Tab = 'general' | 'seo' | 'integrations' | 'appearance' | 'code'
 
 const defaultSettings = {
   general: {
-    siteTitle: 'Sabbir Ahsan',
-    tagline: 'Digital Marketer & MarTech Specialist',
-    contactEmail: 'sabbirahsan73@gmail.com',
+    siteTitle: 'DigiTitan AI',
+    tagline: 'AI-Powered Digital Solutions',
+    contactEmail: 'digititanai@gmail.com',
     phone: '+880 1XXX-XXXXXX',
     address: 'Dhaka, Bangladesh',
     logo: '',
     favicon: '',
   },
   seo: {
-    metaTitle: 'Sabbir Ahsan | Digital Marketer & MarTech Specialist',
+    metaTitle: 'DigiTitan AI | AI-Powered Digital Solutions',
     metaDescription: 'Transforming brands through data-driven digital strategies and cutting-edge marketing technology.',
     ogImage: '',
     gaTrackingId: '',
@@ -194,7 +194,7 @@ export default function SettingsPage() {
       {activeTab === 'general' && (
         <div className="bg-brand-dark/30 border border-brand-mid/10 rounded-xl p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div><label className="block text-[11px] text-brand-cream/60 uppercase tracking-wider mb-1.5">Site Title</label><input type="text" value={g.siteTitle} onChange={(e) => setG({ siteTitle: e.target.value })} className={inp} /><p className="text-[10px] text-brand-cream/25 mt-1">First word = gold, rest = white in logo (e.g. &quot;Sabbir Ahsan&quot;)</p></div>
+            <div><label className="block text-[11px] text-brand-cream/60 uppercase tracking-wider mb-1.5">Site Title</label><input type="text" value={g.siteTitle} onChange={(e) => setG({ siteTitle: e.target.value })} className={inp} /><p className="text-[10px] text-brand-cream/25 mt-1">First word = gold, rest = white in logo (e.g. &quot;DigiTitan AI&quot;)</p></div>
             <div><label className="block text-[11px] text-brand-cream/60 uppercase tracking-wider mb-1.5">Tagline</label><input type="text" value={g.tagline} onChange={(e) => setG({ tagline: e.target.value })} className={inp} /></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -222,7 +222,7 @@ export default function SettingsPage() {
           {/* Search Preview */}
           <div className="p-4 bg-white rounded-lg">
             <p className="text-[16px] text-[#1a0dab] font-medium truncate">{s.metaTitle || 'Page Title'}</p>
-            <p className="text-[13px] text-[#006621] truncate">sabbirahsan.com</p>
+            <p className="text-[13px] text-[#006621] truncate">digititanai.com</p>
             <p className="text-[13px] text-[#545454] line-clamp-2">{s.metaDescription || 'Meta description will appear here...'}</p>
           </div>
           <SaveBtn onSave={handleSave} isSaving={saving} isSaved={saved} />
@@ -354,7 +354,7 @@ export default function SettingsPage() {
       {activeTab === 'integrations' && (
         <div className="bg-brand-dark/30 border border-brand-mid/10 rounded-xl p-4 space-y-3">
           {[
-            { name: 'Google Calendar', desc: 'Auto-create calendar events on bookings', connected: !!process.env.NEXT_PUBLIC_SUPABASE_URL, detail: 'sabbirahsan73@gmail.com' },
+            { name: 'Google Calendar', desc: 'Auto-create calendar events on bookings', connected: !!process.env.NEXT_PUBLIC_SUPABASE_URL, detail: 'digititanai@gmail.com' },
             { name: 'Gmail API', desc: 'Send emails via OAuth2', connected: true, detail: 'OAuth2 configured' },
             { name: 'Supabase', desc: 'Database, storage, and authentication', connected: true, detail: 'Connected' },
             { name: 'Google Analytics', desc: 'Website analytics tracking', connected: !!s.gaTrackingId && s.gaTrackingId !== '', detail: s.gaTrackingId || 'Not configured' },

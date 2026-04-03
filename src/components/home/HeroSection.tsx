@@ -1,59 +1,110 @@
 'use client'
 
-import { useRef, useCallback, useState, useEffect } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { CalendarDays, ArrowRight } from 'lucide-react'
+import { ArrowRight, Sparkles, CalendarDays, Cpu, Globe, Layers, BarChart3, Orbit, Megaphone, Target } from 'lucide-react'
 import { loadHomePageData, defaultHomePageData } from '@/lib/homePageData'
 import { useData } from '@/lib/useData'
-import { getIcon } from '@/lib/iconMap'
 
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-}
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1, y: 0,
-    transition: { duration: 0.7, ease: [0.25, 0.4, 0, 1] },
-  },
-}
-
-const fadeRight = {
-  hidden: { opacity: 0, x: 50 },
-  visible: {
-    opacity: 1, x: 0,
-    transition: { duration: 0.9, ease: [0.25, 0.4, 0, 1], delay: 0.3 },
-  },
-}
-
-const floatBadge = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: (i: number) => ({
-    opacity: 1, scale: 1,
-    transition: { duration: 0.6, ease: [0.25, 0.4, 0, 1], delay: 0.8 + i * 0.15 },
-  }),
-}
-
-function MagneticButton({ children, className, href }: { children: React.ReactNode; className: string; href: string }) {
-  const ref = useRef<HTMLAnchorElement>(null)
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!ref.current) return
-    const rect = ref.current.getBoundingClientRect()
-    const x = e.clientX - rect.left - rect.width / 2
-    const y = e.clientY - rect.top - rect.height / 2
-    ref.current.style.transform = `translate(${x * 0.12}px, ${y * 0.12}px)`
-  }, [])
-  const handleMouseLeave = useCallback(() => {
-    if (!ref.current) return
-    ref.current.style.transform = 'translate(0, 0)'
-  }, [])
+/* ── Single orbiting card ── */
+function PlanetCard({ icon: Icon, label, orbitSize, startDeg, duration, cardSize, reverse }: {
+  icon: React.ElementType; label: string; orbitSize: string; startDeg: number; duration: number; cardSize: number; reverse?: boolean
+}) {
+  // The trick: a wrapper div the size of the orbit, centered, rotates.
+  // The card sits at the top-center (12 o'clock) of that wrapper.
+  // A counter-rotation keeps the card upright.
+  const dir = reverse ? -360 : 360
   return (
-    <Link ref={ref} href={href} className={`${className} magnetic-btn`} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
-      {children}
-    </Link>
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <motion.div
+        className="relative rounded-full"
+        style={{ width: orbitSize, height: orbitSize }}
+        initial={{ rotate: startDeg }}
+        animate={{ rotate: startDeg + dir }}
+        transition={{ duration, repeat: Infinity, ease: 'linear' }}
+      >
+        {/* Card at top of circle */}
+        <motion.div
+          className="absolute left-1/2 -translate-x-1/2 pointer-events-auto"
+          style={{ top: -(cardSize / 2) }}
+          initial={{ rotate: -startDeg }}
+          animate={{ rotate: -(startDeg + dir) }}
+          transition={{ duration, repeat: Infinity, ease: 'linear' }}
+        >
+          <motion.div
+            className="flex flex-col items-center gap-1"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.8 + startDeg * 0.005, type: 'spring', stiffness: 150, damping: 15 }}
+          >
+            <div
+              className="rounded-2xl bg-surface-200/90 backdrop-blur-xl border border-brand-mid/20 flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.3)] hover:border-brand-mid/40 hover:bg-surface-300/50 transition-all duration-300 cursor-default"
+              style={{ width: cardSize, height: cardSize }}
+            >
+              <Icon className="text-brand-mid" style={{ width: cardSize * 0.4, height: cardSize * 0.4 }} />
+            </div>
+            {label && <span className="text-[9px] font-mono text-surface-400 uppercase tracking-[0.12em] whitespace-nowrap">{label}</span>}
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </div>
+  )
+}
+
+/* ── Orbital System ── */
+function OrbitalHUD() {
+  return (
+    <div className="relative w-full aspect-square max-w-[520px] mx-auto">
+      {/* Static orbit rings */}
+      <div className="absolute inset-[2%] rounded-full border border-brand-mid/[0.06]" />
+      <div className="absolute inset-[14%] rounded-full border border-brand-mid/[0.1]" />
+      <div className="absolute inset-[32%] rounded-full border border-dashed border-brand-mid/[0.07]" />
+      <div className="absolute inset-[46%] rounded-full border border-brand-mid/[0.04]" />
+
+      {/* Center core */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <motion.div
+          className="w-20 h-20 rounded-full flex items-center justify-center"
+          style={{
+            background: 'radial-gradient(circle, rgba(6,182,212,0.2) 0%, rgba(6,182,212,0.03) 60%, transparent 100%)',
+            boxShadow: '0 0 60px rgba(6,182,212,0.1), 0 0 30px rgba(6,182,212,0.06)',
+          }}
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <Orbit className="w-8 h-8 text-brand-mid/70" strokeWidth={1.5} />
+        </motion.div>
+      </div>
+
+      {/* Pulse waves */}
+      {[0, 1, 2].map((i) => (
+        <motion.div key={`p-${i}`} className="absolute rounded-full border border-brand-mid/[0.04]" style={{ inset: '46%' }}
+          animate={{ scale: [1, 4.5], opacity: [0.3, 0] }}
+          transition={{ duration: 5, repeat: Infinity, delay: i * 1.5, ease: 'easeOut' }}
+        />
+      ))}
+
+      {/* Outer orbit — 3 large cards, 45s, clockwise */}
+      <PlanetCard icon={Megaphone} label="Digital Mktg" orbitSize="86%" startDeg={0} duration={45} cardSize={52} />
+      <PlanetCard icon={Globe} label="SEO" orbitSize="86%" startDeg={120} duration={45} cardSize={52} />
+      <PlanetCard icon={Target} label="PPC Ads" orbitSize="86%" startDeg={240} duration={45} cardSize={52} />
+
+      {/* Inner orbit — 3 smaller cards, 30s, counter-clockwise */}
+      <PlanetCard icon={Cpu} label="Automation" orbitSize="55%" startDeg={30} duration={30} cardSize={42} reverse />
+      <PlanetCard icon={BarChart3} label="Dashboard" orbitSize="55%" startDeg={150} duration={30} cardSize={42} reverse />
+      <PlanetCard icon={Layers} label="MarTech" orbitSize="55%" startDeg={270} duration={30} cardSize={42} reverse />
+
+      {/* Tiny orbiting dots */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <motion.div className="relative w-[96%] h-[96%] rounded-full" animate={{ rotate: -360 }} transition={{ duration: 70, repeat: Infinity, ease: 'linear' }}>
+          {[0, 72, 144, 216, 288].map((d) => (
+            <div key={d} className="absolute w-1.5 h-1.5 rounded-full bg-brand-mid/20 -translate-x-1/2 -translate-y-1/2"
+              style={{ top: `${50 + 50 * Math.sin(d * Math.PI / 180)}%`, left: `${50 + 50 * Math.cos(d * Math.PI / 180)}%` }} />
+          ))}
+        </motion.div>
+      </div>
+    </div>
   )
 }
 
@@ -62,152 +113,121 @@ export default function HeroSection() {
   const [hero, setHero] = useState(defaultHomePageData.hero)
   useEffect(() => { if (loaded) loadHomePageData().then(d => setHero(d.hero)) }, [loaded])
 
-  const sectionRef = useRef<HTMLElement>(null)
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] })
-  const headingY = useTransform(scrollYProgress, [0, 1], [0, -60])
-  const photoY = useTransform(scrollYProgress, [0, 1], [0, -30])
+  const ref = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
+  const y = useTransform(scrollYProgress, [0, 1], ['0%', '20%'])
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
 
   return (
-    <section ref={sectionRef} className="relative min-h-[100svh] flex items-center overflow-hidden pt-24 pb-12 sm:pt-20 sm:pb-10 lg:pt-0 lg:pb-0" suppressHydrationWarning>
-      {/* Background gradient mesh */}
-      <div className="absolute inset-0 z-0" style={{
-        background: 'radial-gradient(ellipse at 20% 50%, rgba(75,138,108,0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 30%, rgba(184,155,74,0.04) 0%, transparent 40%), radial-gradient(ellipse at 60% 90%, rgba(33,95,71,0.1) 0%, transparent 50%)',
+    <section ref={ref} className="relative min-h-screen flex items-center overflow-hidden">
+      {/* Subtle radial glow */}
+      <div className="absolute inset-0" style={{
+        background: 'radial-gradient(ellipse at 70% 50%, rgba(6,182,212,0.05) 0%, transparent 50%)',
       }} />
 
-      {/* Subtle grid pattern */}
-      <div className="absolute inset-0 z-0 opacity-[0.02]" style={{
-        backgroundImage: 'linear-gradient(rgba(231,221,198,1) 1px, transparent 1px), linear-gradient(90deg, rgba(231,221,198,1) 1px, transparent 1px)',
-        backgroundSize: '60px 60px',
-      }} />
+      <motion.div
+        style={{ y, opacity }}
+        className="relative z-10 container-main pt-28 pb-16 lg:pt-0 lg:pb-0"
+      >
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-8 xl:gap-12">
 
-      <motion.div className="relative z-10 container-main w-full" initial="hidden" animate="visible" variants={stagger} style={{ opacity }}>
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-
-          {/* ═══ LEFT SIDE - Text Content ═══ */}
-          <div className="w-full lg:w-[55%] text-center lg:text-left">
+          {/* ═══ LEFT — Content ═══ */}
+          <div className="flex-1 text-center lg:text-left lg:max-w-[50%] shrink-0">
             {/* Badge */}
-            <motion.div variants={fadeUp}>
-              <span className="inline-flex items-center gap-2 px-4 py-2 text-[12px] font-bold tracking-[0.15em] uppercase text-brand-gold bg-brand-gold/10 border border-brand-gold/25 rounded-full">
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 text-[11px] font-mono font-semibold tracking-[0.2em] uppercase text-brand-mid bg-brand-mid/[0.06] border border-brand-mid/15 rounded-full">
+                <Sparkles className="w-3 h-3" />
                 {hero.badge}
               </span>
             </motion.div>
 
             {/* Heading */}
-            <motion.h1 variants={fadeUp} style={{ y: headingY }}
-              className="mt-6 sm:mt-8 text-[32px] sm:text-[42px] md:text-[52px] lg:text-[68px] font-display font-bold leading-[1.08] tracking-[-0.02em]">
-              {hero.heading}
+            <motion.h1
+              className="mt-7 text-[2.2rem] sm:text-[2.8rem] lg:text-[3.2rem] xl:text-[3.6rem] font-display font-extrabold leading-[1.15] tracking-[-0.02em]"
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.35, ease: [0.25, 0.4, 0.25, 1] }}
+            >
+              <span className="text-brand-cream">Grow Your Brand with </span>
+              <span className="text-shimmer">Data-Driven</span>
+              <span className="text-brand-cream"> Digital </span>
+              <span className="text-shimmer">Strategy</span>
             </motion.h1>
 
             {/* Subtitle */}
-            <motion.p variants={fadeUp} className="mt-4 sm:mt-6 text-[14px] sm:text-[16px] md:text-[17px] leading-[1.75] text-brand-cream/70 max-w-[440px] mx-auto lg:mx-0">
+            <motion.p
+              className="mt-6 text-[16px] sm:text-[17px] leading-[1.75] text-brand-cream-dark max-w-md mx-auto lg:mx-0"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.55, duration: 0.6 }}
+            >
               {hero.subtitle}
             </motion.p>
 
-            {/* Buttons */}
-            <motion.div variants={fadeUp} className="mt-7 sm:mt-9 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4">
-              <MagneticButton href={hero.primaryBtnLink} className="btn-primary gap-2.5 w-full sm:w-auto justify-center">
-                <CalendarDays className="w-4 h-4" />
-                {hero.primaryBtnText}
-              </MagneticButton>
-              <MagneticButton href={hero.secondaryBtnLink} className="btn-secondary gap-2.5 w-full sm:w-auto justify-center">
-                {hero.secondaryBtnText}
-                <ArrowRight className="w-4 h-4" />
-              </MagneticButton>
+            {/* CTAs */}
+            <motion.div
+              className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-4"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7, duration: 0.6 }}
+            >
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                <Link href={hero.primaryBtnLink} className="btn-primary animate-magnetic-pulse gap-2.5 rounded-xl h-12 px-7">
+                  <CalendarDays className="w-4 h-4" />
+                  {hero.primaryBtnText}
+                </Link>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                <Link href={hero.secondaryBtnLink} className="btn-secondary gap-2.5 rounded-xl h-12 px-7">
+                  {hero.secondaryBtnText}
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </motion.div>
             </motion.div>
 
-            {/* Stats Row */}
-            <motion.div variants={fadeUp} className="mt-8 sm:mt-12 grid grid-cols-3 gap-2 sm:flex sm:items-center sm:justify-center lg:justify-start sm:gap-3">
+            {/* Stats */}
+            <motion.div
+              className="mt-10 flex items-center justify-center lg:justify-start gap-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.9, duration: 0.6 }}
+            >
               {hero.stats.map((stat, i) => (
-                <div key={i} className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-brand-mid/[0.06] border border-brand-mid/10">
-                  <span className="text-[18px] sm:text-[22px] font-display font-bold text-brand-gold leading-none">{stat.value}</span>
-                  <span className="text-[10px] sm:text-[12px] font-medium text-brand-cream/50 text-center">{stat.label}</span>
+                <div key={i}>
+                  <div className="text-2xl sm:text-3xl font-display font-bold gradient-text leading-none">{stat.value}</div>
+                  <div className="mt-1.5 text-[10px] font-mono text-surface-400 uppercase tracking-[0.12em]">{stat.label}</div>
                 </div>
               ))}
             </motion.div>
           </div>
 
-          {/* ═══ RIGHT SIDE - Photo with floating badges ═══ */}
-          <motion.div variants={fadeRight} style={{ y: photoY }} className="w-full lg:w-[45%] flex justify-center lg:justify-end mt-4 lg:mt-0">
-            <div className="relative w-[240px] sm:w-[320px] md:w-[400px] lg:w-full max-w-[480px]">
-
-              {/* Photo container */}
-              <div className="relative rounded-2xl overflow-hidden shadow-[0_8px_60px_rgba(0,0,0,0.4)]" style={{ aspectRatio: '3/4' }}>
-                {hero.heroImage ? (
-                  <img src={hero.heroImage} alt="Sabbir Ahsan" className="absolute inset-0 w-full h-full object-cover" />
-                ) : (
-                  <>
-                    <div className="absolute inset-0" style={{
-                      background: 'linear-gradient(160deg, #0E3529 0%, #215F47 40%, #4B8A6C 70%, #0E3529 100%)',
-                    }} />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-[100px] font-display font-bold text-brand-cream/10 select-none">SA</span>
-                    </div>
-                  </>
-                )}
-                {/* Overlay for depth */}
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-darkest/60 via-transparent to-transparent" />
-              </div>
-
-              {/* ── Floating Glass Badge: Analytics (top right) ── */}
-              <motion.div custom={0} variants={floatBadge}
-                className="absolute hidden sm:block sm:top-4 sm:-right-8 z-20 animate-float">
-                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-dark/70 backdrop-blur-xl border border-brand-mid/20 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
-                  <div className="w-10 h-10 rounded-lg bg-brand-mid/20 flex items-center justify-center">
-                    {(() => { const I = getIcon(hero.floatingBadges[0]?.icon); return <I className="w-5 h-5 text-brand-mid" /> })()}
-                  </div>
-                  <div>
-                    <div className="text-[13px] font-semibold text-brand-cream">{hero.floatingBadges[0]?.title ?? 'Analytics'}</div>
-                    <div className="text-[11px] text-brand-cream/50">{hero.floatingBadges[0]?.subtitle ?? 'GA4 & GTM'}</div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* ── Floating Glass Badge: Automation (mid left) ── */}
-              <motion.div custom={1} variants={floatBadge}
-                className="absolute hidden sm:block top-[45%] sm:-left-10 z-20 animate-float-slow">
-                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-dark/70 backdrop-blur-xl border border-brand-mid/20 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
-                  <div className="w-10 h-10 rounded-lg bg-brand-gold/15 flex items-center justify-center">
-                    {(() => { const I = getIcon(hero.floatingBadges[1]?.icon); return <I className="w-5 h-5 text-brand-gold" /> })()}
-                  </div>
-                  <div>
-                    <div className="text-[13px] font-semibold text-brand-cream">{hero.floatingBadges[1]?.title ?? 'Automation'}</div>
-                    <div className="text-[11px] text-brand-cream/50">{hero.floatingBadges[1]?.subtitle ?? 'n8n & Zapier'}</div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* ── Floating Glass Badge: Development (bottom right) ── */}
-              <motion.div custom={2} variants={floatBadge}
-                className="absolute hidden sm:block sm:bottom-8 sm:-right-6 z-20 animate-bounce-subtle">
-                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-dark/70 backdrop-blur-xl border border-brand-mid/20 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
-                  <div className="w-10 h-10 rounded-lg bg-brand-green-light/15 flex items-center justify-center">
-                    {(() => { const I = getIcon(hero.floatingBadges[2]?.icon); return <I className="w-5 h-5 text-brand-green-light" /> })()}
-                  </div>
-                  <div>
-                    <div className="text-[13px] font-semibold text-brand-cream">{hero.floatingBadges[2]?.title ?? 'MarTech'}</div>
-                    <div className="text-[11px] text-brand-cream/50">{hero.floatingBadges[2]?.subtitle ?? 'HubSpot & More'}</div>
-                  </div>
-                </div>
-              </motion.div>
-
-            </div>
+          {/* ═══ RIGHT — Orbital HUD ═══ */}
+          <motion.div
+            className="flex-1 w-full lg:w-[50%]"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5, duration: 1, ease: [0.25, 0.4, 0.25, 1] }}
+          >
+            <OrbitalHUD />
           </motion.div>
 
         </div>
       </motion.div>
 
-      {/* Scroll Indicator */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2, duration: 0.8 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10">
-        <div className="relative w-px h-8 overflow-hidden">
-          <motion.div className="absolute top-0 left-0 w-full h-3 rounded-full"
-            style={{ background: 'linear-gradient(to bottom, #B89B4A, transparent)' }}
-            animate={{ y: [0, 20, 0] }}
-            transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-          />
-        </div>
-        <span className="text-[10px] tracking-[0.2em] uppercase text-brand-cream/40">Scroll</span>
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2 }}
+      >
+        <motion.div className="w-5 h-8 rounded-full border border-brand-mid/20 flex justify-center pt-1.5">
+          <motion.div className="w-1 h-2 rounded-full bg-brand-mid/50" animate={{ y: [0, 8, 0], opacity: [1, 0.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }} />
+        </motion.div>
       </motion.div>
     </section>
   )

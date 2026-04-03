@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { loadHomePageData, defaultHomePageData } from '@/lib/homePageData'
 import { useData } from '@/lib/useData'
 
@@ -15,61 +15,49 @@ export default function FAQSection() {
   return (
     <section className="section-gap" suppressHydrationWarning>
       <div className="container-main">
-        {/* Header */}
-        <div className="text-center mb-8 md:mb-14">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="heading-lg"
-          >
-            {fData.heading}
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1, duration: 0.6 }}
-            className="mt-4 body-base max-w-lg mx-auto"
-          >
-            {fData.subtitle}
-          </motion.p>
-        </div>
-
-        {/* FAQ Grid - 2 columns */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-40px' }}
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.04 } } }}
+          className="text-center mb-10 md:mb-14"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
         >
+          <span className="badge">FAQ</span>
+          <h2 className="mt-5 heading-lg">
+            {fData.heading.split(' ').slice(0, 1).join(' ')}{' '}
+            <span className="gradient-text">{fData.heading.split(' ').slice(1).join(' ')}</span>
+          </h2>
+          <p className="mt-4 body-base max-w-lg mx-auto">{fData.subtitle}</p>
+        </motion.div>
+
+        <div className="max-w-3xl mx-auto perspective-1000 space-y-3">
           {fData.faqs.map((faq, i) => (
             <motion.div
               key={i}
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-              }}
-              className="h-full"
+              className="preserve-3d"
+              initial={{ opacity: 0, rotateX: -15 }}
+              whileInView={{ opacity: 1, rotateX: 0 }}
+              viewport={{ once: true, margin: '-20px' }}
+              transition={{ delay: i * 0.04, duration: 0.5 }}
             >
-              <button
+              <motion.button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className={`w-full h-full text-left rounded-2xl p-5 md:p-6 border transition-all duration-300 flex flex-col
-                  ${openIndex === i
-                    ? 'bg-brand-mid/[0.08] border-brand-mid/20'
-                    : 'bg-brand-darkest/40 border-brand-mid/[0.08] hover:border-brand-mid/15'
-                  }`}
+                className={`w-full text-left p-5 md:p-6 rounded-xl bg-surface-200 border border-surface-300/30 transition-all duration-300 group
+                  ${openIndex === i ? 'bg-surface-300/50 border-brand-mid/20' : 'hover:bg-surface-300/30'}`}
+                whileHover={{ scale: 1.01, boxShadow: '0 0 20px rgba(6,182,212,0.06)' }}
               >
-                <div className="flex items-center justify-between gap-4 flex-1">
-                  <h3 className="text-[15px] font-semibold text-brand-cream leading-snug pr-2">
+                <div className="flex items-center justify-between gap-4">
+                  <h3 className="text-[15px] font-display font-semibold text-brand-cream leading-snug pr-2">
                     {faq.question}
                   </h3>
-                  <div className={`w-7 h-7 rounded-full border border-brand-mid/20 flex items-center justify-center shrink-0 transition-all duration-300
-                    ${openIndex === i ? 'bg-brand-gold/15 border-brand-gold/30 rotate-45' : ''}`}>
-                    <Plus className={`w-3.5 h-3.5 transition-colors ${openIndex === i ? 'text-brand-gold' : 'text-brand-cream/40'}`} />
-                  </div>
+                  <motion.div
+                    className={`w-7 h-7 rounded-full border flex items-center justify-center shrink-0 transition-all duration-300
+                      ${openIndex === i ? 'border-brand-mid/40 bg-brand-mid/10' : 'border-surface-300'}`}
+                    animate={{ rotate: openIndex === i ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <ChevronDown className={`w-3.5 h-3.5 transition-colors ${openIndex === i ? 'text-brand-mid' : 'text-surface-400'}`} />
+                  </motion.div>
                 </div>
 
                 <AnimatePresence>
@@ -81,16 +69,16 @@ export default function FAQSection() {
                       transition={{ duration: 0.3, ease: [0.25, 0.4, 0, 1] }}
                       className="overflow-hidden"
                     >
-                      <p className="mt-4 text-[14px] leading-[1.7] text-brand-cream/70">
+                      <p className="mt-4 text-[14px] leading-[1.75] text-brand-cream-dark">
                         {faq.answer}
                       </p>
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </button>
+              </motion.button>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   )

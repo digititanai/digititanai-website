@@ -29,7 +29,7 @@ export const portfolioDetailDefaults: Record<string, PortfolioDetailPageData> = 
     ],
     testimonial: {
       quote:
-        'We had no idea how much data we were missing until Sabbir showed us. The server-side tracking setup completely changed how we optimize campaigns — we finally trust our numbers.',
+        'We had no idea how much data we were missing until DigiTitan AI showed us. The server-side tracking setup completely changed how we optimize campaigns — we finally trust our numbers.',
       author: 'Abdullah Jayed',
       role: 'CEO, FundedNext',
     },
@@ -60,7 +60,7 @@ export const portfolioDetailDefaults: Record<string, PortfolioDetailPageData> = 
     ],
     testimonial: {
       quote:
-        'Sabbir built us an automation engine that runs our entire lead operation. What used to take two people full-time now happens automatically, and our conversion rates have never been higher.',
+        'DigiTitan AI built us an automation engine that runs our entire lead operation. What used to take two people full-time now happens automatically, and our conversion rates have never been higher.',
       author: 'James Whitfield',
       role: 'Head of Sales, CloudTask Pro',
     },
@@ -91,7 +91,7 @@ export const portfolioDetailDefaults: Record<string, PortfolioDetailPageData> = 
     ],
     testimonial: {
       quote:
-        'Our old site was embarrassing on mobile. Sabbir rebuilt it into something that loads instantly and actually converts. Sales from mobile tripled in the first month alone.',
+        'Our old site was embarrassing on mobile. DigiTitan AI rebuilt it into something that loads instantly and actually converts. Sales from mobile tripled in the first month alone.',
       author: 'Farhan Ahmed',
       role: 'Founder, StyleHouse BD',
     },
@@ -122,7 +122,7 @@ export const portfolioDetailDefaults: Record<string, PortfolioDetailPageData> = 
     ],
     testimonial: {
       quote:
-        'We tried scaling our ads three times before and failed every time. Sabbir rebuilt everything from scratch and we went from $5K to $20K monthly spend while more than doubling our return.',
+        'We tried scaling our ads three times before and failed every time. DigiTitan AI rebuilt everything from scratch and we went from $5K to $20K monthly spend while more than doubling our return.',
       author: 'Nadia Rahman',
       role: 'CMO, PayScale Finance',
     },
@@ -153,7 +153,7 @@ export const portfolioDetailDefaults: Record<string, PortfolioDetailPageData> = 
     ],
     testimonial: {
       quote:
-        'Sabbir turned our blog from an afterthought into our biggest growth channel. Going from 800 to 42,000 monthly visitors in a year seemed impossible, but the content strategy delivered consistently every single month.',
+        'DigiTitan AI turned our blog from an afterthought into our biggest growth channel. Going from 800 to 42,000 monthly visitors in a year seemed impossible, but the content strategy delivered consistently every single month.',
       author: 'Jennifer Park',
       role: 'Head of Marketing, DataSync Solutions',
     },
@@ -184,7 +184,7 @@ export const portfolioDetailDefaults: Record<string, PortfolioDetailPageData> = 
     ],
     testimonial: {
       quote:
-        'We were paying for 12 tools and getting value from maybe 3 of them. Sabbir stripped it all back, built something clean and integrated, and now our entire operation runs on 4 tools that actually talk to each other.',
+        'We were paying for 12 tools and getting value from maybe 3 of them. DigiTitan AI stripped it all back, built something clean and integrated, and now our entire operation runs on 4 tools that actually talk to each other.',
       author: 'Marcus Chen',
       role: 'Managing Director, GrowthHive Agency',
     },
@@ -215,7 +215,7 @@ export const portfolioDetailDefaults: Record<string, PortfolioDetailPageData> = 
     ],
     testimonial: {
       quote:
-        'For years we had no idea which ads brought patients through the door. Sabbir built a tracking system that shows us exactly where every call and booking comes from, and it is fully HIPAA compliant. Game changer.',
+        'For years we had no idea which ads brought patients through the door. DigiTitan AI built a tracking system that shows us exactly where every call and booking comes from, and it is fully HIPAA compliant. Game changer.',
       author: 'Dr. Sarah Mitchell',
       role: 'Chief Marketing Officer, MedCare Network',
     },
@@ -246,7 +246,7 @@ export const portfolioDetailDefaults: Record<string, PortfolioDetailPageData> = 
     ],
     testimonial: {
       quote:
-        'Managing 12 locations used to mean drowning in spreadsheets and missed reviews. Sabbir automated everything — now our reviews are up 300%, customers get instant confirmations, and I get my weekends back.',
+        'Managing 12 locations used to mean drowning in spreadsheets and missed reviews. DigiTitan AI automated everything — now our reviews are up 300%, customers get instant confirmations, and I get my weekends back.',
       author: 'Kamal Hossain',
       role: 'Operations Director, TasteBD Restaurant Group',
     },

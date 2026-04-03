@@ -217,8 +217,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const SidebarContent = ({ onNavClick }: { onNavClick?: () => void }) => (
     <>
       {/* Logo */}
-      <div className="flex items-center gap-2 px-4 h-14 border-b border-brand-mid/10">
-        <span className="font-display text-[18px] text-brand-cream">Sabbir</span>
+      <div className="flex items-center gap-2.5 px-4 h-14 border-b border-brand-mid/10">
+        <div className="w-7 h-7 rounded-md bg-gradient-to-br from-brand-mid/15 to-brand-mid/5 border border-brand-mid/20 flex items-center justify-center">
+          <svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 4h8c8 0 13 5 13 12s-5 12-13 12H6z" stroke="#06b6d4" strokeWidth="2.5" strokeLinejoin="round"/>
+            <line x1="11" y1="11" x2="17" y2="11" stroke="#22d3ee" strokeWidth="1.5" strokeLinecap="round" opacity=".7"/>
+            <line x1="11" y1="16" x2="20" y2="16" stroke="#06b6d4" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="11" y1="21" x2="15" y2="21" stroke="#22d3ee" strokeWidth="1.5" strokeLinecap="round" opacity=".7"/>
+            <circle cx="21" cy="16" r="1.8" fill="#22d3ee" opacity=".9"/>
+          </svg>
+        </div>
+        <span className="font-logo text-[13px] font-bold tracking-[0.08em] uppercase"><span className="text-brand-mid">Digi</span><span className="text-brand-cream">Titan</span></span>
         <span className="text-[10px] bg-brand-gold/10 text-brand-gold rounded px-1.5 py-0.5 font-medium">Admin</span>
       </div>
 

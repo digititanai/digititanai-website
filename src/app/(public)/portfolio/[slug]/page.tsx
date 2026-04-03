@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { getPortfolioDetail, savePortfolioDetail } from '@/lib/collections';
 import { useData, useDetailData } from '@/lib/useData';
 import { portfolioDetailDefaults } from '@/lib/portfolioDetailDefaults';
 import PageSEO from '@/components/layout/PageSEO';
+import TiltCard from '@/components/ui/TiltCard';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -65,7 +66,7 @@ const projectMap: Record<string, ProjectData> = {
     ],
     testimonial: {
       quote:
-        'We had no idea how much data we were missing until Sabbir showed us. The server-side tracking setup completely changed how we optimize campaigns — we finally trust our numbers.',
+        'We had no idea how much data we were missing until DigiTitan AI showed us. The server-side tracking setup completely changed how we optimize campaigns — we finally trust our numbers.',
       author: 'Abdullah Jayed',
       role: 'CEO, FundedNext',
     },
@@ -96,7 +97,7 @@ const projectMap: Record<string, ProjectData> = {
     ],
     testimonial: {
       quote:
-        'Sabbir built us an automation engine that runs our entire lead operation. What used to take two people full-time now happens automatically, and our conversion rates have never been higher.',
+        'DigiTitan AI built us an automation engine that runs our entire lead operation. What used to take two people full-time now happens automatically, and our conversion rates have never been higher.',
       author: 'James Whitfield',
       role: 'Head of Sales, CloudTask Pro',
     },
@@ -127,7 +128,7 @@ const projectMap: Record<string, ProjectData> = {
     ],
     testimonial: {
       quote:
-        'Our old site was embarrassing on mobile. Sabbir rebuilt it into something that loads instantly and actually converts. Sales from mobile tripled in the first month alone.',
+        'Our old site was embarrassing on mobile. DigiTitan AI rebuilt it into something that loads instantly and actually converts. Sales from mobile tripled in the first month alone.',
       author: 'Farhan Ahmed',
       role: 'Founder, StyleHouse BD',
     },
@@ -158,7 +159,7 @@ const projectMap: Record<string, ProjectData> = {
     ],
     testimonial: {
       quote:
-        'We tried scaling our ads three times before and failed every time. Sabbir rebuilt everything from scratch and we went from $5K to $20K monthly spend while more than doubling our return.',
+        'We tried scaling our ads three times before and failed every time. DigiTitan AI rebuilt everything from scratch and we went from $5K to $20K monthly spend while more than doubling our return.',
       author: 'Nadia Rahman',
       role: 'CMO, PayScale Finance',
     },
@@ -189,7 +190,7 @@ const projectMap: Record<string, ProjectData> = {
     ],
     testimonial: {
       quote:
-        'Sabbir turned our blog from an afterthought into our biggest growth channel. Going from 800 to 42,000 monthly visitors in a year seemed impossible, but the content strategy delivered consistently every single month.',
+        'DigiTitan AI turned our blog from an afterthought into our biggest growth channel. Going from 800 to 42,000 monthly visitors in a year seemed impossible, but the content strategy delivered consistently every single month.',
       author: 'Jennifer Park',
       role: 'Head of Marketing, DataSync Solutions',
     },
@@ -220,7 +221,7 @@ const projectMap: Record<string, ProjectData> = {
     ],
     testimonial: {
       quote:
-        'We were paying for 12 tools and getting value from maybe 3 of them. Sabbir stripped it all back, built something clean and integrated, and now our entire operation runs on 4 tools that actually talk to each other.',
+        'We were paying for 12 tools and getting value from maybe 3 of them. DigiTitan AI stripped it all back, built something clean and integrated, and now our entire operation runs on 4 tools that actually talk to each other.',
       author: 'Marcus Chen',
       role: 'Managing Director, GrowthHive Agency',
     },
@@ -251,7 +252,7 @@ const projectMap: Record<string, ProjectData> = {
     ],
     testimonial: {
       quote:
-        'For years we had no idea which ads brought patients through the door. Sabbir built a tracking system that shows us exactly where every call and booking comes from, and it is fully HIPAA compliant. Game changer.',
+        'For years we had no idea which ads brought patients through the door. DigiTitan AI built a tracking system that shows us exactly where every call and booking comes from, and it is fully HIPAA compliant. Game changer.',
       author: 'Dr. Sarah Mitchell',
       role: 'Chief Marketing Officer, MedCare Network',
     },
@@ -282,7 +283,7 @@ const projectMap: Record<string, ProjectData> = {
     ],
     testimonial: {
       quote:
-        'Managing 12 locations used to mean drowning in spreadsheets and missed reviews. Sabbir automated everything — now our reviews are up 300%, customers get instant confirmations, and I get my weekends back.',
+        'Managing 12 locations used to mean drowning in spreadsheets and missed reviews. DigiTitan AI automated everything — now our reviews are up 300%, customers get instant confirmations, and I get my weekends back.',
       author: 'Kamal Hossain',
       role: 'Operations Director, TasteBD Restaurant Group',
     },
@@ -347,33 +348,24 @@ export default function PortfolioDetailPage() {
   const relatedSlugs = project.related;
 
   return (
-    <main className="min-h-screen bg-brand-darkest">
+    <main className="min-h-screen">
       {(() => { const pd = mounted ? getPortfolioDetail(slug ?? '') : null; return pd ? <PageSEO title={pd.seoTitle || project.title} description={pd.seoDescription || project.description} image={pd.seoImage} /> : null })()}
-      {/* ---- Hero ---- */}
-      <section className="pt-28 pb-10">
-        <div className="container-main">
-          {/* Back link */}
-          <Link
-            href="/portfolio"
-            className="inline-flex items-center gap-2 text-[14px] text-[#6BA88A] hover:text-[#B89B4A] transition-colors mb-8"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Portfolio
+
+      {/* ═══ HERO ═══ */}
+      <section className="relative pt-28 pb-14 overflow-hidden">
+        <div className="absolute inset-0 bg-grid opacity-20" />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(6,182,212,0.06) 0%, transparent 60%)' }} />
+
+        <div className="container-main relative z-10">
+          <Link href="/portfolio" className="inline-flex items-center gap-2 text-[14px] text-brand-cream/50 hover:text-brand-cream transition-colors mb-8">
+            <ArrowLeft className="w-4 h-4" /> Portfolio
           </Link>
 
           <div className="grid lg:grid-cols-[1fr_380px] gap-12 items-center">
-            {/* Left column */}
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              transition={{ duration: 0.5 }}
-            >
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
               <span className="badge inline-block mb-4">{project.category}</span>
-              <h1 className="heading-lg text-[#E7DDC6] mb-5">{project.title}</h1>
-              <p className="body-base text-[#C9BFA6]/60 max-w-[560px] leading-relaxed">
-                {project.description}
-              </p>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold leading-[1.08] tracking-tight text-brand-cream mb-5">{project.title}</h1>
+              <p className="text-[15px] text-brand-cream-dark leading-relaxed max-w-[560px]">{project.description}</p>
               {(() => {
                 const detail = mounted ? getPortfolioDetail(slug ?? '') : null;
                 return detail?.image ? (
@@ -384,44 +376,31 @@ export default function PortfolioDetailPage() {
               })()}
             </motion.div>
 
-            {/* Right column — Project Overview card */}
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              transition={{ duration: 0.5, delay: 0.15 }}
-              className="border border-[#4B8A6C]/20 rounded-2xl p-6 h-fit"
-            >
-              <h2 className="text-[13px] uppercase tracking-widest text-[#B89B4A]/70 font-semibold mb-5 font-display">
-                Project Overview
-              </h2>
-              <div className="space-y-4">
-                {[
-                  { label: 'Client', value: project.client },
-                  { label: 'Industry', value: project.industry },
-                  { label: 'Service', value: project.service },
-                  { label: 'Timeline', value: project.timeline },
-                ].map((item) => (
-                  <div key={item.label}>
-                    <span className="text-[11px] uppercase tracking-widest text-[#6BA88A]/50 block mb-1 font-semibold">
-                      {item.label}
-                    </span>
-                    <p className="text-[14px] text-[#E7DDC6]/70">{item.value}</p>
-                  </div>
-                ))}
-                <div>
-                  <span className="text-[11px] uppercase tracking-widest text-[#6BA88A]/50 block mb-2 font-semibold">
-                    Tools
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {project.tools.map((t) => (
-                      <span
-                        key={t}
-                        className="bg-[#215F47]/40 border border-[#4B8A6C]/15 px-2.5 py-1 text-[11px] text-[#6BA88A] rounded-full"
-                      >
-                        {t}
-                      </span>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}>
+              <div className="rounded-2xl bg-surface-200 border border-surface-300 p-6 relative overflow-hidden">
+                <div className="absolute inset-0 card-shine pointer-events-none" />
+                <div className="relative z-10">
+                  <h2 className="text-[13px] uppercase tracking-widest text-brand-mid/80 font-semibold mb-5 font-display">Project Overview</h2>
+                  <div className="space-y-4">
+                    {[
+                      { label: 'Client', value: project.client },
+                      { label: 'Industry', value: project.industry },
+                      { label: 'Service', value: project.service },
+                      { label: 'Timeline', value: project.timeline },
+                    ].map((item) => (
+                      <div key={item.label}>
+                        <span className="text-[11px] uppercase tracking-widest text-brand-cream/30 block mb-1 font-semibold">{item.label}</span>
+                        <p className="text-[14px] text-brand-cream/70">{item.value}</p>
+                      </div>
                     ))}
+                    <div>
+                      <span className="text-[11px] uppercase tracking-widest text-brand-cream/30 block mb-2 font-semibold">Tools</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {project.tools.map((t) => (
+                          <span key={t} className="bg-brand-mid/10 border border-brand-mid/15 px-2.5 py-1 text-[11px] text-brand-mid rounded-full">{t}</span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -430,93 +409,70 @@ export default function PortfolioDetailPage() {
         </div>
       </section>
 
-      {/* ---- Challenge / Solution / Result ---- */}
-      <section className="py-12">
-        <div className="container-main">
-          <div className="grid md:grid-cols-3 gap-5">
+      {/* ═══ CHALLENGE / SOLUTION / RESULT ═══ */}
+      <section className="py-20 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-brand-mid/[0.03] rounded-full blur-[120px]" />
+        </div>
+        <div className="container-main relative z-10">
+          <div className="grid md:grid-cols-3 gap-6">
             {[
               { heading: 'The Challenge', body: project.challenge },
               { heading: 'The Solution', body: project.solution },
               { heading: 'The Result', body: project.result },
             ].map((section, i) => (
-              <motion.div
-                key={section.heading}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                transition={{ duration: 0.45, delay: i * 0.1 }}
-                className="card p-6 relative overflow-hidden flex flex-col"
-              >
-                {/* Grid pattern bg */}
-                <div
-                  className="absolute inset-0 opacity-[0.03]"
-                  style={{
-                    backgroundImage:
-                      'linear-gradient(#E7DDC6 1px, transparent 1px), linear-gradient(90deg, #E7DDC6 1px, transparent 1px)',
-                    backgroundSize: '24px 24px',
-                  }}
-                />
-                <div className="relative z-10 flex flex-col flex-1">
-                  <h3 className="heading-sm text-[#E7DDC6]/90 mb-3">{section.heading}</h3>
-                  <p className="body-sm text-[#C9BFA6]/55 leading-[1.75]">{section.body}</p>
-                </div>
+              <motion.div key={section.heading} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.12 }} className="h-full">
+                <TiltCard tiltAmount={6}>
+                  <div className="p-7 rounded-2xl bg-surface-200 border border-surface-300 hover:border-brand-mid/20 transition-all duration-500 h-full relative overflow-hidden group">
+                    <div className="absolute inset-0 card-shine pointer-events-none" />
+                    <div className="relative z-10">
+                      <h3 className="text-lg font-display font-bold text-brand-cream mb-3">{section.heading}</h3>
+                      <p className="text-sm text-brand-cream-dark leading-relaxed">{section.body}</p>
+                    </div>
+                  </div>
+                </TiltCard>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ---- Key Metrics ---- */}
-      <section className="py-12">
+      {/* ═══ KEY METRICS ═══ */}
+      <section className="py-20">
         <div className="container-main">
-          <motion.h2
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-            className="heading-sm text-[#E7DDC6]/85 mb-8"
-          >
-            Key Results
-          </motion.h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <span className="badge">Results</span>
+            <h2 className="mt-5 text-3xl sm:text-4xl font-display font-bold">Key Results</h2>
+          </motion.div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             {project.metrics.map((metric, i) => (
-              <motion.div
-                key={metric.label}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                transition={{ duration: 0.4, delay: i * 0.1 }}
-                className="card p-6 text-center"
-              >
-                <p className="text-[32px] md:text-[36px] font-display font-bold text-[#B89B4A] mb-1">
-                  {metric.value}
-                </p>
-                <p className="text-[13px] text-[#C9BFA6]/45">{metric.label}</p>
+              <motion.div key={metric.label} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="text-center p-6 rounded-2xl bg-surface-200 border border-surface-300">
+                <p className="text-3xl font-display font-bold gradient-text">{metric.value}</p>
+                <p className="text-sm text-brand-cream-dark mt-2">{metric.label}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ---- Project Gallery ---- */}
+      {/* ═══ PROJECT GALLERY ═══ */}
       {(() => {
         const detail = mounted ? getPortfolioDetail(slug ?? '') : null;
         const gallery = detail?.gallery;
         if (!gallery?.length) return null;
         return (
-          <section className="py-12">
+          <section className="py-20">
             <div className="container-main">
-              <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                className="heading-sm text-[#E7DDC6]/85 mb-8">
-                Project Gallery
-              </motion.h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+                <span className="badge">Gallery</span>
+                <h2 className="mt-5 text-3xl sm:text-4xl font-display font-bold">Project Gallery</h2>
+              </motion.div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {gallery.map((img, i) => (
-                  <motion.div key={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                    transition={{ duration: 0.4, delay: i * 0.08 }}
-                    className="aspect-[3/2] rounded-xl overflow-hidden bg-brand-dark">
+                  <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.08 }}
+                    className="aspect-[3/2] rounded-xl overflow-hidden bg-surface-200 border border-surface-300">
                     <img src={img} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
                   </motion.div>
                 ))}
@@ -526,65 +482,40 @@ export default function PortfolioDetailPage() {
         );
       })()}
 
-      {/* ---- Client Testimonial ---- */}
-      <section className="py-12">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeUp}
-          transition={{ duration: 0.6 }}
-          className="container-main max-w-[720px] mx-auto text-center"
-        >
-          <span className="text-[72px] font-display text-[#B89B4A]/30 leading-none block mb-2">
-            &ldquo;
-          </span>
-          <blockquote className="text-[20px] md:text-[26px] text-[#E7DDC6]/75 leading-[1.55] font-display italic mb-6">
-            {project.testimonial.quote}
-          </blockquote>
-          <p className="text-[15px] text-[#E7DDC6]/70 font-semibold">
-            {project.testimonial.author}
-          </p>
-          <p className="text-[13px] text-[#C9BFA6]/40 mt-1">
-            {project.testimonial.role}
-          </p>
+      {/* ═══ CLIENT TESTIMONIAL ═══ */}
+      <section className="py-20 relative overflow-hidden">
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(6,182,212,0.04) 0%, transparent 60%)' }} />
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
+          className="container-main max-w-[720px] mx-auto text-center relative z-10">
+          <span className="text-[72px] font-display text-brand-mid/20 leading-none block mb-2">&ldquo;</span>
+          <blockquote className="text-[20px] md:text-[26px] text-brand-cream/75 leading-[1.55] font-display italic mb-6">{project.testimonial.quote}</blockquote>
+          <p className="text-[15px] text-brand-cream font-semibold">{project.testimonial.author}</p>
+          <p className="text-[13px] text-brand-cream-dark mt-1">{project.testimonial.role}</p>
         </motion.div>
       </section>
 
-      {/* ---- Related Projects ---- */}
-      <section className="py-12">
+      {/* ═══ RELATED PROJECTS ═══ */}
+      <section className="py-20">
         <div className="container-main">
-          <h2 className="heading-sm text-[#E7DDC6]/85 mb-8">More Projects</h2>
-          <div className="grid md:grid-cols-3 gap-5">
+          <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <span className="badge">More Work</span>
+            <h2 className="mt-5 text-3xl sm:text-4xl font-display font-bold">More Projects</h2>
+          </motion.div>
+          <div className="grid md:grid-cols-3 gap-6">
             {relatedSlugs.map((rSlug, i) => {
               const rProject = projectMap[rSlug];
               if (!rProject) return null;
               return (
-                <motion.div
-                  key={rSlug}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={fadeUp}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
-                >
+                <motion.div key={rSlug} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.1 }}>
                   <Link href={`/portfolio/${rSlug}`} className="group block">
-                    <div className="card-hover overflow-hidden rounded-2xl">
-                      <div className="aspect-[16/10] bg-gradient-to-br from-[#215F47] to-[#4B8A6C]/50 flex items-center justify-center">
-                        <span className="text-[#E7DDC6]/10 text-[12px] font-display italic">
-                          {rProject.category}
-                        </span>
+                    <div className="overflow-hidden rounded-2xl bg-surface-200 border border-surface-300 hover:border-brand-mid/20 transition-all duration-500">
+                      <div className="aspect-[16/10] bg-gradient-to-br from-surface-200 via-brand-mid/10 to-surface-200 flex items-center justify-center">
+                        <span className="text-brand-cream/10 text-[12px] font-display italic">{rProject.category}</span>
                       </div>
                       <div className="p-5">
-                        <span className="text-[11px] text-[#B89B4A]/50 uppercase tracking-wider font-semibold">
-                          {rProject.category}
-                        </span>
-                        <h3 className="text-[15px] text-[#E7DDC6]/70 font-semibold mt-1 group-hover:text-[#E7DDC6] transition-colors">
-                          {rProject.title}
-                        </h3>
-                        <p className="text-[13px] text-[#C9BFA6]/35 mt-1">
-                          {rProject.client}
-                        </p>
+                        <span className="text-[11px] text-brand-mid/60 uppercase tracking-wider font-semibold">{rProject.category}</span>
+                        <h3 className="text-[15px] text-brand-cream/80 font-display font-bold mt-1 group-hover:text-brand-cream transition-colors">{rProject.title}</h3>
+                        <p className="text-[13px] text-brand-cream-dark mt-1">{rProject.client}</p>
                       </div>
                     </div>
                   </Link>

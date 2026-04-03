@@ -32,12 +32,12 @@ const services = [
 const budgets = ['< $500', '$500 – $1,000', '$1,000 – $5,000', '$5,000+']
 
 const socials = [
-  { icon: Linkedin, href: 'https://linkedin.com/in/sabbirahsan', label: 'LinkedIn' },
-  { icon: Twitter, href: 'https://x.com/sabbirahsan', label: 'Twitter' },
-  { icon: Facebook, href: 'https://facebook.com/sabbirahsan', label: 'Facebook' },
-  { icon: Instagram, href: 'https://instagram.com/sabbirahsan', label: 'Instagram' },
-  { icon: Youtube, href: 'https://youtube.com/@sabbirahsan', label: 'YouTube' },
-  { icon: Github, href: 'https://github.com/sabbirahsan', label: 'GitHub' },
+  { icon: Linkedin, href: 'https://linkedin.com/in/digititanai', label: 'LinkedIn' },
+  { icon: Twitter, href: 'https://x.com/digititanai', label: 'Twitter' },
+  { icon: Facebook, href: 'https://facebook.com/digititanai', label: 'Facebook' },
+  { icon: Instagram, href: 'https://instagram.com/digititanai', label: 'Instagram' },
+  { icon: Youtube, href: 'https://youtube.com/@digititanai', label: 'YouTube' },
+  { icon: Github, href: 'https://github.com/digititanai', label: 'GitHub' },
 ]
 
 export default function ContactPage() {
