@@ -205,15 +205,10 @@ export default function HeroSection() {
             </motion.div>
           </div>
 
-          {/* ═══ RIGHT — Orbital HUD (desktop only) ═══ */}
-          <motion.div
-            className="hidden lg:flex flex-1 w-[50%]"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, duration: 1, ease: [0.25, 0.4, 0.25, 1] }}
-          >
+          {/* ═══ RIGHT — Orbital HUD ═══ */}
+          <div className="flex-1 w-full lg:w-[50%]">
             <OrbitalHUD />
-          </motion.div>
+          </div>
 
         </div>
       </motion.div>
