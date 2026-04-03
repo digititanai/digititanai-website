@@ -34,6 +34,15 @@
     color: #e2e8f0;
   }
 
+  /* Force all elements visible on mobile — prevents scroll-triggered opacity:0 blink */
+  @media (max-width: 768px) {
+    [style*="opacity: 0"],
+    [style*="opacity:0"] {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-sans), 'Space Grotesk', system-ui, sans-serif;
     color: #e2e8f0;
