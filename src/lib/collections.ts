@@ -278,15 +278,21 @@ async function fetchFromDB(key: string): Promise<unknown | null> {
   }
 }
 
-async function saveToDB(key: string, data: unknown): Promise<void> {
+async function saveToDB(key: string, data: unknown): Promise<boolean> {
   try {
-    await fetch(`/api/admin/data/${key}`, {
+    const res = await fetch(`/api/admin/data/${key}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ value: data }),
     })
-  } catch {
-    // Fire-and-forget — silently fail, localStorage is the fallback
+    if (!res.ok) {
+      console.error(`[saveToDB] Failed to save ${key}:`, await res.text())
+      return false
+    }
+    return true
+  } catch (err) {
+    console.error(`[saveToDB] Error saving ${key}:`, err)
+    return false
   }
 }
 
