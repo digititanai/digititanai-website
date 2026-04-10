@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Save, Loader2, Plus, Trash2, Check, Eye, ChevronDown, ChevronRight, ExternalLink, Star, GripVertical } from 'lucide-react'
-import { getBlog, saveBlog, getBlogDetail, saveBlogDetail, type BlogDetail } from '@/lib/collections'
-import { useData, useDetailData } from '@/lib/useData'
+import { getBlog, saveBlog, getBlogDetail, saveBlogDetail, loadAllCollections, loadCollection, type BlogDetail } from '@/lib/collections'
+import { useData } from '@/lib/useData'
 import CategoryPicker from '@/components/admin/CategoryPicker'
 import ImageUploader from '@/components/admin/ImageUploader'
 import dynamic from 'next/dynamic'
@@ -696,43 +696,43 @@ export default function BlogDetailEditor() {
   const { slug } = useParams<{ slug: string }>()
   const router = useRouter()
   const { loaded } = useData()
-  const { loaded: detailLoaded } = useDetailData('col_blog_detail_' + slug)
   const [data, setData] = useState<BlogDetail | null>(null)
   const [postSlug, setPostSlug] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    if (!slug || !loaded || !detailLoaded) return
-    const post = getBlog().find((b) => b.slug === slug)
-    if (post) setPostSlug(post.slug)
+    if (!slug || !loaded) return
+    const init = async () => {
+      // Always fetch fresh from Supabase first
+      await loadAllCollections()
+      await loadCollection(`col_blog_detail_${slug}`)
 
-    const existing = getBlogDetail(slug)
-    if (existing) {
-      // Migrate old toc entries that don't have content field
-      let toc = (existing.toc || []).map((t: { id: string; label: string; content?: string }) => ({ id: t.id, label: t.label, content: t.content || '' }))
-      // If toc is empty but we have default seeds, populate from seeds
-      if (toc.length === 0 && defaultTocSeeds[slug]) {
-        toc = defaultTocSeeds[slug]
+      const post = getBlog().find((b) => b.slug === slug)
+      if (post) setPostSlug(post.slug)
+
+      const existing = getBlogDetail(slug)
+      if (existing) {
+        let toc = (existing.toc || []).map((t: { id: string; label: string; content?: string }) => ({ id: t.id, label: t.label, content: t.content || '' }))
+        if (toc.length === 0 && defaultTocSeeds[slug]) toc = defaultTocSeeds[slug]
+        const intro = (!existing.intro && defaultIntroSeeds[slug]) ? defaultIntroSeeds[slug] : (existing.intro || '')
+        const image = existing.image || post?.image || ''
+        setData({ ...existing, toc, intro, image })
+      } else {
+        // New post — seed from blog list data
+        const seeded: BlogDetail = {
+          title: post?.title || '', category: post?.category || '', date: post?.date || '', readTime: post?.readTime || '',
+          excerpt: post?.excerpt || '', image: post?.image || '', author: 'DigiTitan AI', authorRole: 'AI-Powered Digital Solutions', authorInitials: 'DT',
+          intro: defaultIntroSeeds[slug] || '', toc: defaultTocSeeds[slug] || [], ctaHeading: 'Want to implement this?', ctaDescription: "Let's discuss how to apply these strategies to your business.",
+          ctaButtonText: 'Book a Free Consultation', ctaButtonLink: '/book', ctaSubtext: 'No payment required',
+          relatedSectionTitle: 'Keep Reading', featured: post?.featured || false,
+        }
+        await saveBlogDetail(slug, seeded)
+        setData(seeded)
       }
-      // If intro is empty but we have default intro seeds, populate from seeds
-      const intro = (!existing.intro && defaultIntroSeeds[slug]) ? defaultIntroSeeds[slug] : (existing.intro || '')
-      // If image is missing in detail but exists in blog list, pull it in
-      const image = existing.image || post?.image || ''
-      setData({ ...existing, toc, intro, image })
-    } else {
-      // Seed from collection data
-      const seeded: BlogDetail = {
-        title: post?.title || '', category: post?.category || '', date: post?.date || '', readTime: post?.readTime || '',
-        excerpt: post?.excerpt || '', image: post?.image || '', author: 'DigiTitan AI', authorRole: 'AI-Powered Digital Solutions', authorInitials: 'DT',
-        intro: defaultIntroSeeds[slug] || '', toc: defaultTocSeeds[slug] || [], ctaHeading: 'Want to implement this?', ctaDescription: "Let's discuss how to apply these strategies to your business.",
-        ctaButtonText: 'Book a Free Consultation', ctaButtonLink: '/book', ctaSubtext: 'No payment required',
-        relatedSectionTitle: 'Keep Reading', featured: post?.featured || false,
-      }
-      saveBlogDetail(slug, seeded)
-      setData(seeded)
     }
-  }, [slug, loaded, detailLoaded])
+    init()
+  }, [slug, loaded])
 
   const handleSave = () => {
     if (!data || !slug) return

@@ -9,7 +9,7 @@ import {
   getServices, saveServices, getServiceDetail, saveServiceDetail,
   getCategories, type ServiceDetail,
 } from '@/lib/collections'
-import { useData, useDetailData } from '@/lib/useData'
+import { useData } from '@/lib/useData'
 import { serviceDetailDefaults } from '@/lib/serviceDetailDefaults'
 import { iconMap } from '@/lib/iconMap'
 import IconPicker from '@/components/admin/IconPicker'
@@ -63,7 +63,6 @@ export default function ServiceDetailEditor() {
   const { slug } = useParams<{ slug: string }>()
   const router = useRouter()
   const { loaded } = useData()
-  const { loaded: detailLoaded } = useDetailData('col_service_detail_' + slug)
   const [serviceTitle, setServiceTitle] = useState('')
   const [serviceSlug, setServiceSlug] = useState('')
   const [data, setData] = useState<ServiceDetail | null>(null)
@@ -71,35 +70,39 @@ export default function ServiceDetailEditor() {
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    if (!slug || !loaded || !detailLoaded) return
-    const svc = getServices().find((s) => s.slug === slug)
-    if (svc) { setServiceTitle(svc.title); setServiceSlug(svc.slug) }
+    if (!slug || !loaded) return
+    const init = async () => {
+      // Always fetch fresh from Supabase
+      const { loadAllCollections, loadCollection } = await import('@/lib/collections')
+      await loadAllCollections()
+      await loadCollection(`col_service_detail_${slug}`)
 
-    // Load saved data, merge with defaults to fill any missing new fields
-    const defaults = seedFromDefaults(slug)
-    const existing = getServiceDetail(slug)
-    if (existing) {
-      // Merge: existing data takes priority, but missing fields get defaults
-      const merged = { ...defaults, ...existing }
-      // Ensure arrays aren't lost
-      if (!merged.quickOverviewItems?.length) merged.quickOverviewItems = defaults.quickOverviewItems
-      if (!merged.ctaPrimaryText) merged.ctaPrimaryText = defaults.ctaPrimaryText
-      if (!merged.ctaPrimaryLink) merged.ctaPrimaryLink = defaults.ctaPrimaryLink
-      if (!merged.ctaSecondaryText) merged.ctaSecondaryText = defaults.ctaSecondaryText
-      if (!merged.ctaSecondaryLink) merged.ctaSecondaryLink = defaults.ctaSecondaryLink
-      if (!merged.heroDescription) merged.heroDescription = defaults.heroDescription
-      // Sync: pull latest pricing and category from collection (source of truth)
-      const colService = getServices().find((sv) => sv.slug === slug)
-      if (colService) {
-        if (colService.pricing?.length) merged.pricing = colService.pricing
-        if (colService.category) merged.category = colService.category
+      const svc = getServices().find((s) => s.slug === slug)
+      if (svc) { setServiceTitle(svc.title); setServiceSlug(svc.slug) }
+
+      const defaults = seedFromDefaults(slug)
+      const existing = getServiceDetail(slug)
+      if (existing) {
+        const merged = { ...defaults, ...existing }
+        if (!merged.quickOverviewItems?.length) merged.quickOverviewItems = defaults.quickOverviewItems
+        if (!merged.ctaPrimaryText) merged.ctaPrimaryText = defaults.ctaPrimaryText
+        if (!merged.ctaPrimaryLink) merged.ctaPrimaryLink = defaults.ctaPrimaryLink
+        if (!merged.ctaSecondaryText) merged.ctaSecondaryText = defaults.ctaSecondaryText
+        if (!merged.ctaSecondaryLink) merged.ctaSecondaryLink = defaults.ctaSecondaryLink
+        if (!merged.heroDescription) merged.heroDescription = defaults.heroDescription
+        const colService = getServices().find((sv) => sv.slug === slug)
+        if (colService) {
+          if (colService.pricing?.length) merged.pricing = colService.pricing
+          if (colService.category) merged.category = colService.category
+        }
+        setData(merged)
+      } else {
+        await saveServiceDetail(slug, defaults)
+        setData(defaults)
       }
-      setData(merged)
-    } else {
-      saveServiceDetail(slug, defaults)
-      setData(defaults)
     }
-  }, [slug, loaded, detailLoaded])
+    init()
+  }, [slug, loaded])
 
   const handleSave = () => {
     if (!data || !slug) return

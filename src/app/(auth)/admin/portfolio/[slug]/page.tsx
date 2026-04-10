@@ -6,7 +6,7 @@ import { ArrowLeft, Save, Loader2, Plus, Trash2, Check, Eye, ChevronDown, Chevro
 import dynamic from 'next/dynamic'
 const MediaPicker = dynamic(() => import('@/components/admin/MediaPicker'), { ssr: false })
 import { getPortfolio, savePortfolio, getPortfolioDetail, savePortfolioDetail, type PortfolioDetail } from '@/lib/collections'
-import { useData, useDetailData } from '@/lib/useData'
+import { useData } from '@/lib/useData'
 import { portfolioDetailDefaults } from '@/lib/portfolioDetailDefaults'
 import CategoryPicker from '@/components/admin/CategoryPicker'
 import ImageUploader from '@/components/admin/ImageUploader'
@@ -33,7 +33,6 @@ export default function PortfolioDetailEditor() {
   const { slug } = useParams<{ slug: string }>()
   const router = useRouter()
   const { loaded } = useData()
-  const { loaded: detailLoaded } = useDetailData('col_portfolio_detail_' + slug)
   const [title, setTitle] = useState('')
   const [projectSlug, setProjectSlug] = useState('')
   const [data, setData] = useState<PortfolioDetail | null>(null)
@@ -42,24 +41,30 @@ export default function PortfolioDetailEditor() {
   const [showGalleryPicker, setShowGalleryPicker] = useState(false)
 
   useEffect(() => {
-    if (!slug || !loaded || !detailLoaded) return
-    const p = getPortfolio().find((i) => i.slug === slug)
-    if (p) { setTitle(p.title); setProjectSlug(p.slug) }
+    if (!slug || !loaded) return
+    const init = async () => {
+      const { loadAllCollections, loadCollection } = await import('@/lib/collections')
+      await loadAllCollections()
+      await loadCollection(`col_portfolio_detail_${slug}`)
 
-    const defaults = portfolioDetailDefaults[slug]
-    const existing = getPortfolioDetail(slug)
-    if (existing) {
-      // Merge image from collection if detail doesn't have it
-      if (!existing.image && p?.image) existing.image = p.image
-      setData(existing)
-    } else if (defaults) {
-      const seeded: PortfolioDetail = { ...defaults }
-      savePortfolioDetail(slug, seeded)
-      setData(seeded)
-    } else {
-      setData({ title: p?.title || '', category: p?.category || '', description: p?.description || '', client: '', industry: '', service: '', timeline: '', tools: [], challenge: '', solution: '', result: '', metrics: p?.metrics || [], testimonial: { quote: '', author: '', role: '' }, related: [] })
+      const p = getPortfolio().find((i) => i.slug === slug)
+      if (p) { setTitle(p.title); setProjectSlug(p.slug) }
+
+      const defaults = portfolioDetailDefaults[slug]
+      const existing = getPortfolioDetail(slug)
+      if (existing) {
+        if (!existing.image && p?.image) existing.image = p.image
+        setData(existing)
+      } else if (defaults) {
+        const seeded: PortfolioDetail = { ...defaults }
+        await savePortfolioDetail(slug, seeded)
+        setData(seeded)
+      } else {
+        setData({ title: p?.title || '', category: p?.category || '', description: p?.description || '', client: '', industry: '', service: '', timeline: '', tools: [], challenge: '', solution: '', result: '', metrics: p?.metrics || [], testimonial: { quote: '', author: '', role: '' }, related: [] })
+      }
     }
-  }, [slug, loaded, detailLoaded])
+    init()
+  }, [slug, loaded])
 
   const handleSave = () => {
     if (!data || !slug) return
