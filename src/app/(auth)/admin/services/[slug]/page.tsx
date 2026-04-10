@@ -104,21 +104,15 @@ export default function ServiceDetailEditor() {
     init()
   }, [slug, loaded])
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!data || !slug) return
     setSaving(true)
-    // Save detail page data
-    saveServiceDetail(serviceSlug || slug, data)
-    // Sync title, slug, category, and pricing back to the main services collection
+    await saveServiceDetail(serviceSlug || slug, data)
     const allSvcs = getServices()
     const newSlug = serviceSlug || slug
     const updated = allSvcs.map((s) => s.slug === slug ? { ...s, title: serviceTitle, slug: newSlug, category: data.category, pricing: data.pricing } : s)
-    saveServices(updated)
-    // If slug changed, migrate detail store key
-    if (newSlug !== slug) {
-      if (typeof window !== 'undefined') localStorage.removeItem(`col_service_detail_${slug}`)
-    }
-    setTimeout(() => { setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000) }, 500)
+    await saveServices(updated)
+    setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000)
   }
 
   if (!data) return <div className="flex items-center justify-center py-20"><Loader2 className="w-5 h-5 text-brand-cream/40 animate-spin" /></div>

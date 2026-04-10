@@ -711,38 +711,49 @@ export default function BlogDetailEditor() {
       const post = getBlog().find((b) => b.slug === slug)
       if (post) setPostSlug(post.slug)
 
+      // Build base data from blog list (always has title, category, etc.)
+      const base: BlogDetail = {
+        title: post?.title || '', category: post?.category || '', date: post?.date || '', readTime: post?.readTime || '',
+        excerpt: post?.excerpt || '', image: post?.image || '', author: 'DigiTitan AI', authorRole: 'AI-Powered Digital Solutions', authorInitials: 'DT',
+        intro: defaultIntroSeeds[slug] || '', toc: defaultTocSeeds[slug] || [], ctaHeading: 'Want to implement this?', ctaDescription: "Let's discuss how to apply these strategies to your business.",
+        ctaButtonText: 'Book a Free Consultation', ctaButtonLink: '/book', ctaSubtext: 'No payment required',
+        relatedSectionTitle: 'Keep Reading', featured: post?.featured || false,
+      }
+
       const existing = getBlogDetail(slug)
       if (existing) {
-        let toc = (existing.toc || []).map((t: { id: string; label: string; content?: string }) => ({ id: t.id, label: t.label, content: t.content || '' }))
+        // Merge: existing detail data on top of blog list data (so no empty fields)
+        const merged = { ...base, ...existing }
+        // Fill empty fields from blog list
+        if (!merged.title && post?.title) merged.title = post.title
+        if (!merged.category && post?.category) merged.category = post.category
+        if (!merged.excerpt && post?.excerpt) merged.excerpt = post.excerpt
+        if (!merged.date && post?.date) merged.date = post.date
+        if (!merged.readTime && post?.readTime) merged.readTime = post.readTime
+        if (!merged.image && post?.image) merged.image = post.image
+        // Fix toc
+        let toc = (merged.toc || []).map((t: { id: string; label: string; content?: string }) => ({ id: t.id, label: t.label, content: t.content || '' }))
         if (toc.length === 0 && defaultTocSeeds[slug]) toc = defaultTocSeeds[slug]
-        const intro = (!existing.intro && defaultIntroSeeds[slug]) ? defaultIntroSeeds[slug] : (existing.intro || '')
-        const image = existing.image || post?.image || ''
-        setData({ ...existing, toc, intro, image })
+        merged.toc = toc
+        if (!merged.intro && defaultIntroSeeds[slug]) merged.intro = defaultIntroSeeds[slug]
+        setData(merged)
       } else {
-        // New post — seed from blog list data
-        const seeded: BlogDetail = {
-          title: post?.title || '', category: post?.category || '', date: post?.date || '', readTime: post?.readTime || '',
-          excerpt: post?.excerpt || '', image: post?.image || '', author: 'DigiTitan AI', authorRole: 'AI-Powered Digital Solutions', authorInitials: 'DT',
-          intro: defaultIntroSeeds[slug] || '', toc: defaultTocSeeds[slug] || [], ctaHeading: 'Want to implement this?', ctaDescription: "Let's discuss how to apply these strategies to your business.",
-          ctaButtonText: 'Book a Free Consultation', ctaButtonLink: '/book', ctaSubtext: 'No payment required',
-          relatedSectionTitle: 'Keep Reading', featured: post?.featured || false,
-        }
-        await saveBlogDetail(slug, seeded)
-        setData(seeded)
+        // New post — save base as detail
+        await saveBlogDetail(slug, base)
+        setData(base)
       }
     }
     init()
   }, [slug, loaded])
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!data || !slug) return
     setSaving(true)
-    saveBlogDetail(postSlug || slug, data)
+    await saveBlogDetail(postSlug || slug, data)
     const all = getBlog()
     const updated = all.map((b) => b.slug === slug ? { ...b, title: data.title, slug: postSlug || slug, category: data.category, date: data.date, readTime: data.readTime, excerpt: data.excerpt, featured: data.featured, image: data.image } : b)
-    saveBlog(updated)
-    if (postSlug && postSlug !== slug && typeof window !== 'undefined') localStorage.removeItem(`col_blog_detail_${slug}`)
-    setTimeout(() => { setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000) }, 500)
+    await saveBlog(updated)
+    setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000)
   }
 
   if (!data) return <div className="flex items-center justify-center py-20"><Loader2 className="w-5 h-5 text-brand-cream/40 animate-spin" /></div>

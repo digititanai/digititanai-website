@@ -66,15 +66,14 @@ export default function PortfolioDetailEditor() {
     init()
   }, [slug, loaded])
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!data || !slug) return
     setSaving(true)
-    savePortfolioDetail(projectSlug || slug, data)
+    await savePortfolioDetail(projectSlug || slug, data)
     const all = getPortfolio()
     const updated = all.map((p) => p.slug === slug ? { ...p, title: data.title || title, slug: projectSlug || slug, category: data.category, description: data.description, metrics: data.metrics, image: data.image } : p)
-    savePortfolio(updated)
-    if (projectSlug && projectSlug !== slug && typeof window !== 'undefined') localStorage.removeItem(`col_portfolio_detail_${slug}`)
-    setTimeout(() => { setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000) }, 500)
+    await savePortfolio(updated)
+    setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000)
   }
 
   if (!data) return <div className="flex items-center justify-center py-20"><Loader2 className="w-5 h-5 text-brand-cream/40 animate-spin" /></div>
