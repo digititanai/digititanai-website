@@ -39,19 +39,21 @@ export default function BlogManagement() {
     }
     loadBlogs()
   }, [loaded])
-  const persist = (next: BlogItem[]) => { setItems(next); saveBlog(next) }
+  const persist = async (next: BlogItem[]) => { setItems(next); const ok = await saveBlog(next); if (!ok) alert('Failed to save to database. Check console.') }
 
   const filtered = items.filter((i) => i.title.toLowerCase().includes(searchQuery.toLowerCase()) || i.category.toLowerCase().includes(searchQuery.toLowerCase()))
 
   const openNew = () => { setEditingItem(null); setFormData({ ...emptyForm }); setShowModal(true) }
   const openEdit = (item: BlogItem) => { setEditingItem(item); setFormData({ title: item.title, slug: item.slug, excerpt: item.excerpt, category: item.category, date: item.date, readTime: item.readTime, status: item.status, featured: item.featured, content: item.content }); setShowModal(true) }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setSaving(true)
     const slug = formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
     const data = { ...formData, slug }
     const next = editingItem ? items.map((i) => i.id === editingItem.id ? { ...data, id: editingItem.id } : i) : [...items, { ...data, id: Date.now().toString() }]
-    persist(next); setShowModal(false); setTimeout(() => setSaving(false), 300)
+    await persist(next)
+    setShowModal(false)
+    setSaving(false)
   }
 
   const handleDelete = (id: string) => { persist(items.filter((i) => i.id !== id)); setDeleteConfirm(null) }

@@ -24,19 +24,21 @@ export default function TestimonialsManagement() {
       setItems(Array.isArray(fresh) && fresh.length ? fresh : getTestimonials())
     }).catch(() => setItems(getTestimonials()))
   }, [loaded])
-  const persist = (next: TestimonialItem[]) => { setItems(next); saveTestimonials(next) }
+  const persist = async (next: TestimonialItem[]) => { setItems(next); const ok = await saveTestimonials(next); if (!ok) alert('Failed to save to database.') }
 
   const filtered = items.filter((t) => t.name.toLowerCase().includes(searchQuery.toLowerCase()) || t.company.toLowerCase().includes(searchQuery.toLowerCase()))
 
   const openNew = () => { setEditingItem(null); setFormData({ ...emptyForm }); setShowModal(true) }
   const openEdit = (item: TestimonialItem) => { setEditingItem(item); setFormData({ name: item.name, company: item.company, role: item.role, initials: item.initials, image: item.image || '', quote: item.quote, rating: item.rating, active: item.active }); setShowModal(true) }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setSaving(true)
     const initials = formData.initials || formData.name.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2)
     const data = { ...formData, initials }
     const next = editingItem ? items.map((i) => i.id === editingItem.id ? { ...data, id: editingItem.id } : i) : [...items, { ...data, id: Date.now().toString() }]
-    persist(next); setShowModal(false); setTimeout(() => setSaving(false), 300)
+    await persist(next)
+    setShowModal(false)
+    setSaving(false)
   }
 
   const handleDelete = (id: string) => { persist(items.filter((i) => i.id !== id)); setDeleteConfirm(null) }

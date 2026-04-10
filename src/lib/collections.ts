@@ -343,10 +343,9 @@ export const getServices = (): ServiceItem[] => {
   return defaultServices
 }
 
-export const saveServices = (data: ServiceItem[]): void => {
+export const saveServices = async (data: ServiceItem[]): Promise<boolean> => {
   cache['col_services'] = data
-  saveToDB('col_services', data)
-  writeLocalStorage('col_services', data)
+  return saveToDB('col_services', data)
 }
 
 // ── Service Detail ──
@@ -359,11 +358,10 @@ export function getServiceDetail(slug: string): ServiceDetail | null {
   return null
 }
 
-export function saveServiceDetail(slug: string, data: ServiceDetail): void {
+export async function saveServiceDetail(slug: string, data: ServiceDetail): Promise<boolean> {
   const key = `col_service_detail_${slug}`
   cache[key] = data
-  saveToDB(key, data)
-  writeLocalStorage(key, data)
+  return saveToDB(key, data)
 }
 
 // ── Portfolio ──
@@ -375,10 +373,9 @@ export const getPortfolio = (): PortfolioItem[] => {
   return defaultPortfolio
 }
 
-export const savePortfolio = (data: PortfolioItem[]): void => {
+export const savePortfolio = async (data: PortfolioItem[]): Promise<boolean> => {
   cache['col_portfolio'] = data
-  saveToDB('col_portfolio', data)
-  writeLocalStorage('col_portfolio', data)
+  return saveToDB('col_portfolio', data)
 }
 
 // ── Portfolio Detail ──
@@ -391,11 +388,10 @@ export function getPortfolioDetail(slug: string): PortfolioDetail | null {
   return null
 }
 
-export function savePortfolioDetail(slug: string, data: PortfolioDetail): void {
+export async function savePortfolioDetail(slug: string, data: PortfolioDetail): Promise<boolean> {
   const key = `col_portfolio_detail_${slug}`
   cache[key] = data
-  saveToDB(key, data)
-  writeLocalStorage(key, data)
+  return saveToDB(key, data)
 }
 
 // ── Blog ──
@@ -407,10 +403,9 @@ export const getBlog = (): BlogItem[] => {
   return defaultBlog
 }
 
-export const saveBlog = (data: BlogItem[]): void => {
+export const saveBlog = async (data: BlogItem[]): Promise<boolean> => {
   cache['col_blog'] = data
-  saveToDB('col_blog', data)
-  writeLocalStorage('col_blog', data)
+  return saveToDB('col_blog', data)
 }
 
 // ── Blog Detail ──
@@ -423,11 +418,10 @@ export function getBlogDetail(slug: string): BlogDetail | null {
   return null
 }
 
-export function saveBlogDetail(slug: string, data: BlogDetail): void {
+export async function saveBlogDetail(slug: string, data: BlogDetail): Promise<boolean> {
   const key = `col_blog_detail_${slug}`
   cache[key] = data
-  saveToDB(key, data)
-  writeLocalStorage(key, data)
+  return saveToDB(key, data)
 }
 
 // ── Testimonials ──
@@ -439,10 +433,9 @@ export const getTestimonials = (): TestimonialItem[] => {
   return defaultTestimonials
 }
 
-export const saveTestimonials = (data: TestimonialItem[]): void => {
+export const saveTestimonials = async (data: TestimonialItem[]): Promise<boolean> => {
   cache['col_testimonials'] = data
-  saveToDB('col_testimonials', data)
-  writeLocalStorage('col_testimonials', data)
+  return saveToDB('col_testimonials', data)
 }
 
 // ── Categories ──
@@ -459,8 +452,7 @@ export const getCategories = (): Category[] => {
   return defaultCategories
 }
 
-export const saveCategories = (data: Category[]): void => {
+export const saveCategories = async (data: Category[]): Promise<boolean> => {
   cache['col_categories_v2'] = data
-  saveToDB('col_categories_v2', data)
-  writeLocalStorage('col_categories_v2', data)
+  return saveToDB('col_categories_v2', data)
 }

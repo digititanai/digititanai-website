@@ -27,33 +27,32 @@ export default function ServicesManagement() {
       setItems(Array.isArray(fresh) && fresh.length ? fresh : getServices())
     }).catch(() => setItems(getServices()))
   }, [loaded])
-  const persist = (next: ServiceItem[]) => { setItems(next); saveServices(next) }
+  const persist = async (next: ServiceItem[]) => { setItems(next); const ok = await saveServices(next); if (!ok) alert('Failed to save to database.') }
 
   const filtered = items.filter((i) => i.title.toLowerCase().includes(searchQuery.toLowerCase()))
 
   const openNew = () => { setEditingItem(null); setFormData(JSON.parse(JSON.stringify(emptyForm))); setShowModal(true) }
   const openEdit = (item: ServiceItem) => { setEditingItem(item); setFormData(JSON.parse(JSON.stringify({ ...item, id: undefined }))); setShowModal(true) }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setSaving(true)
     const slug = formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')
     const data = { ...formData, slug }
     const next = editingItem ? items.map((i) => i.id === editingItem.id ? { ...data, id: editingItem.id } : i) : [...items, { ...data, id: Date.now().toString() }]
-    persist(next)
+    await persist(next)
     // Sync ALL shared fields to service detail store
     const oldSlug = editingItem?.slug || slug
     const existing = getServiceDetail(oldSlug)
     if (existing) {
       const updated = { ...existing, pricing: data.pricing, category: data.category }
-      // If slug changed, save under new key and remove old
       if (oldSlug !== slug) {
-        saveServiceDetail(slug, updated)
-        if (typeof window !== 'undefined') localStorage.removeItem(`col_service_detail_${oldSlug}`)
+        await saveServiceDetail(slug, updated)
       } else {
-        saveServiceDetail(slug, updated)
+        await saveServiceDetail(slug, updated)
       }
     }
-    setShowModal(false); setTimeout(() => setSaving(false), 300)
+    setShowModal(false)
+    setSaving(false)
   }
 
   const handleDelete = (id: string) => { persist(items.filter((i) => i.id !== id)); setDeleteConfirm(null) }

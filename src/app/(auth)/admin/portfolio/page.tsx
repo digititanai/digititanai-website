@@ -28,24 +28,25 @@ export default function PortfolioManagement() {
       setItems(Array.isArray(fresh) && fresh.length ? fresh : getPortfolio())
     }).catch(() => setItems(getPortfolio()))
   }, [loaded])
-  const persist = (next: PortfolioItem[]) => { setItems(next); savePortfolio(next) }
+  const persist = async (next: PortfolioItem[]) => { setItems(next); const ok = await savePortfolio(next); if (!ok) alert('Failed to save to database.') }
 
   const filtered = items.filter((i) => i.title.toLowerCase().includes(searchQuery.toLowerCase()) || i.clientName.toLowerCase().includes(searchQuery.toLowerCase()))
 
   const openNew = () => { setEditingItem(null); setFormData(JSON.parse(JSON.stringify(emptyForm))); setShowModal(true) }
   const openEdit = (item: PortfolioItem) => { setEditingItem(item); setFormData({ title: item.title, category: item.category, description: item.description, slug: item.slug, icon: item.icon, image: item.image || '', clientName: item.clientName, industry: item.industry, featured: item.featured, metrics: [...item.metrics] }); setShowModal(true) }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setSaving(true)
     const next = editingItem ? items.map((i) => i.id === editingItem.id ? { ...formData, id: editingItem.id } : i) : [...items, { ...formData, id: Date.now().toString() }]
-    persist(next)
+    await persist(next)
     // Sync image to detail store
     const slug = editingItem?.slug || formData.slug
     if (slug) {
       const detail = getPortfolioDetail(slug)
-      if (detail) savePortfolioDetail(slug, { ...detail, image: formData.image })
+      if (detail) await savePortfolioDetail(slug, { ...detail, image: formData.image })
     }
-    setShowModal(false); setTimeout(() => setSaving(false), 300)
+    setShowModal(false)
+    setSaving(false)
   }
 
   const handleDelete = (id: string) => { persist(items.filter((i) => i.id !== id)); setDeleteConfirm(null) }
