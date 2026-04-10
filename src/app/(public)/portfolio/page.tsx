@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
-import { getPortfolio, type PortfolioItem } from '@/lib/collections'
+import { getPortfolio, loadAllCollections, type PortfolioItem } from '@/lib/collections'
 import { useData } from '@/lib/useData'
 import { getIcon } from '@/lib/iconMap'
 import { defaultPageContent } from '@/lib/pageContent'
@@ -32,11 +32,9 @@ export default function PortfolioPage() {
 
   useEffect(() => {
     if (!loaded) return
-    const load = async () => {
-      const items = getPortfolio()
-      setPortfolioItems(items)
-    }
-    load()
+    // Show cached data first, then refresh from Supabase
+    setPortfolioItems(getPortfolio())
+    loadAllCollections().then(() => setPortfolioItems(getPortfolio()))
   }, [loaded])
 
   const isAllSelected = activeFilters.size === 0

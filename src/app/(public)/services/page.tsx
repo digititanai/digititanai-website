@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { ArrowRight, CheckCircle2, Check, X as XIcon, DollarSign } from 'lucide-react'
-import { getServices, getCategories, type ServiceItem } from '@/lib/collections'
+import { getServices, getCategories, loadAllCollections, type ServiceItem } from '@/lib/collections'
 import { defaultPageContent } from '@/lib/pageContent'
 import PageSEO from '@/components/layout/PageSEO'
 import { useData } from '@/lib/useData'
@@ -99,11 +99,11 @@ export default function ServicesPage() {
 
   useEffect(() => {
     if (!loaded) return
-    const load = async () => {
-      const items = getServices()
-      setServices(items.filter((s: ServiceItem) => s.active))
-    }
-    load()
+    // Show cached data first, then refresh from Supabase
+    setServices(getServices().filter((s: ServiceItem) => s.active))
+    loadAllCollections().then(() => {
+      setServices(getServices().filter((s: ServiceItem) => s.active))
+    })
   }, [loaded])
 
   const heroRef = useRef<HTMLElement>(null)

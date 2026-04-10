@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Search, ArrowRight, ArrowUpRight, Clock, Calendar } from 'lucide-react'
-import { getBlog, getBlogDetail, loadCollection, type BlogItem } from '@/lib/collections'
+import { getBlog, getBlogDetail, loadCollection, loadAllCollections, type BlogItem } from '@/lib/collections'
 import { useData } from '@/lib/useData'
 import { defaultPageContent } from '@/lib/pageContent'
 import PageSEO from '@/components/layout/PageSEO'
@@ -106,24 +106,27 @@ export default function BlogPage() {
 
   useEffect(() => {
     if (!loaded) return
-    const blogItems = getBlog()
-    const allBlogs = blogItems.filter((b: { status: string }) => b.status === 'published')
-    setPosts(allBlogs)
-
-    // Only fetch details for blogs missing images (avoid N+1 API calls)
-    const blogsWithoutImage = allBlogs.filter((b) => !b.image)
-    if (blogsWithoutImage.length === 0) return
-    const loadMissingImages = async () => {
-      await Promise.all(blogsWithoutImage.map((b) => loadCollection(`col_blog_detail_${b.slug}`)))
-      setPosts(allBlogs.map((b) => {
-        if (!b.image) {
-          const detail = getBlogDetail(b.slug)
-          if (detail?.image) return { ...b, image: detail.image }
-        }
-        return b
-      }))
+    // Show cached data first (instant)
+    const showPosts = () => {
+      const allBlogs = getBlog().filter((b: { status: string }) => b.status === 'published')
+      setPosts(allBlogs)
+      // Load missing images
+      const blogsWithoutImage = allBlogs.filter((b) => !b.image)
+      if (blogsWithoutImage.length > 0) {
+        Promise.all(blogsWithoutImage.map((b) => loadCollection(`col_blog_detail_${b.slug}`))).then(() => {
+          setPosts(allBlogs.map((b) => {
+            if (!b.image) {
+              const detail = getBlogDetail(b.slug)
+              if (detail?.image) return { ...b, image: detail.image }
+            }
+            return b
+          }))
+        })
+      }
     }
-    loadMissingImages()
+    showPosts()
+    // Then refresh from Supabase in background to catch new posts from admin
+    loadAllCollections().then(() => showPosts())
   }, [loaded])
 
   useEffect(() => {
